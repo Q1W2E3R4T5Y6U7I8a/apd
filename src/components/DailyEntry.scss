@@ -763,9 +763,7 @@ $transition-slow: 0.3s ease;
     font-size: 1.3rem;
   }
 
-  .meditation-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+
     gap: $spacing-lg;
     align-items: start;
 
@@ -1181,7 +1179,6 @@ $transition-slow: 0.3s ease;
       }
     }
   }
-}
 
 // Animations
 @keyframes fadeIn {
@@ -1311,11 +1308,9 @@ $transition-slow: 0.3s ease;
 // Responsive adjustments
 @media (max-width: 768px) {
   .meditation-section {
-    padding: $spacing-md;
+   
     
-    .meditation-grid {
-      gap: $spacing-md;
-    }
+
     
     .tracks-grid {
       grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
@@ -1377,10 +1372,6 @@ $transition-slow: 0.3s ease;
     gap: $spacing-md;
   }
   
-  .meditation-section .meditation-grid {
-    grid-template-columns: 1fr;
-    gap: $spacing-md;
-  }
   
   .tracks-grid {
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
@@ -1927,6 +1918,156 @@ $transition-slow: 0.3s ease;
         width: 100%;
         text-align: center;
       }
+    }
+  }
+}
+
+.rich-text-editor {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: white;
+
+  .toolbar {
+    display: flex;
+    gap: 5px;
+    padding: 8px;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    
+    button {
+      padding: 4px 8px;
+      border: 1px solid #cbd5e1;
+      background: white;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s;
+      
+      &:hover {
+        background: #f1f5f9;
+        border-color: #94a3b8;
+      }
+      
+      &:active {
+        transform: scale(0.95);
+      }
+    }
+    
+    .color-picker-container {
+      position: relative;
+      display: inline-block;
+      
+      .color-picker-button {
+        font-size: 14px;
+        padding: 4px 8px;
+      }
+      
+      .color-picker-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        margin-top: 5px;
+        background: white;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 8px;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 6px;
+        z-index: 1000;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        min-width: 150px;
+        
+        .color-option {
+          width: 28px;
+          height: 28px;
+          border-radius: 4px;
+          border: 2px solid transparent;
+          cursor: pointer;
+          transition: all 0.2s;
+          
+          &:hover {
+            transform: scale(1.1);
+            border-color: #000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+          }
+          
+          &:active {
+            transform: scale(0.95);
+          }
+        }
+      }
+    }
+  }
+
+  .rich-text-editor {
+  .toolbar {
+    .color-picker-container {
+      position: relative;
+      display: inline-block;
+      
+      .color-picker-button {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 12px;
+        padding: 4px 8px;
+      }
+      
+      .color-picker-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        margin-top: 5px;
+        background: $pure-white;
+        border: 1px solid $border-color;
+        border-radius: $border-radius-md;
+        padding: 8px;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 6px;
+        z-index: 1000;
+        box-shadow: 0 4px 12px $shadow-color;
+        min-width: 160px;
+        
+        .color-option {
+          width: 28px;
+          height: 28px;
+          border-radius: $border-radius-sm;
+          border: 2px solid transparent;
+          cursor: pointer;
+          transition: all $transition-fast;
+          
+          &:hover {
+            transform: scale(1.1);
+            border-color: $dark-gray;
+            box-shadow: 0 2px 4px $shadow-color;
+          }
+          
+          &:active {
+            transform: scale(0.95);
+          }
+        }
+      }
+    }
+  }
+}
+  
+  .editor-content {
+    padding: 12px;
+    min-height: 60px;
+    outline: none;
+    line-height: 1.5;
+    font-size: 14px;
+    
+    &:empty:before {
+      content: attr(placeholder);
+      color: #94a3b8;
+    }
+    
+    [style*="color"] {
+      transition: color 0.2s;
     }
   }
 }

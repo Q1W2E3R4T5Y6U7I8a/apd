@@ -4,7 +4,7 @@
   "description": "APD",
   "author": "MK makarkarma21@gmail.com",
   "private": true,
-  "homepage": "./",
+  "homepage": "https://Q1W2E3R4T5Y6U7I8a.github.io/apd/",
   "license": "MIT",
   "main": "electron.js",
   "dependencies": {
@@ -15,7 +15,6 @@
     "@testing-library/user-event": "^13.5.0",
     "chart.js": "^4.4.9",
     "date-fns": "^3.6.0",
-    "gh-pages": "^6.3.0",
     "leaflet": "^1.9.4",
     "qrcode.react": "^4.2.0",
     "react": "^18.2.0",
@@ -33,6 +32,7 @@
     "electron": "^28.1.0",
     "electron-builder": "^24.6.4",
     "electron-reload": "^2.0.0-alpha.1",
+    "gh-pages": "^6.3.0",
     "wait-on": "^7.2.0"
   },
   "scripts": {
@@ -40,6 +40,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "electron:dev": "concurrently -k \"npm start\" \"wait-on http://localhost:3000 && electron .\"",
     "electron:build": "npm run build && electron-builder",
     "electron:pack": "npm run build && electron-builder --dir"
