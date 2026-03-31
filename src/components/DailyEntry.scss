@@ -1,0 +1,1932 @@
+// ============================================
+// VARIABLES - Black & White Theme
+// ============================================
+
+// Black & White Palette
+$pure-black: #000000;
+$near-black: #111111;
+$darkest-gray: #222222;
+$darker-gray: #333333;
+$dark-gray: #444444;
+$medium-gray: #666666;
+$light-gray: #888888;
+$lighter-gray: #AAAAAA;
+$lightest-gray: #CCCCCC;
+$off-white: #EEEEEE;
+$near-white: #F5F5F5;
+$pure-white: #FFFFFF;
+
+// Theme Configuration
+$background-color: $pure-white;
+$card-background: $near-white;
+$text-color: $pure-black;
+$border-color: $lightest-gray;
+$shadow-color: rgba(0, 0, 0, 0.08);
+$shadow-color-hover: rgba(0, 0, 0, 0.15);
+
+// Semantic Colors (using grayscale)
+$primary-color: $medium-gray;
+$secondary-color: $light-gray;
+$success-color: $dark-gray;
+$warning-color: $medium-gray;
+$danger-color: $darkest-gray;
+$disabled-color: $lighter-gray;
+
+// Typography
+$font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+$font-size-base: 16px;
+$font-size-sm: 14px;
+$font-size-lg: 18px;
+
+// Spacing
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+
+// Border Radius
+$border-radius-sm: 4px;
+$border-radius-md: 8px;
+$border-radius-lg: 12px;
+
+// Transitions
+$transition-fast: 0.15s ease;
+$transition-base: 0.2s ease;
+$transition-slow: 0.3s ease;
+
+// ============================================
+// MIXINS & UTILITIES
+// ============================================
+
+@mixin card-shadow {
+  box-shadow: 0 2px 8px $shadow-color;
+  transition: box-shadow $transition-base;
+  
+  &:hover {
+    box-shadow: 0 4px 12px $shadow-color-hover;
+  }
+}
+
+@mixin button-base {
+  padding: $spacing-sm $spacing-md;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-md;
+  background: $pure-white;
+  color: $text-color;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all $transition-base;
+  font-family: $font-family;
+  
+  &:hover:not(:disabled) {
+    background: $near-white;
+    transform: translateY(-1px);
+  }
+  
+  &:disabled {
+    background: $disabled-color;
+    color: $light-gray;
+    cursor: not-allowed;
+  }
+}
+
+@mixin slider-track {
+  width: 100%;
+  height: 6px;
+  border-radius: $border-radius-sm;
+  background: linear-gradient(90deg, $lightest-gray, $medium-gray, $darker-gray);
+  outline: none;
+  cursor: pointer;
+  
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: $pure-white;
+    border: 2px solid $medium-gray;
+    cursor: pointer;
+    @include card-shadow;
+  }
+  
+  &::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: $pure-white;
+    border: 2px solid $medium-gray;
+    cursor: pointer;
+    @include card-shadow;
+  }
+}
+
+// ============================================
+// MAIN CONTAINER
+// ============================================
+
+.daily-entry {
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: $spacing-lg;
+  font-family: $font-family;
+  font-size: $font-size-base;
+  background: $background-color;
+  min-height: 100vh;
+  color: $text-color;
+  line-height: 1.5;
+
+  // Main Card
+  .card {
+    background: $card-background;
+    border-radius: $border-radius-lg;
+    @include card-shadow;
+    overflow: hidden;
+  }
+}
+
+// ============================================
+// POMODORO SECTION
+// ============================================
+
+.pomodoro-section {
+  margin-bottom: $spacing-lg;
+  padding: $spacing-lg;
+  background: $near-white;
+  border-radius: $border-radius-md;
+  text-align: center;
+  border: 1px solid $border-color;
+
+  .active-pomodoro {
+    .timer-display {
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: $spacing-md;
+      font-family: 'Courier New', monospace;
+      
+      .pause-label {
+        font-size: $font-size-sm;
+        margin-left: $spacing-sm;
+        color: $light-gray;
+      }
+    }
+  }
+
+  .pomodoro-controls {
+    .duration-control {
+      margin-bottom: $spacing-md;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: $spacing-sm;
+      
+      .custom-duration-input {
+        padding: $spacing-sm;
+        border: 1px solid $border-color;
+        border-radius: $border-radius-sm;
+        width: 80px;
+        font-size: $font-size-base;
+        background: $pure-white;
+        color: $text-color;
+        
+        &:focus {
+          outline: none;
+          border-color: $medium-gray;
+        }
+      }
+    }
+    
+    .quick-pomodoros {
+      display: flex;
+      justify-content: center;
+      gap: $spacing-sm;
+    }
+  }
+  
+  button {
+    @include button-base;
+    
+    &.start-pomodoro {
+      background: $darker-gray;
+      color: $pure-white;
+      border-color: $darker-gray;
+      
+      &:hover {
+        background: $darkest-gray;
+      }
+    }
+    
+    &.pause-pomodoro {
+      background: $light-gray;
+      color: $pure-white;
+      border-color: $light-gray;
+    }
+    
+    &.resume-pomodoro {
+      background: $medium-gray;
+      color: $pure-white;
+      border-color: $medium-gray;
+    }
+    
+    &.cancel-pomodoro {
+      background: $near-black;
+      color: $pure-white;
+      border-color: $near-black;
+    }
+    
+    &.mute-button {
+      background: transparent;
+      border: none;
+      font-size: 1.2rem;
+      padding: $spacing-xs $spacing-sm;
+    }
+    
+    &.pomodoro-button {
+      min-width: 60px;
+    }
+  }
+}
+
+// ============================================
+// DATE CONTROLS
+// ============================================
+
+.date-section {
+  background: $darkest-gray;
+  color: $pure-white;
+  padding: $spacing-md;
+  border-bottom: 1px solid $border-color;
+}
+
+.date-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: $spacing-md;
+  
+  button {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: $dark-gray;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+  
+  .date-picker {
+    flex: 1;
+    max-width: 250px;
+    padding: $spacing-sm;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: $border-radius-md;
+    background: rgba(255, 255, 255, 0.1);
+    color: $dark-gray;
+    font-weight: 500;
+    text-align: center;
+    
+    &::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+      opacity: 0.7;
+      cursor: pointer;
+      
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+  
+  .copy-tomorrow-button {
+    margin-left: $spacing-sm;
+    background: $medium-gray;
+    color: $pure-white;
+    border: none;
+    
+    &:hover {
+      background: $dark-gray;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+  }
+}
+
+// ============================================
+// LAYOUT GRIDS
+// ============================================
+
+.bottom-section {
+  display: grid;
+  gap: $spacing-lg;
+  padding: $spacing-lg;
+}
+
+.three-column-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-lg;
+  margin-bottom: $spacing-lg;
+}
+
+.new-row {
+  grid-column: 1 / -1;
+}
+
+// ============================================
+// SECTION BOXES
+// ============================================
+
+.section-box {
+  background: $pure-white;
+  padding: $spacing-lg;
+  border-radius: $border-radius-md;
+  border: 1px solid $border-color;
+  @include card-shadow;
+}
+
+.section-subtitle {
+  font-size: 1.2rem;
+  margin-bottom: $spacing-md;
+  color: $text-color;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  
+  &::before,
+  &::after {
+    content: "";
+    height: 1px;
+    flex: 1;
+    background: linear-gradient(90deg, transparent, $medium-gray, transparent);
+  }
+}
+
+// ============================================
+// ENERGY LEVELS
+// ============================================
+
+.energy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: $spacing-md;
+}
+
+.energy-card {
+  background: $near-white;
+  border-radius: $border-radius-md;
+  padding: $spacing-md;
+  border: 1px solid $border-color;
+  
+  .energy-label {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 600;
+    margin-bottom: $spacing-sm;
+  }
+  
+  .energy-value {
+    font-weight: 700;
+    color: $dark-gray;
+  }
+  
+  .energy-slider {
+    @include slider-track;
+  }
+}
+
+// ============================================
+// PERFORMANCE METRICS
+// ============================================
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $spacing-md;
+}
+
+.metric-card {
+  background: $near-white;
+  border-radius: $border-radius-md;
+  padding: $spacing-md;
+  border: 1px solid $border-color;
+  
+  .metric-label {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 600;
+    margin-bottom: $spacing-sm;
+  }
+  
+  .metric-value {
+    font-weight: 700;
+  }
+  
+  .metric-slider {
+    @include slider-track;
+  }
+  
+  .slider-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: $font-size-sm;
+    color: $light-gray;
+    margin-top: $spacing-xs;
+  }
+}
+
+.pomodoros-card {
+  display: flex;
+  flex-direction: column;
+  
+  .pomodoros-input {
+    padding: $spacing-sm;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-md;
+    background: $pure-white;
+    color: $text-color;
+    font-family: $font-family;
+    
+    &:focus {
+      outline: none;
+      border-color: $medium-gray;
+    }
+  }
+  
+  .pomodoro-note {
+    font-size: $font-size-sm;
+    color: $light-gray;
+    margin-top: $spacing-xs;
+  }
+}
+
+// ============================================
+// DAILY TASKS
+// ============================================
+
+.todos-grid {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.todo-card {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  background: $pure-white;
+  border-radius: $border-radius-md;
+  border: 1px solid $border-color;
+  transition: all $transition-base;
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px $shadow-color;
+  }
+  
+  &.completed {
+    background: $near-white;
+    opacity: 0.8;
+    
+    .todo-input .editor-content {
+      text-decoration: line-through;
+      color: $medium-gray;
+    }
+  }
+  
+  .todo-checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: $dark-gray;
+  }
+  
+  .todo-priority-buttons {
+    display: flex;
+    gap: $spacing-xs;
+    
+    button {
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      border: 1px solid $border-color;
+      background: $pure-white;
+      color: $text-color;
+      border-radius: $border-radius-sm;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: $font-size-sm;
+      
+      &:hover:not(:disabled) {
+        background: $near-white;
+      }
+      
+      &:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+    }
+  }
+  
+  .delete-todo {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 1px solid $lightest-gray;
+    background: $pure-white;
+    color: $dark-gray;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    
+    &:hover {
+      background: $near-white;
+      color: $darkest-gray;
+    }
+  }
+}
+
+.add-todo-button {
+  @include button-base;
+  width: 100%;
+  margin-top: $spacing-sm;
+  background: $pure-white;
+  border: 2px dashed $border-color;
+  
+  &:hover {
+    background: $near-white;
+    border-color: $medium-gray;
+  }
+}
+
+// ============================================
+// DAILY REFLECTIONS
+// ============================================
+
+.insights-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: $spacing-md;
+}
+
+.insight-card {
+  background: $pure-white;
+  border-radius: $border-radius-md;
+  padding: $spacing-md;
+  border: 1px solid $border-color;
+  border-top: 3px solid $medium-gray;
+  
+  .input-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: $spacing-sm;
+    color: $darker-gray;
+  }
+  
+  .insight-textarea {
+    width: 100%;
+    padding: $spacing-sm;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-sm;
+    resize: vertical;
+    min-height: 100px;
+    font-family: $font-family;
+    background: $pure-white;
+    color: $text-color;
+    
+    &:focus {
+      outline: none;
+      border-color: $medium-gray;
+    }
+  }
+}
+
+// ============================================
+// HABITS TRACKER
+// ============================================
+
+.habits-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.habit-item {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  background: $pure-white;
+  border-radius: $border-radius-md;
+  border: 1px solid $border-color;
+  
+  input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: $medium-gray;
+  }
+  
+  .habit-input {
+    flex: 1;
+    padding: $spacing-sm;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-sm;
+    font-family: $font-family;
+    background: $pure-white;
+    color: $text-color;
+    
+    &:focus {
+      outline: none;
+      border-color: $medium-gray;
+    }
+  }
+  
+  .delete-habit {
+    @extend .delete-todo;
+  }
+}
+
+.add-habit-button {
+  @extend .add-todo-button;
+}
+
+// ============================================
+// MOST IMPORTANT TASK
+// ============================================
+
+.mit-section {
+  background: $near-white;
+  border: 2px dashed $border-color;
+  border-radius: $border-radius-md;
+  padding: $spacing-lg;
+  
+  h3.section-subtitle {
+    text-align: center;
+    margin-bottom: $spacing-md;
+    
+    &::before,
+    &::after {
+      background: linear-gradient(90deg, transparent, $medium-gray, transparent);
+    }
+  }
+  
+  .mit-input {
+    width: 100%;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-md;
+    padding: $spacing-md;
+    font-size: $font-size-base;
+    font-family: $font-family;
+    background: $pure-white;
+    color: $text-color;
+    resize: vertical;
+    min-height: 60px;
+    
+    &:focus {
+      outline: none;
+      border-color: $medium-gray;
+    }
+  }
+}
+
+// ============================================
+// RICH TEXT EDITOR
+// ============================================
+
+.rich-text-editor {
+  border: 1px solid $border-color;
+  border-radius: $border-radius-sm;
+  background: $pure-white;
+  flex: 1;
+  
+  .toolbar {
+    padding: $spacing-xs;
+    border-bottom: 1px solid $border-color;
+    background: $near-white;
+    display: flex;
+    gap: $spacing-xs;
+    flex-wrap: wrap;
+    
+    button {
+      padding: $spacing-xs $spacing-sm;
+      border: 1px solid $border-color;
+      background: $pure-white;
+      border-radius: $border-radius-sm;
+      cursor: pointer;
+      font-size: $font-size-sm;
+      color: $text-color;
+      
+      &:hover {
+        background: $near-white;
+      }
+    }
+  }
+  
+  .editor-content {
+    padding: $spacing-sm;
+    min-height: 60px;
+    outline: none;
+    resize: vertical;
+    overflow: auto;
+    width: 100%;
+    min-width: 200px;
+    
+    &:empty:before {
+      content: attr(placeholder);
+      color: $light-gray;
+    }
+  }
+}
+
+// ============================================
+// MEDITATION SECTION
+// ============================================
+.meditation-section {
+  margin-top: $spacing-lg;
+  padding: $spacing-lg;
+  background: $pure-white;
+  border-radius: $border-radius-md;
+  border: 1px solid $border-color;
+  @include card-shadow;
+
+  .section-subtitle {
+    text-align: center;
+    margin-bottom: $spacing-lg;
+    color: $text-color;
+    font-size: 1.3rem;
+  }
+
+  .meditation-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-lg;
+    align-items: start;
+
+    @media (max-width: 1024px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-md;
+    padding-bottom: $spacing-sm;
+    border-bottom: 1px solid $border-color;
+    
+    h4 {
+      margin: 0;
+      color: $text-color;
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+  }
+
+// ============================================
+// FIREPLACE VIDEO STYLES
+// ============================================
+
+.fireplace-section {
+  .fullscreen-container {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    border-radius: $border-radius-md;
+    overflow: hidden;
+    background: $pure-black;
+    
+    &.active {
+      .fireplace-video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      
+      .video-loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.95);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        
+        .loading-content {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: $spacing-lg;
+          padding: $spacing-xl;
+          background: rgba(0, 0, 0, 0.8);
+          border-radius: $border-radius-lg;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          max-width: 400px;
+          text-align: center;
+          
+          .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid $pure-white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+          }
+          
+          .loading-text {
+            color: $pure-white;
+            font-size: 1.2rem;
+            font-weight: 500;
+          }
+        }
+      }
+      
+      .video-controls-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+        padding: $spacing-md;
+        z-index: 20;
+        opacity: 0;
+        transition: opacity $transition-base;
+        
+        &:hover {
+          opacity: 1;
+        }
+        
+        .controls-content {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: $spacing-md;
+          
+          .volume-controls {
+            display: flex;
+            align-items: center;
+            gap: $spacing-sm;
+            
+            .mute-button {
+              @include button-base;
+              padding: $spacing-xs $spacing-sm;
+              background: rgba(255, 255, 255, 0.2);
+              border: 1px solid rgba(255, 255, 255, 0.3);
+              color: $pure-white;
+              font-size: 1.2rem;
+              min-width: 40px;
+              
+              &:hover {
+                background: rgba(255, 255, 255, 0.3);
+              }
+            }
+            
+            .volume-slider {
+              width: 100px;
+              height: 6px;
+              border-radius: $border-radius-sm;
+              background: linear-gradient(90deg, $lightest-gray, $medium-gray, $darker-gray);
+              outline: none;
+              cursor: pointer;
+              
+              &::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                width: 18px;
+                height: 18px;
+                border-radius: 50%;
+                background: $pure-white;
+                border: 2px solid $medium-gray;
+                cursor: pointer;
+                @include card-shadow;
+              }
+              
+              &::-moz-range-thumb {
+                width: 18px;
+                height: 18px;
+                border-radius: 50%;
+                background: $pure-white;
+                border: 2px solid $medium-gray;
+                cursor: pointer;
+                @include card-shadow;
+              }
+            }
+          }
+          
+          .fullscreen-instructions {
+            .instruction-text {
+              color: $pure-white;
+              font-size: $font-size-sm;
+              opacity: 0.8;
+              padding: $spacing-xs $spacing-sm;
+              background: rgba(0, 0, 0, 0.5);
+              border-radius: $border-radius-sm;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  .fireplace-preview {
+    height: 200px;
+    background: linear-gradient(135deg, $near-black, $darkest-gray);
+    border-radius: $border-radius-md;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed $border-color;
+    
+    .preview-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: $spacing-sm;
+      
+      .preview-icon {
+        font-size: 3rem;
+        opacity: 0.7;
+      }
+      
+      .preview-text {
+        color: $pure-white;
+        font-size: 1rem;
+        opacity: 0.9;
+        text-align: center;
+        max-width: 300px;
+      }
+    }
+  }
+}
+
+// Fullscreen styles
+:fullscreen {
+  .fireplace-section .fullscreen-container {
+    height: 100vh;
+    width: 100vw;
+    border-radius: 0;
+  }
+}
+
+// Add spin animation
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .fireplace-section {
+    .fullscreen-container {
+      height: 300px;
+      
+      &.active {
+        .video-controls-overlay {
+          opacity: 1; // Always show controls on mobile
+          
+          .controls-content {
+            flex-direction: column;
+            gap: $spacing-sm;
+            align-items: stretch;
+            
+            .volume-controls {
+              justify-content: center;
+              
+              .volume-slider {
+                flex: 1;
+                max-width: 150px;
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    .fireplace-preview {
+      height: 150px;
+      
+      .preview-placeholder {
+        .preview-icon {
+          font-size: 2rem;
+        }
+        
+        .preview-text {
+          font-size: 0.9rem;
+          padding: 0 $spacing-md;
+        }
+      }
+    }
+  }
+}
+
+  .other-tracks-section {
+    .stop-meditation-button {
+      @include button-base;
+      background: $darkest-gray;
+      color: $pure-white;
+      border: none;
+      padding: $spacing-xs $spacing-sm;
+      font-size: $font-size-sm;
+      
+      &:hover {
+        background: $pure-black;
+      }
+    }
+
+    .tracks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: $spacing-sm;
+      margin-bottom: $spacing-md;
+      
+      .track-container {
+        position: relative;
+        
+        audio {
+          display: none;
+        }
+        
+        .track-button {
+          display: flex;
+          align-items: center;
+          gap: $spacing-xs;
+          padding: $spacing-sm;
+          background: $pure-white;
+          color: $darker-gray;
+          border: 1px solid $border-color;
+          border-radius: $border-radius-md;
+          cursor: pointer;
+          font-size: $font-size-sm;
+          transition: all $transition-base;
+          width: 100%;
+          text-align: left;
+          
+          &:hover {
+            background: $near-white;
+            transform: translateY(-1px);
+          }
+          
+          &.active {
+            background: $medium-gray;
+            color: $pure-white;
+            border-color: $dark-gray;
+            box-shadow: 0 2px 8px $shadow-color;
+          }
+          
+          // Element type borders
+          &.air {
+            border-left: 3px solid $lighter-gray;
+            &.active {
+              background: $light-gray;
+            }
+          }
+          
+          &.water {
+            border-left: 3px solid $light-gray;
+            &.active {
+              background: $medium-gray;
+            }
+          }
+          
+          &.earth {
+            border-left: 3px solid $medium-gray;
+            &.active {
+              background: $dark-gray;
+            }
+          }
+          
+          &.fire {
+            border-left: 3px solid $darker-gray;
+            &.active {
+              background: $darkest-gray;
+            }
+          }
+          
+          .track-emoji {
+            font-size: 1.1rem;
+            min-width: 24px;
+          }
+        }
+      }
+    }
+
+    .now-playing {
+      margin-top: $spacing-md;
+      padding: $spacing-md;
+      background: $near-white;
+      border-radius: $border-radius-md;
+      border: 1px solid $border-color;
+      animation: fadeIn $transition-slow ease-out;
+      
+      .now-playing-info {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+        margin-bottom: $spacing-sm;
+        
+        .now-playing-emoji {
+          font-size: 1.3rem;
+        }
+        
+        .now-playing-title {
+          font-weight: 600;
+          color: $darker-gray;
+        }
+      }
+      
+      .audio-controls {
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+        
+        .play-pause-button {
+          @include button-base;
+          padding: $spacing-xs $spacing-sm;
+          background: transparent;
+          border: 1px solid $border-color;
+          font-size: 1.2rem;
+          
+          &:hover {
+            background: $pure-white;
+          }
+        }
+        
+        .volume-slider {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: $border-radius-lg;
+  background: linear-gradient(
+    90deg,
+    $lightest-gray 0%,
+    $lightest-gray var(--volume-percent, 50%),
+    $off-white var(--volume-percent, 50%),
+    $off-white 100%
+  );
+  outline: none;
+  cursor: pointer;
+  transition: all $transition-base;
+  border: 1px solid $border-color;}
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .meditation-section {
+    padding: $spacing-md;
+    
+    .meditation-grid {
+      gap: $spacing-md;
+    }
+    
+    .tracks-grid {
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
+    }
+    
+    .now-playing {
+      padding: $spacing-sm;
+      
+      .audio-controls {
+        flex-direction: column;
+        gap: $spacing-sm;
+        
+        .volume-slider {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .meditation-section {
+    .tracks-grid {
+      grid-template-columns: 1fr 1fr !important;
+    }
+    
+    .section-header {
+      flex-direction: column;
+      gap: $spacing-sm;
+      align-items: stretch;
+      
+      h4 {
+        text-align: center;
+      }
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .meditation-section {
+    padding: $spacing-md;
+    
+    .meditation-grid {
+      gap: $spacing-md;
+    }
+    
+    .section-header {
+      .fireplace-controls {
+        flex-direction: column;
+        align-items: flex-end;
+        gap: $spacing-xs;
+      }
+    }
+    
+    .tracks-grid {
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
+    }
+    
+    .now-playing {
+      padding: $spacing-sm;
+      
+      .audio-controls {
+        flex-direction: column;
+        gap: $spacing-sm;
+        
+        .volume-slider {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .meditation-section {
+    .tracks-grid {
+      grid-template-columns: 1fr 1fr !important;
+    }
+    
+    .section-header {
+      flex-direction: column;
+      gap: $spacing-sm;
+      align-items: stretch;
+      
+      h4 {
+        text-align: center;
+      }
+      
+      .fireplace-controls {
+        align-items: stretch;
+        
+        button {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
+
+// Animation for now-playing
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .meditation-section {
+    padding: $spacing-md;
+    
+    .meditation-grid {
+      gap: $spacing-md;
+    }
+    
+    .tracks-grid {
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
+    }
+    
+    .now-playing {
+      padding: $spacing-sm;
+      
+      .audio-controls {
+        flex-direction: column;
+        gap: $spacing-sm;
+        
+        .volume-slider {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .meditation-section {
+    .tracks-grid {
+      grid-template-columns: 1fr 1fr !important;
+    }
+    
+    .section-header {
+      flex-direction: column;
+      gap: $spacing-sm;
+      align-items: stretch;
+      
+      h4 {
+        text-align: center;
+      }
+    }
+  }
+}
+
+// ============================================
+// ANIMATIONS
+// ============================================
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.meditation-player {
+  animation: fadeIn $transition-slow ease-out;
+}
+
+// ============================================
+// RESPONSIVE DESIGN
+// ============================================
+
+@media (max-width: 1024px) {
+  .three-column-row {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+  }
+  
+  .meditation-section .meditation-grid {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+  }
+  
+  .tracks-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .daily-entry {
+    padding: $spacing-md;
+  }
+  
+  .bottom-section {
+    padding: $spacing-md;
+  }
+  
+  .date-controls {
+    flex-direction: column;
+    gap: $spacing-sm;
+    
+    .date-picker {
+      max-width: 100%;
+    }
+  }
+  
+  .meditation-section {
+    padding: $spacing-md;
+    
+    .section-header {
+      flex-direction: column;
+      gap: $spacing-sm;
+      align-items: stretch;
+      
+      h4 {
+        text-align: center;
+      }
+    }
+  }
+  
+  .metrics-grid,
+  .energy-grid,
+  .insights-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .pomodoro-section {
+    padding: $spacing-md;
+    
+    .active-pomodoro .timer-display {
+      font-size: 36px;
+    }
+  }
+  
+  .tracks-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
+
+// Add these to your existing SCSS file
+
+// ============================================
+// COLOR PICKER STYLES
+// ============================================
+
+.color-picker {
+  position: relative;
+  display: inline-block;
+  
+  .color-picker-toggle {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    border: 1px solid $border-color;
+    background: $pure-white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    padding: 0;
+    transition: all $transition-base;
+    
+    &:hover {
+      transform: scale(1.1);
+      box-shadow: 0 2px 4px $shadow-color;
+    }
+  }
+  
+  .color-palette {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    background: $pure-white;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-md;
+    padding: $spacing-sm;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+    margin-top: 4px;
+    box-shadow: 0 4px 12px $shadow-color;
+    min-width: 140px;
+    
+    .color-option {
+      width: 20px;
+      height: 20px;
+      border-radius: 3px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: all $transition-fast;
+      
+      &:hover {
+        transform: scale(1.2);
+        box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+      }
+      
+      &:active {
+        transform: scale(1.1);
+      }
+    }
+  }
+}
+
+// ============================================
+// UPDATED TODO CARD WITH TIME INPUT
+// ============================================
+
+.todos-grid {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.todo-card {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  background: $pure-white;
+  border-radius: $border-radius-md;
+  border: 1px solid $border-color;
+  transition: all $transition-base;
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px $shadow-color;
+  }
+  
+  &.completed {
+    background: $near-white;
+    opacity: 0.8;
+    
+    .todo-input .editor-content {
+      text-decoration: line-through;
+      color: $medium-gray;
+    }
+    
+    .todo-time-input {
+      opacity: 0.7;
+    }
+  }
+  
+  .todo-checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: $dark-gray;
+    margin-top: 4px;
+    flex-shrink: 0;
+  }
+  
+  .todo-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+    min-width: 0; // Prevents overflow
+    
+    .rich-text-editor {
+      width: 100%;
+      
+      .editor-content {
+        min-height: 28px;
+        max-height: 200px;
+        overflow-y: auto;
+        
+        &:empty:before {
+          color: $light-gray;
+          font-style: italic;
+        }
+      }
+    }
+    
+    .todo-time-container {
+      display: flex;
+      align-items: center;
+      gap: $spacing-xs;
+      
+      .todo-time-input {
+        width: 80px;
+        padding: 2px 4px;
+        border: 1px solid $border-color;
+        border-radius: $border-radius-sm;
+        background: $pure-white;
+        color: $text-color;
+        font-size: $font-size-sm;
+        font-family: $font-family;
+        
+        &:focus {
+          outline: none;
+          border-color: $medium-gray;
+          box-shadow: 0 0 0 2px rgba($medium-gray, 0.1);
+        }
+        
+        &::placeholder {
+          color: $light-gray;
+        }
+      }
+      
+      .time-display {
+        font-size: $font-size-sm;
+        color: $medium-gray;
+        padding: 2px 6px;
+        background: $near-white;
+        border-radius: $border-radius-sm;
+        border: 1px solid $border-color;
+      }
+    }
+  }
+  
+  .todo-controls {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    flex-shrink: 0;
+    
+    .todo-color-picker {
+      margin-right: 2px;
+    }
+    
+    .todo-priority-buttons {
+      display: flex;
+      gap: 2px;
+      
+      button {
+        width: 24px;
+        height: 24px;
+        padding: 0;
+        border: 1px solid $border-color;
+        background: $pure-white;
+        color: $text-color;
+        border-radius: $border-radius-sm;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        
+        &:hover:not(:disabled) {
+          background: $near-white;
+          transform: translateY(-1px);
+        }
+        
+        &:disabled {
+          opacity: 0.3;
+          cursor: not-allowed;
+        }
+      }
+    }
+    
+    .delete-todo {
+      width: 24px;
+      height: 24px;
+      padding: 0;
+      border: 1px solid $lightest-gray;
+      background: $pure-white;
+      color: $dark-gray;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1rem;
+      
+      &:hover {
+        background: $near-white;
+        color: $darkest-gray;
+        transform: scale(1.1);
+      }
+    }
+  }
+}
+
+// ============================================
+// ELECTRON IFRAME FIXES
+// ============================================
+
+.meditation-player {
+  margin-top: $spacing-md;
+  border-radius: $border-radius-md;
+  overflow: hidden;
+  @include card-shadow;
+  
+  iframe {
+    border: none;
+    border-radius: $border-radius-md;
+    width: 100%;
+    height: 200px;
+    // Electron-specific fixes
+    background: $pure-black;
+    
+    // Allow fullscreen in Electron
+    &[allowfullscreen] {
+      -webkit-allowfullscreen: true;
+      -moz-allowfullscreen: true;
+    }
+  }
+}
+
+// Electron-specific media query
+@media all and (-webkit-min-device-pixel-ratio:0) and (min-resolution: .001dpcm) {
+  .meditation-player iframe {
+    // Additional WebKit fixes for Electron
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+}
+
+// ============================================
+// RESPONSIVE DESIGN UPDATES
+// ============================================
+
+@media (max-width: 768px) {
+  .todo-card {
+    flex-direction: column;
+    align-items: stretch;
+    
+    .todo-content {
+      width: 100%;
+    }
+    
+    .todo-controls {
+      justify-content: flex-end;
+      margin-top: $spacing-xs;
+      
+      .todo-color-picker {
+        order: 1;
+      }
+      
+      .todo-priority-buttons {
+        order: 2;
+      }
+      
+      .delete-todo {
+        order: 3;
+      }
+    }
+  }
+  
+  .color-picker {
+    .color-palette {
+      grid-template-columns: repeat(4, 1fr);
+      min-width: 120px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .todo-card {
+    .todo-content {
+      .todo-time-container {
+        .todo-time-input {
+          width: 70px;
+          font-size: $font-size-sm;
+        }
+      }
+    }
+  }
+  
+  .color-picker {
+    .color-palette {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 3px;
+      padding: 6px;
+      
+      .color-option {
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
+}
+
+// Add these styles to your DailyEntry.scss
+
+.todo-time-container {
+  .time-input-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    
+    .time-input-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      
+      .time-label {
+        font-size: 10px;
+        color: $medium-gray;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+      }
+    }
+    
+    .time-separator {
+      color: $light-gray;
+      font-size: 14px;
+      margin: 0 2px;
+      opacity: 0.7;
+    }
+    
+    .todo-time-input {
+      width: 85px;
+      padding: 4px 6px;
+      border: 1px solid $border-color;
+      border-radius: $border-radius-sm;
+      background: $pure-white;
+      color: $text-color;
+      font-size: $font-size-sm;
+      font-family: $font-family;
+      transition: all $transition-fast;
+      
+      &:focus {
+        outline: none;
+        border-color: $medium-gray;
+        box-shadow: 0 0 0 2px rgba($medium-gray, 0.1);
+      }
+      
+      &:hover {
+        border-color: $light-gray;
+      }
+      
+      &::placeholder {
+        color: $light-gray;
+      }
+    }
+    
+    .duration-display {
+      margin-left: 6px;
+      
+      .duration-badge {
+        display: inline-block;
+        padding: 3px 8px;
+        background: $near-white;
+        border: 1px solid $border-color;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+        color: $darker-gray;
+        white-space: nowrap;
+        transition: all $transition-fast;
+        
+        &:hover {
+          background: $lightest-gray;
+          transform: translateY(-1px);
+        }
+      }
+    }
+  }
+}
+
+// Alternative: If you want ESTIMATED vs ACTUAL times
+.time-input-group.alternative {
+  .time-input-wrapper {
+    &:first-child .time-label {
+      color: $success-color; // Green for estimated
+    }
+    
+    &:last-child .time-label {
+      color: $danger-color; // Red for actual
+    }
+  }
+}
+
+// Alternative 2: If you want PLANNED vs DONE times
+.time-input-group.planned-done {
+  .time-input-wrapper {
+    &:first-child {
+      .time-label::before {
+        content: "📅 ";
+      }
+      .todo-time-input {
+        border-left: 3px solid $primary-color;
+      }
+    }
+    
+    &:last-child {
+      .time-label::before {
+        content: "✅ ";
+      }
+      .todo-time-input {
+        border-left: 3px solid $success-color;
+      }
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .todo-time-container {
+    .time-input-group {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      
+      .time-separator {
+        display: none;
+      }
+      
+      .time-input-wrapper {
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        
+        .time-label {
+          min-width: 40px;
+          text-align: right;
+        }
+        
+        .todo-time-input {
+          flex: 1;
+        }
+      }
+      
+      .duration-display {
+        margin-left: 0;
+        margin-top: 4px;
+        width: 100%;
+        text-align: center;
+      }
+    }
+  }
+}

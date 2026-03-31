@@ -1,0 +1,465 @@
+.statistics-page {
+  background-color: #e5e4db;
+  max-width: 2000px;
+  margin: 0 auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    width: 90%;
+    max-width: 1400px;
+  }
+
+  .section-title {
+    color: #1e293b;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+
+  .section-subtitle {
+    color: #64748b;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  .charts-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-top: 1.5rem;
+    width: 100%;
+    align-items: center;
+  }
+
+  .chart-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    display: flex;
+    justify-content: center;
+  }
+
+  .chart-card {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f0f0f0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .chart-title {
+      color: #334155;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .chart-container {
+      height: 500px;
+      width: 95%;
+    }
+  }
+
+  .insights-container {
+    margin-top: 2rem;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .insights-column {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 1400px;
+  }
+
+  .insight-type {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f0f0f0;
+
+    &.victories-column {
+      border-left: 4px solid #10b981;
+    }
+
+    &.dreams-column {
+      border-left: 4px solid #dc2626;
+    }
+
+    &.insights-column {
+      border-left: 4px solid #f59e0b;
+    }
+  }
+
+  .insights-title {
+    color: #000;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e2e8f0;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  .insights-list {
+    max-height: 500px;
+    overflow-y: auto;
+  }
+
+  .insight-item {
+    position: relative;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+
+    .insight-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .insight-date {
+      font-weight: 600;
+      color: #000;
+      font-size: 1.1rem;
+    }
+
+    .insight-content {
+      color: #000;
+      font-size: 1rem;
+    }
+
+    .delete-btn {
+      background: none;
+      border: none;
+      color: #dc2626;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0 0.5rem;
+      line-height: 1;
+      transition: transform 0.2s;
+
+      &:hover {
+        transform: scale(1.2);
+      }
+    }
+
+    .delete-confirmation {
+      margin-top: 0.5rem;
+      padding: 0.5rem;
+      background: #fff;
+      border-radius: 4px;
+      border: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      p {
+        margin: 0;
+        color: #64748b;
+        font-size: 0.9rem;
+      }
+
+      button {
+        padding: 0.25rem 0.5rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.8rem;
+
+        &:first-of-type {
+          background: #dc2626;
+          color: white;
+        }
+
+        &:last-of-type {
+          background: #e2e8f0;
+          color: #334155;
+        }
+      }
+    }
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 2rem;
+
+    .empty-message {
+      color: #64748b;
+    }
+  }
+
+  .data-actions {
+    padding-top: 30px;
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    justify-content: center;
+    width: 100%;
+
+    button, .import-button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      background: #3b82f6;
+      color: white;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+
+      &:hover {
+        background: #2563eb;
+      }
+    }
+
+    .import-button {
+      display: inline-block;
+    }
+  }
+}
+
+.insight-item ul li.completed {
+  text-decoration: line-through;
+  color: #94a3b8;
+}
+
+.averages-section {
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  
+  .averages-title {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 24px;
+  }
+  
+  .averages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    
+    .average-card {
+      background-color: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      
+      h3 {
+        margin-top: 0;
+        margin-bottom: 15px;
+        color: #333;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 8px;
+      }
+      
+      .average-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        
+        .average-label {
+          font-weight: bold;
+          color: #555;
+        }
+        
+        .average-value {
+          font-weight: bold;
+          color: #3b82f6;
+        }
+      }
+    }
+  }
+}
+
+// Statistics.scss - Ajoutez ces styles
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+
+  h3 {
+    margin-bottom: 1rem;
+    color: #333;
+  }
+
+  p {
+    margin-bottom: 2rem;
+    color: #666;
+  }
+}
+
+.modal-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.modal-button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+
+  &.manual {
+    background-color: #4285f4;
+    color: white;
+    
+    &:hover {
+      background-color: #3367d6;
+    }
+  }
+
+  &.onedrive {
+    background-color: #0078d4;
+    color: white;
+    
+    &:hover {
+      background-color: #106ebe;
+    }
+  }
+
+  &.cancel {
+    background-color: #f5f5f5;
+    color: #333;
+    
+    &:hover {
+      background-color: #e0e0e0;
+    }
+  }
+}
+
+.onedrive-info {
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  text-align: left;
+
+  p {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+  }
+
+  a {
+    word-break: break-all;
+    color: #0078d4;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.sync-section {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+
+  h3 {
+    margin-bottom: 1rem;
+    color: #333;
+  }
+
+  h4 {
+    margin-bottom: 0.5rem;
+    color: #555;
+    font-size: 1.1rem;
+  }
+}
+
+// Add to Statistics.scss
+
+.date-range-selector {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+  .range-title {
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: #333;
+  }
+
+  .range-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+  }
+
+  .range-btn {
+    padding: 8px 16px;
+    border: 2px solid #e2e8f0;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+
+    &:hover {
+      border-color: #3b82f6;
+      background: #eff6ff;
+    }
+
+    &.active {
+      background: #3b82f6;
+      border-color: #3b82f6;
+      color: white;
+    }
+  }
+
+  .range-info {
+    font-size: 14px;
+    color: #666;
+    padding-top: 10px;
+    border-top: 1px solid #e2e8f0;
+  }
+}

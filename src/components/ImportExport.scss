@@ -1,0 +1,201 @@
+// src/components/ImportExport.scss
+.import-export-container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+
+  .import-export-card {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+    .title {
+      font-size: 28px;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+
+    .section {
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #eee;
+
+      h3 {
+        font-size: 18px;
+        margin-bottom: 15px;
+        color: #555;
+      }
+
+      .button-group {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+    }
+
+    .danger-zone {
+      border-bottom-color: #ffebee;
+      
+      h3 {
+        color: #d32f2f;
+      }
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+
+    .btn-primary {
+      background-color: #3b82f6;
+      color: white;
+    }
+
+    .btn-secondary {
+      background-color: #6b7280;
+      color: white;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .btn-onedrive {
+      background-color: #0078d4;
+      color: white;
+    }
+
+    .btn-info {
+      background-color: #10b981;
+      color: white;
+    }
+
+    .btn-danger {
+      background-color: #dc2626;
+      color: white;
+    }
+
+    .btn-danger-small {
+      background-color: #dc2626;
+      color: white;
+      padding: 8px 16px;
+      font-size: 12px;
+    }
+
+    .btn-secondary-small {
+      background-color: #6b7280;
+      color: white;
+      padding: 8px 16px;
+      font-size: 12px;
+    }
+
+    .btn-small {
+      padding: 8px 16px;
+      font-size: 12px;
+    }
+
+    .oneDrive-input-group {
+      margin-top: 15px;
+      display: flex;
+      gap: 10px;
+
+      .oneDrive-input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+      }
+    }
+
+    .confirm-box {
+      background-color: #fff3e0;
+      padding: 15px;
+      border-radius: 6px;
+      border-left: 4px solid #ff9800;
+
+      p {
+        margin: 0 0 10px 0;
+        color: #e65100;
+        font-weight: 500;
+      }
+
+      .confirm-buttons {
+        display: flex;
+        gap: 10px;
+      }
+    }
+
+    .status-message {
+      padding: 12px;
+      border-radius: 6px;
+      margin-top: 20px;
+      text-align: center;
+      font-weight: 500;
+
+      &.success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      &.error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+    }
+
+    .instructions {
+      margin-top: 30px;
+      padding-top: 20px;
+      background-color: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+
+      h4 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      ul {
+        margin: 10px 0;
+        padding-left: 20px;
+
+        li {
+          margin: 8px 0;
+          color: #666;
+          font-size: 13px;
+        }
+      }
+
+      .note {
+        margin-top: 15px;
+        padding-top: 10px;
+        border-top: 1px solid #ddd;
+        font-size: 12px;
+        color: #888;
+      }
+    }
+  }
+}
