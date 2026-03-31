@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Constitution de Vie - Maks</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+</head>
+<body>
+    <div class="header">
+        <h1>Constitution de Vie - Maks</h1>
+        <p>Les principes fondamentaux qui guident mon existence</p>
+    </div>
+
+    <div class="container">
+        <!-- L'air -->
+        <div class="element-section air">
+            <div class="element-header">
+                <i class="fas fa-wind"></i>
+                <h2>L'air - Sagesse et Conscience</h2>
+            </div>
+            
+            <ul class="principle-list">
+                <li>Tu sais que tu ne sais rien.</li>
+                <li>Tu es déjà mort.</li>
+                <li>Avant ta mort, t'attends l'infinité, je crois pas que je pourrais être "effacé" de ce monde.</li>
+                <li>C'est presque sûr que tu peux affecter cette infinité et qu'avant cette vie tu as eu aussi, qui tu es maintenant c'est pas seulement les décisions de ta vie correspondant.</li>
+                <li>T'es responsable de ton destin.</li>
+                <li>Ceci est le plus controversé, mais c'est sûr que je choisis de le croire.</li>
+            </ul>
+            
+            <div class="principle-quote">
+                "Je sais que je ne sais rien, mais je choisis de croire en ma responsabilité face à l'infini."
+            </div>
+        </div>
+        
+        <!-- Le feu -->
+        <div class="element-section fire">
+            <div class="element-header">
+                <i class="fas fa-fire"></i>
+                <h2>Le feu - Amour et Famille</h2>
+            </div>
+            
+            <ul class="principle-list">
+                <li>L'amour est le plus important.</li>
+                <li>Ta fille Sophia, c'est à qui tu sers ta vie, jamais à toi-même.</li>
+                <li>Reste doux et attentif avec ta femme.</li>
+                <li>Il faut trouver la fille que tu admirais, au moins elle doit avoir ton IQ et capacité de penser critiquement.</li>
+                <li>Faire le mini contrat avec ta femme et parle de tout que vous voulez.</li>
+            </ul>
+            
+            <div class="principle-quote">
+                "Je sers ma vie à Sophia et à l'amour, jamais à moi-même."
+            </div>
+        </div>
+        
+        <!-- La terre -->
+        <div class="element-section earth">
+            <div class="element-header">
+                <i class="fas fa-mountain"></i>
+                <h2>La terre - Responsabilité et Action</h2>
+            </div>
+            
+            <ul class="principle-list">
+                <li>Tu es un homme, tu es responsable pour tout.</li>
+                <li>Tu dois obtenir liberté financière, sans ça presque rien ne compte pas.</li>
+                <li>Voix basse, tête calme, bouche silencieuse.</li>
+                <li>DUMY</li>
+                <li>DUMYKAVA</li>
+                <li>ENGLISH CLUB</li>
+                <li>TOP</li>
+            </ul>
+            
+            <div class="principle-quote">
+                "Voix basse, tête calme, bouche silencieuse. Je suis responsable de tout."
+            </div>
+        </div>
+        
+        <!-- L'eau -->
+        <div class="element-section water">
+            <div class="element-header">
+                <i class="fas fa-tint"></i>
+                <h2>L'eau - Amour de Soi et Interconnexion</h2>
+            </div>
+            
+            <ul class="principle-list">
+                <li>Aime toi-même et tes règles du jeu.</li>
+                <li>Tout ce que t'auras pour toi c'est que tu as choisi.</li>
+                <li>Tout est interconnecté.</li>
+            </ul>
+            
+            <div class="principle-quote">
+                "J'aime mes règles du jeu. Tout ce que j'ai, c'est ce que j'ai choisi."
+            </div>
+        </div>
+        
+        <!-- Habitudes -->
+        <div class="element-section habits">
+            <div class="element-header">
+                <i class="fas fa-pray"></i>
+                <h2>Habitudes - Spiritualité</h2>
+            </div>
+            
+            <ul class="principle-list">
+                <li>Dire merci à Dieu.</li>
+            </ul>
+            
+            <div class="principle-quote">
+                "Chaque jour, je dis merci à Dieu pour cette vie et cette conscience."
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>Cette constitution est mon ancrage - elle guide chaque décision, chaque pensée, chaque action.</p>
+        <p style="margin-top: 10px;">"Je vis selon mes règles, pour l'amour, avec responsabilité."</p>
+    </div>
+
+    <script>
+        // Animation au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Effet de fondu pour les sections
+            const sections = document.querySelectorAll('.element-section');
+            sections.forEach((section, index) => {
+                setTimeout(() => {
+                    section.style.opacity = '1';
+                    section.style.transform = 'translateY(0)';
+                }, 300 * index);
+            });
+            
+            // Effet de parallaxe léger
+            window.addEventListener('scroll', function() {
+                const scrollY = window.scrollY;
+                document.querySelector('.header').style.backgroundPositionY = `-${scrollY * 0.2}px`;
+            });
+            
+            // Surlignage des sections au survol
+            const elementSections = document.querySelectorAll('.element-section');
+            elementSections.forEach(section => {
+                section.addEventListener('mouseenter', function() {
+                    this.style.boxShadow = '0 15px 35px rgba(0, 0, 0, 0.6)';
+                });
+                
+                section.addEventListener('mouseleave', function() {
+                    this.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.4)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
