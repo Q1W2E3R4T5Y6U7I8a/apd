@@ -1056,14 +1056,16 @@ export default function DailyEntry() {
       </div>
       
       <div className="card">
-        <div className="section-box date-section">
-          <div className="date-controls">
-            <button type="button" onClick={() => changeDateBy(-1)}>&larr; Yesterday</button>
-            <input type="date" value={entry.date.split('/').reverse().join('-')} onChange={handleDateChange} className="date-picker" />
-            <button type="button" onClick={() => changeDateBy(1)}>Tomorrow &rarr;</button>
-            <button type="button" onClick={copyToTomorrow} className="copy-tomorrow-button">📋 Copy to Tomorrow</button>
-          </div>
-        </div>
+         <div className="section-box date-section">
+    <div className="date-controls">
+      <div className="nav-buttons">
+        <button type="button" onClick={() => changeDateBy(-1)}>← Yesterday</button>
+        <button type="button" onClick={() => changeDateBy(1)}>Tomorrow →</button>
+      </div>
+      <input type="date" value={entry.date.split('/').reverse().join('-')} onChange={handleDateChange} className="date-picker" />
+      <button type="button" onClick={copyToTomorrow} className="copy-tomorrow-button">📋 Copy to Tomorrow</button>
+    </div>
+  </div>
 
         <div className="bottom-section">
           <div className="three-column-row">

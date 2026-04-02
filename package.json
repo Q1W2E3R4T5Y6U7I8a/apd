@@ -4,7 +4,7 @@
   "description": "APD",
   "author": "MK makarkarma21@gmail.com",
   "private": true,
-  "homepage": "https://Q1W2E3R4T5Y6U7I8a.github.io/apd/",
+  "homepage": "./",
   "license": "MIT",
   "main": "electron.js",
   "dependencies": {
@@ -56,16 +56,13 @@
     },
     "files": [
       "build/**/*",
-      "node_modules/**/*",
       "electron.js"
     ],
     "extraResources": [
       {
         "from": "public",
         "to": "public",
-        "filter": [
-          "**/*"
-        ]
+        "filter": ["**/*"]
       }
     ],
     "win": {

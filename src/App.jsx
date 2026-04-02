@@ -1,4 +1,3 @@
-// App.jsx - Modified Finance handling to open in new tab
 import React, { useState, useEffect } from 'react';
 import DailyEntry from './components/DailyEntry';
 import Calendar from './components/Calendar';
@@ -10,6 +9,7 @@ import ImportExport from './components/ImportExport';
 
 function App() {
   const [page, setPage] = useState('daily');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [financeLink, setFinanceLink] = useState(() => {
     const saved = localStorage.getItem('financeLink');
     return saved || '';
@@ -17,34 +17,30 @@ function App() {
   const [showFinanceModal, setShowFinanceModal] = useState(false);
   const [tempFinanceLink, setTempFinanceLink] = useState('');
 
-  // Check if finance link exists on first load
   useEffect(() => {
-    if (!financeLink) {
-      // Don't auto-open modal, wait for user to click Finance button
-    }
+    // No auto-open
   }, [financeLink]);
 
   const handleFinanceClick = () => {
     if (!financeLink) {
-      // First time - ask for link
       setTempFinanceLink('');
       setShowFinanceModal(true);
     } else {
-      // Has link - open in new tab
       window.open(financeLink, '_blank', 'noopener,noreferrer');
     }
+    setMobileMenuOpen(false);
   };
 
   const handleChangeLink = () => {
     setTempFinanceLink(financeLink);
     setShowFinanceModal(true);
+    setMobileMenuOpen(false);
   };
 
   const saveFinanceLink = () => {
     if (tempFinanceLink.trim()) {
       let link = tempFinanceLink.trim();
       
-      // Add https:// if no protocol specified
       if (!link.startsWith('http://') && !link.startsWith('https://')) {
         link = 'https://' + link;
       }
@@ -53,11 +49,9 @@ function App() {
       setFinanceLink(link);
       setShowFinanceModal(false);
       
-      // If we're saving for the first time, open the link
       if (!financeLink) {
         window.open(link, '_blank', 'noopener,noreferrer');
       } else {
-        // If changing link, ask if they want to open it
         const shouldNavigate = window.confirm('Link updated! Do you want to open it now?');
         if (shouldNavigate) {
           window.open(link, '_blank', 'noopener,noreferrer');
@@ -71,44 +65,42 @@ function App() {
       localStorage.removeItem('financeLink');
       setFinanceLink('');
       setShowFinanceModal(false);
-      alert('Finance link removed. You will be asked to set it again next time.');
+      alert('Finance link removed.');
     }
   };
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+    setMobileMenuOpen(false);
+  };
+
+  // Navigation items configuration
+  const navItems = [
+    { id: 'daily', icon: '✍️', text: 'Daily Journal' },
+    { id: 'goals', icon: '📅', text: 'Calendar' },
+    { id: 'stats', icon: '📊', text: 'Statistics' },
+    { id: 'dreams', icon: '✨', text: 'Dreams' },
+    { id: 'constitution', icon: '📝', text: 'Constitution' },
+    { id: 'importexport', icon: '🔄', text: 'Backup' },
+  ];
 
   return (
     <div className="app-container">
       <nav className="main-nav">
+        {/* Desktop navigation */}
         <div className="nav-container">
-          <button 
-            onClick={() => setPage('daily')}
-            className={`nav-button ${page === 'daily' ? 'active' : ''}`}
-          >
-            <span className="nav-icon">✍️</span>
-            <span className="nav-text">Daily Journal</span>
-          </button>
-          <button 
-            onClick={() => setPage('goals')}
-            className={`nav-button ${page === 'goals' ? 'active' : ''}`}
-          >
-            <span className="nav-icon">📅</span>
-            <span className="nav-text">Calendar</span>
-          </button>
-          <button 
-            onClick={() => setPage('stats')}
-            className={`nav-button ${page === 'stats' ? 'active' : ''}`}
-          >
-            <span className="nav-icon">📊</span>
-            <span className="nav-text">Statistics</span>
-          </button>
-          <button 
-            onClick={() => setPage('dreams')}
-            className={`nav-button ${page === 'dreams' ? 'active' : ''}`}
-          >
-            <span className="nav-icon">✨</span>
-            <span className="nav-text">Dreams</span>
-          </button>
+          {navItems.map(item => (
+            <button 
+              key={item.id}
+              onClick={() => handlePageChange(item.id)}
+              className={`nav-button ${page === item.id ? 'active' : ''}`}
+            >
+              <span className="nav-icon">{item.icon}</span>
+              <span className="nav-text">{item.text}</span>
+            </button>
+          ))}
           
-          {/* Finance Button with Link Management */}
+          {/* Finance Button */}
           <div className="finance-button-group">
             <button
               onClick={handleFinanceClick}
@@ -128,21 +120,48 @@ function App() {
             )}
           </div>
 
+          {/* Mobile menu button */}
           <button 
-            onClick={() => setPage('constitution')}
-            className={`nav-button ${page === 'constitution' ? 'active' : ''}`}
+            className="mobile-menu-button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
-            <span className="nav-icon">📝</span>
-            <span className="nav-text">Constitution</span>
+            <span>{mobileMenuOpen ? '✕' : '☰'}</span>
+            <span className="nav-text">Menu</span>
           </button>
+        </div>
 
-          <button 
-            onClick={() => setPage('importexport')}
-            className={`nav-button ${page === 'importexport' ? 'active' : ''}`}
-          >
-            <span className="nav-icon">🔄</span>
-            <span className="nav-text">Backup</span>
-          </button>
+        {/* Mobile dropdown menu */}
+        <div className={`mobile-dropdown ${mobileMenuOpen ? 'open' : ''}`}>
+          {navItems.map(item => (
+            <button 
+              key={item.id}
+              onClick={() => handlePageChange(item.id)}
+              className={`nav-button ${page === item.id ? 'active' : ''}`}
+            >
+              <span className="nav-icon">{item.icon}</span>
+              <span className="nav-text">{item.text}</span>
+            </button>
+          ))}
+          
+          {/* Finance in mobile menu */}
+          <div className="finance-button-group">
+            <button
+              onClick={handleFinanceClick}
+              className={`nav-button ${financeLink ? 'has-link' : ''}`}
+            >
+              <span className="nav-icon">💰</span>
+              <span className="nav-text">Finance</span>
+            </button>
+            {financeLink && (
+              <button
+                onClick={handleChangeLink}
+                className="change-link-button"
+                title="Change Finance Link"
+              >
+                ⚙️
+              </button>
+            )}
+          </div>
         </div>
       </nav>
 

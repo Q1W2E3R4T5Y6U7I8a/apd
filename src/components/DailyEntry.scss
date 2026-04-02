@@ -1,147 +1,169 @@
 // ============================================
-// VARIABLES - Black & White Theme
+// VARIABLES - Clean Modern Theme
 // ============================================
 
-// Black & White Palette
-$pure-black: #000000;
-$near-black: #111111;
-$darkest-gray: #222222;
-$darker-gray: #333333;
-$dark-gray: #444444;
-$medium-gray: #666666;
-$light-gray: #888888;
-$lighter-gray: #AAAAAA;
-$lightest-gray: #CCCCCC;
-$off-white: #EEEEEE;
-$near-white: #F5F5F5;
-$pure-white: #FFFFFF;
-
-// Theme Configuration
-$background-color: $pure-white;
-$card-background: $near-white;
-$text-color: $pure-black;
-$border-color: $lightest-gray;
-$shadow-color: rgba(0, 0, 0, 0.08);
-$shadow-color-hover: rgba(0, 0, 0, 0.15);
-
-// Semantic Colors (using grayscale)
-$primary-color: $medium-gray;
-$secondary-color: $light-gray;
-$success-color: $dark-gray;
-$warning-color: $medium-gray;
-$danger-color: $darkest-gray;
-$disabled-color: $lighter-gray;
-
-// Typography
-$font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-$font-size-base: 16px;
-$font-size-sm: 14px;
-$font-size-lg: 18px;
+// Colors
+$bg-primary: #f8fafc;
+$bg-secondary: #ffffff;
+$bg-tertiary: #f1f5f9;
+$text-primary: #0f172a;
+$text-secondary: #475569;
+$text-muted: #94a3b8;
+$border-light: #e2e8f0;
+$border-medium: #cbd5e1;
+$accent: #3b82f6;
+$accent-dark: #2563eb;
+$danger: #ef4444;
+$danger-dark: #dc2626;
+$success: #22c55e;
+$warning: #f59e0b;
 
 // Spacing
-$spacing-xs: 4px;
-$spacing-sm: 8px;
-$spacing-md: 16px;
-$spacing-lg: 24px;
-$spacing-xl: 32px;
+$space-xs: 4px;
+$space-sm: 8px;
+$space-md: 16px;
+$space-lg: 24px;
+$space-xl: 32px;
+$space-2xl: 48px;
 
-// Border Radius
-$border-radius-sm: 4px;
-$border-radius-md: 8px;
-$border-radius-lg: 12px;
+// Typography
+$font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+$font-mono: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+$text-sm: 0.875rem;
+$text-base: 1rem;
+$text-lg: 1.125rem;
+$text-xl: 1.25rem;
+$text-2xl: 1.5rem;
+$text-3xl: 1.875rem;
 
-// Transitions
-$transition-fast: 0.15s ease;
-$transition-base: 0.2s ease;
-$transition-slow: 0.3s ease;
+// Radius
+$radius-sm: 6px;
+$radius-md: 10px;
+$radius-lg: 14px;
+$radius-xl: 20px;
+
+// Shadows
+$shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+$shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 
 // ============================================
-// MIXINS & UTILITIES
+// GLOBAL STYLES
 // ============================================
 
-@mixin card-shadow {
-  box-shadow: 0 2px 8px $shadow-color;
-  transition: box-shadow $transition-base;
-  
-  &:hover {
-    box-shadow: 0 4px 12px $shadow-color-hover;
-  }
+*, *::before, *::after {
+  box-sizing: border-box;
 }
-
-@mixin button-base {
-  padding: $spacing-sm $spacing-md;
-  border: 1px solid $border-color;
-  border-radius: $border-radius-md;
-  background: $pure-white;
-  color: $text-color;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all $transition-base;
-  font-family: $font-family;
-  
-  &:hover:not(:disabled) {
-    background: $near-white;
-    transform: translateY(-1px);
-  }
-  
-  &:disabled {
-    background: $disabled-color;
-    color: $light-gray;
-    cursor: not-allowed;
-  }
-}
-
-@mixin slider-track {
-  width: 100%;
-  height: 6px;
-  border-radius: $border-radius-sm;
-  background: linear-gradient(90deg, $lightest-gray, $medium-gray, $darker-gray);
-  outline: none;
-  cursor: pointer;
-  
-  &::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: $pure-white;
-    border: 2px solid $medium-gray;
-    cursor: pointer;
-    @include card-shadow;
-  }
-  
-  &::-moz-range-thumb {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: $pure-white;
-    border: 2px solid $medium-gray;
-    cursor: pointer;
-    @include card-shadow;
-  }
-}
-
-// ============================================
-// MAIN CONTAINER
-// ============================================
 
 .daily-entry {
-  max-width: 1800px;
+  max-width: 1400px;
+  width: 100%;
   margin: 0 auto;
-  padding: $spacing-lg;
-  font-family: $font-family;
-  font-size: $font-size-base;
-  background: $background-color;
+  padding: $space-lg;
+  font-family: $font-sans;
+  background: $bg-primary;
   min-height: 100vh;
-  color: $text-color;
-  line-height: 1.5;
+  color: $text-primary;
 
-  // Main Card
-  .card {
-    background: $card-background;
-    border-radius: $border-radius-lg;
-    @include card-shadow;
-    overflow: hidden;
+  // Cards
+  .card, .section-box {
+    background: $bg-secondary;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-sm;
+    border: 1px solid $border-light;
+    transition: box-shadow 0.2s ease;
+    width: 100%;
+
+    &:hover {
+      box-shadow: $shadow-md;
+    }
+  }
+
+  // Section titles
+  .section-subtitle {
+    font-size: $text-lg;
+    font-weight: 600;
+    margin-bottom: $space-lg;
+    color: $text-primary;
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+
+    &::before {
+      content: '';
+      width: 4px;
+      height: 20px;
+      background: $accent;
+      border-radius: $radius-sm;
+      flex-shrink: 0;
+    }
+  }
+}
+
+// ============================================
+// DATE SECTION
+// ============================================
+
+.date-section {
+  background: $bg-secondary;
+  border-radius: $radius-xl;
+  margin-bottom: $space-lg;
+  padding: $space-md $space-lg;
+  box-shadow: $shadow-sm;
+  border: 1px solid $border-light;
+}
+
+.date-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-md;
+  flex-wrap: wrap;
+
+  .nav-buttons {
+    display: flex;
+    gap: $space-md;
+
+    button {
+      background: $bg-tertiary;
+      border: 1px solid $border-light;
+      padding: $space-sm $space-lg;
+      border-radius: $radius-md;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: $text-secondary;
+
+      &:hover {
+        background: $accent;
+        color: white;
+        border-color: $accent;
+      }
+    }
+  }
+
+  .date-picker {
+    padding: $space-sm $space-md;
+    border: 1px solid $border-light;
+    border-radius: $radius-md;
+    font-size: $text-base;
+    background: $bg-secondary;
+    color: $text-primary;
+
+    &:focus {
+      outline: none;
+      border-color: $accent;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+  }
+
+  .copy-tomorrow-button {
+    background: $bg-tertiary;
+
+    &:hover {
+      background: $accent;
+    }
   }
 }
 
@@ -150,459 +172,591 @@ $transition-slow: 0.3s ease;
 // ============================================
 
 .pomodoro-section {
-  margin-bottom: $spacing-lg;
-  padding: $spacing-lg;
-  background: $near-white;
-  border-radius: $border-radius-md;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border-radius: $radius-xl;
+  padding: $space-xl;
+  margin-bottom: $space-lg;
+  color: white;
   text-align: center;
-  border: 1px solid $border-color;
 
-  .active-pomodoro {
-    .timer-display {
-      font-size: 48px;
-      font-weight: 700;
-      margin-bottom: $spacing-md;
-      font-family: 'Courier New', monospace;
-      
-      .pause-label {
-        font-size: $font-size-sm;
-        margin-left: $spacing-sm;
-        color: $light-gray;
+  .timer-display {
+    font-size: 4rem;
+    font-weight: 700;
+    font-family: $font-mono;
+    letter-spacing: 4px;
+    margin-bottom: $space-lg;
+  }
+
+  .duration-control {
+    margin-bottom: $space-lg;
+
+    .custom-duration-input {
+      padding: $space-sm $space-md;
+      border-radius: $radius-md;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      width: 80px;
+      text-align: center;
+
+      &:focus {
+        outline: none;
+        border-color: $accent;
       }
     }
   }
 
-  .pomodoro-controls {
-    .duration-control {
-      margin-bottom: $spacing-md;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: $spacing-sm;
-      
-      .custom-duration-input {
-        padding: $spacing-sm;
-        border: 1px solid $border-color;
-        border-radius: $border-radius-sm;
-        width: 80px;
-        font-size: $font-size-base;
-        background: $pure-white;
-        color: $text-color;
-        
-        &:focus {
-          outline: none;
-          border-color: $medium-gray;
-        }
-      }
-    }
-    
-    .quick-pomodoros {
-      display: flex;
-      justify-content: center;
-      gap: $spacing-sm;
-    }
-  }
-  
-  button {
-    @include button-base;
-    
-    &.start-pomodoro {
-      background: $darker-gray;
-      color: $pure-white;
-      border-color: $darker-gray;
-      
-      &:hover {
-        background: $darkest-gray;
-      }
-    }
-    
-    &.pause-pomodoro {
-      background: $light-gray;
-      color: $pure-white;
-      border-color: $light-gray;
-    }
-    
-    &.resume-pomodoro {
-      background: $medium-gray;
-      color: $pure-white;
-      border-color: $medium-gray;
-    }
-    
-    &.cancel-pomodoro {
-      background: $near-black;
-      color: $pure-white;
-      border-color: $near-black;
-    }
-    
-    &.mute-button {
-      background: transparent;
-      border: none;
-      font-size: 1.2rem;
-      padding: $spacing-xs $spacing-sm;
-    }
-    
-    &.pomodoro-button {
-      min-width: 60px;
-    }
-  }
-}
+  .quick-pomodoros {
+    display: flex;
+    gap: $space-sm;
+    justify-content: center;
+    flex-wrap: wrap;
 
-// ============================================
-// DATE CONTROLS
-// ============================================
-
-.date-section {
-  background: $darkest-gray;
-  color: $pure-white;
-  padding: $spacing-md;
-  border-bottom: 1px solid $border-color;
-}
-
-.date-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: $spacing-md;
-  
-  button {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: $dark-gray;
-    
-    &:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
-  }
-  
-  .date-picker {
-    flex: 1;
-    max-width: 250px;
-    padding: $spacing-sm;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: $border-radius-md;
-    background: rgba(255, 255, 255, 0.1);
-    color: $dark-gray;
-    font-weight: 500;
-    text-align: center;
-    
-    &::-webkit-calendar-picker-indicator {
-      filter: invert(1);
-      opacity: 0.7;
+    button {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: $space-sm $space-lg;
+      border-radius: $radius-md;
+      color: white;
       cursor: pointer;
-      
+      transition: all 0.2s;
+
       &:hover {
-        opacity: 1;
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
       }
     }
   }
-  
-  .copy-tomorrow-button {
-    margin-left: $spacing-sm;
-    background: $medium-gray;
-    color: $pure-white;
-    border: none;
-    
+
+  .start-pomodoro {
+    background: $success !important;
+    border-color: $success !important;
+
     &:hover {
-      background: $dark-gray;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      background: #16a34a !important;
+    }
+  }
+
+  .cancel-pomodoro {
+    background: $danger !important;
+    border-color: $danger !important;
+
+    &:hover {
+      background: $danger-dark !important;
     }
   }
 }
 
 // ============================================
-// LAYOUT GRIDS
+// GRID LAYOUTS
 // ============================================
-
-.bottom-section {
-  display: grid;
-  gap: $spacing-lg;
-  padding: $spacing-lg;
-}
 
 .three-column-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: $spacing-lg;
-  margin-bottom: $spacing-lg;
+  gap: $space-lg;
+  margin-bottom: $space-lg;
+  width: 100%;
 }
 
-.new-row {
-  grid-column: 1 / -1;
-}
-
-// ============================================
-// SECTION BOXES
-// ============================================
-
-.section-box {
-  background: $pure-white;
-  padding: $spacing-lg;
-  border-radius: $border-radius-md;
-  border: 1px solid $border-color;
-  @include card-shadow;
-}
-
-.section-subtitle {
-  font-size: 1.2rem;
-  margin-bottom: $spacing-md;
-  color: $text-color;
-  font-weight: 600;
+.bottom-section {
   display: flex;
-  align-items: center;
-  gap: $spacing-sm;
-  
-  &::before,
-  &::after {
-    content: "";
-    height: 1px;
-    flex: 1;
-    background: linear-gradient(90deg, transparent, $medium-gray, transparent);
-  }
+  flex-direction: column;
+  gap: $space-lg;
+  width: 100%;
 }
 
 // ============================================
-// ENERGY LEVELS
+// ENERGY & METRICS CARDS
 // ============================================
 
-.energy-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: $spacing-md;
-}
-
-.energy-card {
-  background: $near-white;
-  border-radius: $border-radius-md;
-  padding: $spacing-md;
-  border: 1px solid $border-color;
-  
-  .energy-label {
-    display: flex;
-    justify-content: space-between;
-    font-weight: 600;
-    margin-bottom: $spacing-sm;
-  }
-  
-  .energy-value {
-    font-weight: 700;
-    color: $dark-gray;
-  }
-  
-  .energy-slider {
-    @include slider-track;
-  }
-}
-
-// ============================================
-// PERFORMANCE METRICS
-// ============================================
-
-.metrics-grid {
+.energy-grid, .metrics-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: $spacing-md;
+  gap: $space-md;
 }
 
-.metric-card {
-  background: $near-white;
-  border-radius: $border-radius-md;
-  padding: $spacing-md;
-  border: 1px solid $border-color;
-  
-  .metric-label {
+.energy-card, .metric-card {
+  background: $bg-secondary;
+  border: 1px solid $border-light;
+  border-radius: $radius-lg;
+  padding: $space-lg;
+  transition: all 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
+
+  .energy-label, .metric-label {
     display: flex;
     justify-content: space-between;
+    margin-bottom: $space-md;
     font-weight: 600;
-    margin-bottom: $spacing-sm;
+    color: $text-secondary;
   }
-  
-  .metric-value {
+
+  input[type="range"] {
+    width: 100%;
+    height: 6px;
+    border-radius: $radius-sm;
+    background: $bg-tertiary;
+    -webkit-appearance: none;
+
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: $accent;
+      cursor: pointer;
+      box-shadow: $shadow-sm;
+      transition: all 0.2s;
+
+      &:hover {
+        transform: scale(1.2);
+        background: $accent-dark;
+      }
+    }
+
+    &::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: $accent;
+      cursor: pointer;
+      border: none;
+
+      &:hover {
+        transform: scale(1.2);
+        background: $accent-dark;
+      }
+    }
+  }
+
+  .energy-value, .metric-value {
+    text-align: right;
     font-weight: 700;
+    color: $accent;
+    margin-top: $space-sm;
+    font-size: $text-lg;
   }
-  
-  .metric-slider {
-    @include slider-track;
-  }
-  
+
   .slider-labels {
     display: flex;
     justify-content: space-between;
-    font-size: $font-size-sm;
-    color: $light-gray;
-    margin-top: $spacing-xs;
-  }
-}
-
-.pomodoros-card {
-  display: flex;
-  flex-direction: column;
-  
-  .pomodoros-input {
-    padding: $spacing-sm;
-    border: 1px solid $border-color;
-    border-radius: $border-radius-md;
-    background: $pure-white;
-    color: $text-color;
-    font-family: $font-family;
-    
-    &:focus {
-      outline: none;
-      border-color: $medium-gray;
-    }
-  }
-  
-  .pomodoro-note {
-    font-size: $font-size-sm;
-    color: $light-gray;
-    margin-top: $spacing-xs;
+    margin-top: $space-xs;
+    font-size: $text-sm;
+    color: $text-muted;
   }
 }
 
 // ============================================
-// DAILY TASKS
+// TODO LIST (TASKS)
 // ============================================
 
 .todos-grid {
   display: flex;
   flex-direction: column;
-  gap: $spacing-sm;
+  gap: $space-sm;
 }
 
 .todo-card {
   display: flex;
-  align-items: center;
-  gap: $spacing-sm;
-  padding: $spacing-md;
-  background: $pure-white;
-  border-radius: $border-radius-md;
-  border: 1px solid $border-color;
-  transition: all $transition-base;
-  
+  align-items: flex-start;
+  gap: $space-md;
+  padding: $space-md;
+  background: $bg-secondary;
+  border: 1px solid $border-light;
+  border-radius: $radius-lg;
+  transition: all 0.2s;
+
   &:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px $shadow-color;
+    box-shadow: $shadow-md;
+    border-color: $border-medium;
   }
-  
+
   &.completed {
-    background: $near-white;
-    opacity: 0.8;
-    
-    .todo-input .editor-content {
+    background: $bg-tertiary;
+    opacity: 0.75;
+
+    .editor-content {
       text-decoration: line-through;
-      color: $medium-gray;
+      color: $text-muted;
     }
   }
-  
+
   .todo-checkbox {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
+    border-radius: $radius-sm;
     cursor: pointer;
-    accent-color: $dark-gray;
+    accent-color: $accent;
+    flex-shrink: 0;
+    margin-top: 2px;
   }
-  
-  .todo-priority-buttons {
+
+  .todo-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .todo-controls {
     display: flex;
-    gap: $spacing-xs;
-    
-    button {
-      width: 28px;
-      height: 28px;
-      padding: 0;
-      border: 1px solid $border-color;
-      background: $pure-white;
-      color: $text-color;
-      border-radius: $border-radius-sm;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: $font-size-sm;
-      
-      &:hover:not(:disabled) {
-        background: $near-white;
-      }
-      
-      &:disabled {
-        opacity: 0.3;
-        cursor: not-allowed;
-      }
-    }
+    gap: $space-xs;
+    flex-shrink: 0;
   }
-  
+
   .delete-todo {
-    width: 28px;
-    height: 28px;
-    padding: 0;
-    border: 1px solid $lightest-gray;
-    background: $pure-white;
-    color: $dark-gray;
-    border-radius: 50%;
+    background: none;
+    border: none;
+    font-size: 1.25rem;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 1.2rem;
-    
+    color: $text-muted;
+    padding: 0 $space-xs;
+    transition: all 0.2s;
+
     &:hover {
-      background: $near-white;
-      color: $darkest-gray;
+      color: $danger;
+      transform: scale(1.1);
     }
   }
 }
 
 .add-todo-button {
-  @include button-base;
   width: 100%;
-  margin-top: $spacing-sm;
-  background: $pure-white;
-  border: 2px dashed $border-color;
-  
+  padding: $space-md;
+  background: $bg-tertiary;
+  border: 2px dashed $border-medium;
+  border-radius: $radius-lg;
+  color: $text-secondary;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: $space-sm;
+
   &:hover {
-    background: $near-white;
-    border-color: $medium-gray;
+    background: $bg-secondary;
+    border-color: $accent;
+    color: $accent;
   }
 }
 
 // ============================================
-// DAILY REFLECTIONS
+// RICH TEXT EDITOR
 // ============================================
 
-.insights-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: $spacing-md;
+.rich-text-editor {
+  border: 1px solid $border-light;
+  border-radius: $radius-md;
+  background: $bg-secondary;
+  overflow: hidden;
+
+  .toolbar {
+    display: flex;
+    gap: $space-xs;
+    padding: $space-sm;
+    background: $bg-tertiary;
+    border-bottom: 1px solid $border-light;
+    flex-wrap: wrap;
+
+    button {
+      padding: $space-xs $space-sm;
+      border: 1px solid $border-light;
+      background: $bg-secondary;
+      border-radius: $radius-sm;
+      cursor: pointer;
+      font-size: $text-sm;
+      font-weight: 500;
+      color: $text-secondary;
+      transition: all 0.2s;
+
+      &:hover {
+        background: $accent;
+        color: white;
+        border-color: $accent;
+      }
+    }
+  }
+
+  .editor-content {
+    padding: $space-md;
+    min-height: 80px;
+    outline: none;
+    line-height: 1.5;
+    font-size: $text-base;
+    color: $text-primary;
+
+    &:empty:before {
+      content: attr(placeholder);
+      color: $text-muted;
+      font-style: italic;
+    }
+
+    &[contenteditable="true"] {
+      cursor: text;
+    }
+  }
 }
 
-.insight-card {
-  background: $pure-white;
-  border-radius: $border-radius-md;
-  padding: $spacing-md;
-  border: 1px solid $border-color;
-  border-top: 3px solid $medium-gray;
-  
-  .input-label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: $spacing-sm;
-    color: $darker-gray;
+// ============================================
+// TIME INPUT
+// ============================================
+
+.todo-time-container {
+  margin-top: $space-sm;
+
+  .time-input-group {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+    flex-wrap: wrap;
+
+    .todo-time-input {
+      padding: $space-xs $space-sm;
+      border: 1px solid $border-light;
+      border-radius: $radius-sm;
+      font-size: $text-sm;
+      width: 90px;
+
+      &:focus {
+        outline: none;
+        border-color: $accent;
+      }
+    }
+
+    .duration-badge {
+      background: $bg-tertiary;
+      padding: $space-xs $space-sm;
+      border-radius: $radius-sm;
+      font-size: $text-sm;
+      color: $text-secondary;
+    }
   }
-  
-  .insight-textarea {
+}
+
+// ============================================
+// MEDITATION SECTION
+// ============================================
+
+.meditation-section {
+  background: $bg-secondary;
+  border-radius: $radius-xl;
+  padding: $space-lg;
+  border: 1px solid $border-light;
+  margin-top: $space-lg;
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $space-lg;
+    flex-wrap: wrap;
+    gap: $space-md;
+
+    h4 {
+      font-size: $text-lg;
+      font-weight: 600;
+      margin: 0;
+    }
+  }
+
+  .tracks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: $space-sm;
+    margin-bottom: $space-lg;
+
+    .track-button {
+      display: flex;
+      align-items: center;
+      gap: $space-sm;
+      padding: $space-sm $space-md;
+      background: $bg-tertiary;
+      border: 1px solid $border-light;
+      border-radius: $radius-md;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.2s;
+
+      &:hover {
+        background: $accent;
+        color: white;
+        transform: translateY(-2px);
+      }
+
+      &.active {
+        background: $accent;
+        color: white;
+        border-color: $accent;
+      }
+
+      .track-emoji {
+        font-size: 1.2rem;
+      }
+    }
+  }
+
+  .now-playing {
+    background: $bg-tertiary;
+    border-radius: $radius-lg;
+    padding: $space-md;
+
+    .now-playing-info {
+      display: flex;
+      align-items: center;
+      gap: $space-sm;
+      margin-bottom: $space-md;
+
+      .now-playing-title {
+        font-weight: 600;
+      }
+    }
+
+    .audio-controls {
+      display: flex;
+      align-items: center;
+      gap: $space-md;
+      flex-wrap: wrap;
+
+      button {
+        padding: $space-sm $space-lg;
+        background: $accent;
+        border: none;
+        border-radius: $radius-md;
+        color: white;
+        cursor: pointer;
+
+        &:hover {
+          background: $accent-dark;
+        }
+      }
+
+      input[type="range"] {
+        flex: 1;
+        min-width: 120px;
+      }
+    }
+  }
+}
+
+// ============================================
+// FIREPLACE SECTION
+// ============================================
+
+.fireplace-section {
+  margin-bottom: $space-lg;
+
+  .fullscreen-container {
+    position: relative;
     width: 100%;
-    padding: $spacing-sm;
-    border: 1px solid $border-color;
-    border-radius: $border-radius-sm;
-    resize: vertical;
-    min-height: 100px;
-    font-family: $font-family;
-    background: $pure-white;
-    color: $text-color;
-    
-    &:focus {
-      outline: none;
-      border-color: $medium-gray;
+    height: 360px;
+    border-radius: $radius-xl;
+    overflow: hidden;
+    background: #000;
+
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .video-controls-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+      padding: $space-md;
+      opacity: 0;
+      transition: opacity 0.3s;
+
+      &:hover {
+        opacity: 1;
+      }
+
+      .controls-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: $space-md;
+
+        .volume-controls {
+          display: flex;
+          align-items: center;
+          gap: $space-sm;
+
+          button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            padding: $space-xs $space-md;
+            border-radius: $radius-md;
+            color: white;
+            cursor: pointer;
+          }
+
+          input {
+            width: 100px;
+          }
+        }
+
+        .instruction-text {
+          color: white;
+          font-size: $text-sm;
+          opacity: 0.8;
+        }
+      }
+    }
+  }
+}
+
+// ============================================
+// COLOR PICKER
+// ============================================
+
+.color-picker {
+  position: relative;
+
+  .color-picker-toggle {
+    width: 28px;
+    height: 28px;
+    border-radius: $radius-sm;
+    border: 1px solid $border-light;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+
+  .color-palette {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: $space-xs;
+    background: $bg-secondary;
+    border: 1px solid $border-light;
+    border-radius: $radius-md;
+    padding: $space-sm;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: $space-xs;
+    z-index: 100;
+    box-shadow: $shadow-lg;
+
+    .color-option {
+      width: 28px;
+      height: 28px;
+      border-radius: $radius-sm;
+      cursor: pointer;
+
+      &:hover {
+        transform: scale(1.1);
+      }
     }
   }
 }
@@ -614,1460 +768,461 @@ $transition-slow: 0.3s ease;
 .habits-list {
   display: flex;
   flex-direction: column;
-  gap: $spacing-sm;
+  gap: $space-sm;
 }
 
 .habit-item {
   display: flex;
   align-items: center;
-  gap: $spacing-sm;
-  padding: $spacing-md;
-  background: $pure-white;
-  border-radius: $border-radius-md;
-  border: 1px solid $border-color;
-  
+  gap: $space-sm;
+  padding: $space-sm;
+  background: $bg-secondary;
+  border: 1px solid $border-light;
+  border-radius: $radius-md;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: $border-medium;
+    box-shadow: $shadow-sm;
+  }
+
   input[type="checkbox"] {
     width: 20px;
     height: 20px;
     cursor: pointer;
-    accent-color: $medium-gray;
+    accent-color: $accent;
+    flex-shrink: 0;
   }
-  
+
   .habit-input {
     flex: 1;
-    padding: $spacing-sm;
-    border: 1px solid $border-color;
-    border-radius: $border-radius-sm;
-    font-family: $font-family;
-    background: $pure-white;
-    color: $text-color;
-    
+    min-width: 0;
+    padding: $space-sm $space-md;
+    border: 1px solid $border-light;
+    border-radius: $radius-md;
+    font-size: $text-base;
+    font-family: $font-sans;
+    background: $bg-secondary;
+    color: $text-primary;
+    transition: all 0.2s;
+
     &:focus {
       outline: none;
-      border-color: $medium-gray;
+      border-color: $accent;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    &::placeholder {
+      color: $text-muted;
     }
   }
-  
+
   .delete-habit {
-    @extend .delete-todo;
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    cursor: pointer;
+    color: $text-muted;
+    padding: $space-xs $space-sm;
+    border-radius: $radius-sm;
+    transition: all 0.2s;
+    flex-shrink: 0;
+
+    &:hover {
+      color: $danger;
+      background: $bg-tertiary;
+    }
   }
 }
 
 .add-habit-button {
-  @extend .add-todo-button;
+  width: 100%;
+  padding: $space-md;
+  background: $bg-tertiary;
+  border: 2px dashed $border-medium;
+  border-radius: $radius-lg;
+  color: $text-secondary;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: $space-sm;
+
+  &:hover {
+    background: $bg-secondary;
+    border-color: $accent;
+    color: $accent;
+  }
 }
 
 // ============================================
-// MOST IMPORTANT TASK
+// DAILY REFLECTIONS
+// ============================================
+
+.insights-grid {
+  display: flex;
+  flex-direction: row;
+  gap: $space-md;
+  width: 100%;
+}
+
+.insight-card {
+  background: $bg-secondary;
+  border-radius: $radius-lg;
+  padding: $space-lg;
+  border: 1px solid $border-light;
+  transition: all 0.2s;
+
+  &:hover {
+    box-shadow: $shadow-md;
+    border-color: $border-medium;
+  }
+
+  .input-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: $space-sm;
+    color: $text-secondary;
+    font-size: $text-sm;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .insight-textarea {
+
+    border: 1px solid $border-light;
+    border-radius: $radius-md;
+    resize: vertical;
+    min-height: 120px;
+    font-family: $font-sans;
+    font-size: $text-base;
+    background: $bg-secondary;
+    color: $text-primary;
+    line-height: 1.5;
+    transition: all 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: $accent;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    &::placeholder {
+      color: $text-muted;
+      font-style: italic;
+    }
+  }
+}
+
+// ============================================
+// MOST IMPORTANT TASK (MIT)
 // ============================================
 
 .mit-section {
-  background: $near-white;
-  border: 2px dashed $border-color;
-  border-radius: $border-radius-md;
-  padding: $spacing-lg;
-  
-  h3.section-subtitle {
-    text-align: center;
-    margin-bottom: $spacing-md;
-    
-    &::before,
-    &::after {
-      background: linear-gradient(90deg, transparent, $medium-gray, transparent);
-    }
-  }
-  
-  .mit-input {
-    width: 100%;
-    border: 1px solid $border-color;
-    border-radius: $border-radius-md;
-    padding: $spacing-md;
-    font-size: $font-size-base;
-    font-family: $font-family;
-    background: $pure-white;
-    color: $text-color;
-    resize: vertical;
-    min-height: 60px;
-    
-    &:focus {
-      outline: none;
-      border-color: $medium-gray;
-    }
-  }
-}
+  background: $bg-secondary;
+  border-radius: $radius-lg;
+  padding: $space-lg;
+  border: 1px solid $border-light;
+  box-shadow: $shadow-sm;
+  margin-bottom: $space-lg;
+  transition: box-shadow 0.2s ease;
 
-// ============================================
-// RICH TEXT EDITOR
-// ============================================
-
-.rich-text-editor {
-  border: 1px solid $border-color;
-  border-radius: $border-radius-sm;
-  background: $pure-white;
-  flex: 1;
-  
-  .toolbar {
-    padding: $spacing-xs;
-    border-bottom: 1px solid $border-color;
-    background: $near-white;
-    display: flex;
-    gap: $spacing-xs;
-    flex-wrap: wrap;
-    
-    button {
-      padding: $spacing-xs $spacing-sm;
-      border: 1px solid $border-color;
-      background: $pure-white;
-      border-radius: $border-radius-sm;
-      cursor: pointer;
-      font-size: $font-size-sm;
-      color: $text-color;
-      
-      &:hover {
-        background: $near-white;
-      }
-    }
+  &:hover {
+    box-shadow: $shadow-md;
   }
-  
-  .editor-content {
-    padding: $spacing-sm;
-    min-height: 60px;
-    outline: none;
-    resize: vertical;
-    overflow: auto;
-    width: 100%;
-    min-width: 200px;
-    
-    &:empty:before {
-      content: attr(placeholder);
-      color: $light-gray;
-    }
-  }
-}
-
-// ============================================
-// MEDITATION SECTION
-// ============================================
-.meditation-section {
-  margin-top: $spacing-lg;
-  padding: $spacing-lg;
-  background: $pure-white;
-  border-radius: $border-radius-md;
-  border: 1px solid $border-color;
-  @include card-shadow;
 
   .section-subtitle {
-    text-align: center;
-    margin-bottom: $spacing-lg;
-    color: $text-color;
-    font-size: 1.3rem;
-  }
-
-
-    gap: $spacing-lg;
-    align-items: start;
-
-    @media (max-width: 1024px) {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .section-header {
+    font-size: $text-lg;
+    font-weight: 600;
+    margin-bottom: $space-lg;
+    color: $text-primary;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: $spacing-md;
-    padding-bottom: $spacing-sm;
-    border-bottom: 1px solid $border-color;
-    
-    h4 {
-      margin: 0;
-      color: $text-color;
-      font-weight: 600;
-      font-size: 1.1rem;
+    gap: $space-sm;
+
+    &::before {
+      content: '';
+      width: 4px;
+      height: 20px;
+      background: $accent;
+      border-radius: $radius-sm;
+      flex-shrink: 0;
+    }
+
+    &::after {
+      display: none;
     }
   }
 
-// ============================================
-// FIREPLACE VIDEO STYLES
-// ============================================
-
-.fireplace-section {
-  .fullscreen-container {
-    position: relative;
+  .mit-input {
     width: 100%;
-    height: 400px;
-    border-radius: $border-radius-md;
-    overflow: hidden;
-    background: $pure-black;
-    
-    &.active {
-      .fireplace-video {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-      
-      .video-loading-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.95);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 10;
-        
-        .loading-content {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: $spacing-lg;
-          padding: $spacing-xl;
-          background: rgba(0, 0, 0, 0.8);
-          border-radius: $border-radius-lg;
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          max-width: 400px;
-          text-align: center;
-          
-          .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            border-top: 4px solid $pure-white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-          }
-          
-          .loading-text {
-            color: $pure-white;
-            font-size: 1.2rem;
-            font-weight: 500;
-          }
-        }
-      }
-      
-      .video-controls-overlay {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
-        padding: $spacing-md;
-        z-index: 20;
-        opacity: 0;
-        transition: opacity $transition-base;
-        
-        &:hover {
-          opacity: 1;
-        }
-        
-        .controls-content {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          gap: $spacing-md;
-          
-          .volume-controls {
-            display: flex;
-            align-items: center;
-            gap: $spacing-sm;
-            
-            .mute-button {
-              @include button-base;
-              padding: $spacing-xs $spacing-sm;
-              background: rgba(255, 255, 255, 0.2);
-              border: 1px solid rgba(255, 255, 255, 0.3);
-              color: $pure-white;
-              font-size: 1.2rem;
-              min-width: 40px;
-              
-              &:hover {
-                background: rgba(255, 255, 255, 0.3);
-              }
-            }
-            
-            .volume-slider {
-              width: 100px;
-              height: 6px;
-              border-radius: $border-radius-sm;
-              background: linear-gradient(90deg, $lightest-gray, $medium-gray, $darker-gray);
-              outline: none;
-              cursor: pointer;
-              
-              &::-webkit-slider-thumb {
-                -webkit-appearance: none;
-                width: 18px;
-                height: 18px;
-                border-radius: 50%;
-                background: $pure-white;
-                border: 2px solid $medium-gray;
-                cursor: pointer;
-                @include card-shadow;
-              }
-              
-              &::-moz-range-thumb {
-                width: 18px;
-                height: 18px;
-                border-radius: 50%;
-                background: $pure-white;
-                border: 2px solid $medium-gray;
-                cursor: pointer;
-                @include card-shadow;
-              }
-            }
-          }
-          
-          .fullscreen-instructions {
-            .instruction-text {
-              color: $pure-white;
-              font-size: $font-size-sm;
-              opacity: 0.8;
-              padding: $spacing-xs $spacing-sm;
-              background: rgba(0, 0, 0, 0.5);
-              border-radius: $border-radius-sm;
-            }
-          }
-        }
-      }
-    }
-  }
-  
-  .fireplace-preview {
-    height: 200px;
-    background: linear-gradient(135deg, $near-black, $darkest-gray);
-    border-radius: $border-radius-md;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px dashed $border-color;
-    
-    .preview-placeholder {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: $spacing-sm;
-      
-      .preview-icon {
-        font-size: 3rem;
-        opacity: 0.7;
-      }
-      
-      .preview-text {
-        color: $pure-white;
-        font-size: 1rem;
-        opacity: 0.9;
-        text-align: center;
-        max-width: 300px;
-      }
-    }
-  }
-}
+    padding: $space-md;
+    border: 1px solid $border-light;
+    border-radius: $radius-md;
+    font-size: $text-base;
+    font-family: $font-sans;
+    background: $bg-secondary;
+    color: $text-primary;
+    resize: vertical;
+    min-height: 100px;
+    line-height: 1.5;
+    transition: all 0.2s;
 
-// Fullscreen styles
-:fullscreen {
-  .fireplace-section .fullscreen-container {
-    height: 100vh;
-    width: 100vw;
-    border-radius: 0;
-  }
-}
-
-// Add spin animation
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-// Responsive adjustments
-@media (max-width: 768px) {
-  .fireplace-section {
-    .fullscreen-container {
-      height: 300px;
-      
-      &.active {
-        .video-controls-overlay {
-          opacity: 1; // Always show controls on mobile
-          
-          .controls-content {
-            flex-direction: column;
-            gap: $spacing-sm;
-            align-items: stretch;
-            
-            .volume-controls {
-              justify-content: center;
-              
-              .volume-slider {
-                flex: 1;
-                max-width: 150px;
-              }
-            }
-          }
-        }
-      }
-    }
-    
-    .fireplace-preview {
-      height: 150px;
-      
-      .preview-placeholder {
-        .preview-icon {
-          font-size: 2rem;
-        }
-        
-        .preview-text {
-          font-size: 0.9rem;
-          padding: 0 $spacing-md;
-        }
-      }
-    }
-  }
-}
-
-  .other-tracks-section {
-    .stop-meditation-button {
-      @include button-base;
-      background: $darkest-gray;
-      color: $pure-white;
-      border: none;
-      padding: $spacing-xs $spacing-sm;
-      font-size: $font-size-sm;
-      
-      &:hover {
-        background: $pure-black;
-      }
+    &:focus {
+      outline: none;
+      border-color: $accent;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     }
 
-    .tracks-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: $spacing-sm;
-      margin-bottom: $spacing-md;
-      
-      .track-container {
-        position: relative;
-        
-        audio {
-          display: none;
-        }
-        
-        .track-button {
-          display: flex;
-          align-items: center;
-          gap: $spacing-xs;
-          padding: $spacing-sm;
-          background: $pure-white;
-          color: $darker-gray;
-          border: 1px solid $border-color;
-          border-radius: $border-radius-md;
-          cursor: pointer;
-          font-size: $font-size-sm;
-          transition: all $transition-base;
-          width: 100%;
-          text-align: left;
-          
-          &:hover {
-            background: $near-white;
-            transform: translateY(-1px);
-          }
-          
-          &.active {
-            background: $medium-gray;
-            color: $pure-white;
-            border-color: $dark-gray;
-            box-shadow: 0 2px 8px $shadow-color;
-          }
-          
-          // Element type borders
-          &.air {
-            border-left: 3px solid $lighter-gray;
-            &.active {
-              background: $light-gray;
-            }
-          }
-          
-          &.water {
-            border-left: 3px solid $light-gray;
-            &.active {
-              background: $medium-gray;
-            }
-          }
-          
-          &.earth {
-            border-left: 3px solid $medium-gray;
-            &.active {
-              background: $dark-gray;
-            }
-          }
-          
-          &.fire {
-            border-left: 3px solid $darker-gray;
-            &.active {
-              background: $darkest-gray;
-            }
-          }
-          
-          .track-emoji {
-            font-size: 1.1rem;
-            min-width: 24px;
-          }
-        }
-      }
-    }
-
-    .now-playing {
-      margin-top: $spacing-md;
-      padding: $spacing-md;
-      background: $near-white;
-      border-radius: $border-radius-md;
-      border: 1px solid $border-color;
-      animation: fadeIn $transition-slow ease-out;
-      
-      .now-playing-info {
-        display: flex;
-        align-items: center;
-        gap: $spacing-sm;
-        margin-bottom: $spacing-sm;
-        
-        .now-playing-emoji {
-          font-size: 1.3rem;
-        }
-        
-        .now-playing-title {
-          font-weight: 600;
-          color: $darker-gray;
-        }
-      }
-      
-      .audio-controls {
-        display: flex;
-        align-items: center;
-        gap: $spacing-md;
-        
-        .play-pause-button {
-          @include button-base;
-          padding: $spacing-xs $spacing-sm;
-          background: transparent;
-          border: 1px solid $border-color;
-          font-size: 1.2rem;
-          
-          &:hover {
-            background: $pure-white;
-          }
-        }
-        
-        .volume-slider {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 8px;
-  border-radius: $border-radius-lg;
-  background: linear-gradient(
-    90deg,
-    $lightest-gray 0%,
-    $lightest-gray var(--volume-percent, 50%),
-    $off-white var(--volume-percent, 50%),
-    $off-white 100%
-  );
-  outline: none;
-  cursor: pointer;
-  transition: all $transition-base;
-  border: 1px solid $border-color;}
-      }
-    }
-  }
-
-// Animations
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-}
-
-// Responsive adjustments
-@media (max-width: 768px) {
-  .meditation-section {
-    padding: $spacing-md;
-    
-    .meditation-grid {
-      gap: $spacing-md;
-    }
-    
-    .tracks-grid {
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
-    }
-    
-    .now-playing {
-      padding: $spacing-sm;
-      
-      .audio-controls {
-        flex-direction: column;
-        gap: $spacing-sm;
-        
-        .volume-slider {
-          width: 100%;
-        }
-      }
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  .meditation-section {
-    .tracks-grid {
-      grid-template-columns: 1fr 1fr !important;
-    }
-    
-    .section-header {
-      flex-direction: column;
-      gap: $spacing-sm;
-      align-items: stretch;
-      
-      h4 {
-        text-align: center;
-      }
-    }
-  }
-}
-
-// Responsive adjustments
-@media (max-width: 768px) {
-  .meditation-section {
-    padding: $spacing-md;
-    
-    .meditation-grid {
-      gap: $spacing-md;
-    }
-    
-    .section-header {
-      .fireplace-controls {
-        flex-direction: column;
-        align-items: flex-end;
-        gap: $spacing-xs;
-      }
-    }
-    
-    .tracks-grid {
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
-    }
-    
-    .now-playing {
-      padding: $spacing-sm;
-      
-      .audio-controls {
-        flex-direction: column;
-        gap: $spacing-sm;
-        
-        .volume-slider {
-          width: 100%;
-        }
-      }
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  .meditation-section {
-    .tracks-grid {
-      grid-template-columns: 1fr 1fr !important;
-    }
-    
-    .section-header {
-      flex-direction: column;
-      gap: $spacing-sm;
-      align-items: stretch;
-      
-      h4 {
-        text-align: center;
-      }
-      
-      .fireplace-controls {
-        align-items: stretch;
-        
-        button {
-          width: 100%;
-        }
-      }
-    }
-  }
-}
-
-// Animation for now-playing
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-// Responsive adjustments
-@media (max-width: 768px) {
-  .meditation-section {
-   
-    
-
-    
-    .tracks-grid {
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
-    }
-    
-    .now-playing {
-      padding: $spacing-sm;
-      
-      .audio-controls {
-        flex-direction: column;
-        gap: $spacing-sm;
-        
-        .volume-slider {
-          width: 100%;
-        }
-      }
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  .meditation-section {
-    .tracks-grid {
-      grid-template-columns: 1fr 1fr !important;
-    }
-    
-    .section-header {
-      flex-direction: column;
-      gap: $spacing-sm;
-      align-items: stretch;
-      
-      h4 {
-        text-align: center;
-      }
+    &::placeholder {
+      color: $text-muted;
+      font-style: italic;
     }
   }
 }
 
 // ============================================
-// ANIMATIONS
+// POMODOROS INPUT
 // ============================================
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+.pomodoros-card {
+  .pomodoros-input {
+    width: 100%;
+    padding: $space-sm;
+    border: 1px solid $border-light;
+    border-radius: $radius-md;
+    font-size: $text-base;
+    font-family: $font-sans;
+    background: $bg-secondary;
+    color: $text-primary;
+    text-align: center;
 
-.meditation-player {
-  animation: fadeIn $transition-slow ease-out;
-}
-
-// ============================================
-// RESPONSIVE DESIGN
-// ============================================
-
-@media (max-width: 1024px) {
-  .three-column-row {
-    grid-template-columns: 1fr;
-    gap: $spacing-md;
+    &:focus {
+      outline: none;
+      border-color: $accent;
+    }
   }
-  
-  
-  .tracks-grid {
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
+
+  .pomodoro-note {
+    font-size: $text-sm;
+    color: $text-muted;
+    margin-top: $space-xs;
+    text-align: center;
   }
 }
+
+// ============================================
+// TASK INPUT (Add Task)
+// ============================================
+
+.task-input-container {
+  display: flex;
+  gap: $space-sm;
+  margin-top: $space-md;
+
+  .task-input {
+    flex: 1;
+    min-width: 0;
+    padding: $space-md;
+    border: 1px solid $border-light;
+    border-radius: $radius-md;
+    font-size: $text-base;
+    font-family: $font-sans;
+    background: $bg-secondary;
+    color: $text-primary;
+    transition: all 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: $accent;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    &::placeholder {
+      color: $text-muted;
+    }
+  }
+
+  .add-task-button {
+    padding: $space-md $space-xl;
+    background: $accent;
+    border: none;
+    border-radius: $radius-md;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    &:hover {
+      background: $accent-dark;
+      transform: translateY(-2px);
+    }
+
+    &:disabled {
+      background: $text-muted;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+}
+
+// ============================================
+// RESPONSIVE (MOBILE) — 768px
+// ============================================
 
 @media (max-width: 768px) {
   .daily-entry {
-    padding: $spacing-md;
+    padding: $space-md;
+    // Ensure full-width centered layout on phone
+    width: 100%;
+    max-width: 100%;
   }
-  
-  .bottom-section {
-    padding: $spacing-md;
+
+  .three-column-row {
+    grid-template-columns: 1fr;
+    gap: $space-md;
   }
-  
+
+  // Date controls: stack vertically, center everything
   .date-controls {
     flex-direction: column;
-    gap: $spacing-sm;
-    
-    .date-picker {
-      max-width: 100%;
-    }
-  }
-  
-  .meditation-section {
-    padding: $spacing-md;
-    
-    .section-header {
-      flex-direction: column;
-      gap: $spacing-sm;
-      align-items: stretch;
-      
-      h4 {
-        text-align: center;
-      }
-    }
-  }
-  
-  .metrics-grid,
-  .energy-grid,
-  .insights-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 480px) {
-  .pomodoro-section {
-    padding: $spacing-md;
-    
-    .active-pomodoro .timer-display {
-      font-size: 36px;
-    }
-  }
-  
-  .tracks-grid {
-    grid-template-columns: 1fr 1fr !important;
-  }
-}
-
-// Add these to your existing SCSS file
-
-// ============================================
-// COLOR PICKER STYLES
-// ============================================
-
-.color-picker {
-  position: relative;
-  display: inline-block;
-  
-  .color-picker-toggle {
-    width: 24px;
-    height: 24px;
-    border-radius: 4px;
-    border: 1px solid $border-color;
-    background: $pure-white;
-    cursor: pointer;
-    display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
-    padding: 0;
-    transition: all $transition-base;
-    
-    &:hover {
-      transform: scale(1.1);
-      box-shadow: 0 2px 4px $shadow-color;
-    }
-  }
-  
-  .color-palette {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    z-index: 1000;
-    background: $pure-white;
-    border: 1px solid $border-color;
-    border-radius: $border-radius-md;
-    padding: $spacing-sm;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 4px;
-    margin-top: 4px;
-    box-shadow: 0 4px 12px $shadow-color;
-    min-width: 140px;
-    
-    .color-option {
-      width: 20px;
-      height: 20px;
-      border-radius: 3px;
-      border: 1px solid rgba(0, 0, 0, 0.1);
-      cursor: pointer;
-      transition: all $transition-fast;
-      
-      &:hover {
-        transform: scale(1.2);
-        box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
-      }
-      
-      &:active {
-        transform: scale(1.1);
-      }
-    }
-  }
-}
+    gap: $space-sm;
 
-// ============================================
-// UPDATED TODO CARD WITH TIME INPUT
-// ============================================
-
-.todos-grid {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-sm;
-}
-
-.todo-card {
-  display: flex;
-  align-items: flex-start;
-  gap: $spacing-sm;
-  padding: $spacing-md;
-  background: $pure-white;
-  border-radius: $border-radius-md;
-  border: 1px solid $border-color;
-  transition: all $transition-base;
-  
-  &:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px $shadow-color;
-  }
-  
-  &.completed {
-    background: $near-white;
-    opacity: 0.8;
-    
-    .todo-input .editor-content {
-      text-decoration: line-through;
-      color: $medium-gray;
-    }
-    
-    .todo-time-input {
-      opacity: 0.7;
-    }
-  }
-  
-  .todo-checkbox {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-    accent-color: $dark-gray;
-    margin-top: 4px;
-    flex-shrink: 0;
-  }
-  
-  .todo-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-xs;
-    min-width: 0; // Prevents overflow
-    
-    .rich-text-editor {
+    .nav-buttons {
       width: 100%;
-      
-      .editor-content {
-        min-height: 28px;
-        max-height: 200px;
-        overflow-y: auto;
-        
-        &:empty:before {
-          color: $light-gray;
-          font-style: italic;
-        }
-      }
-    }
-    
-    .todo-time-container {
-      display: flex;
-      align-items: center;
-      gap: $spacing-xs;
-      
-      .todo-time-input {
-        width: 80px;
-        padding: 2px 4px;
-        border: 1px solid $border-color;
-        border-radius: $border-radius-sm;
-        background: $pure-white;
-        color: $text-color;
-        font-size: $font-size-sm;
-        font-family: $font-family;
-        
-        &:focus {
-          outline: none;
-          border-color: $medium-gray;
-          box-shadow: 0 0 0 2px rgba($medium-gray, 0.1);
-        }
-        
-        &::placeholder {
-          color: $light-gray;
-        }
-      }
-      
-      .time-display {
-        font-size: $font-size-sm;
-        color: $medium-gray;
-        padding: 2px 6px;
-        background: $near-white;
-        border-radius: $border-radius-sm;
-        border: 1px solid $border-color;
-      }
-    }
-  }
-  
-  .todo-controls {
-    display: flex;
-    align-items: center;
-    gap: $spacing-xs;
-    flex-shrink: 0;
-    
-    .todo-color-picker {
-      margin-right: 2px;
-    }
-    
-    .todo-priority-buttons {
-      display: flex;
-      gap: 2px;
-      
-      button {
-        width: 24px;
-        height: 24px;
-        padding: 0;
-        border: 1px solid $border-color;
-        background: $pure-white;
-        color: $text-color;
-        border-radius: $border-radius-sm;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 10px;
-        
-        &:hover:not(:disabled) {
-          background: $near-white;
-          transform: translateY(-1px);
-        }
-        
-        &:disabled {
-          opacity: 0.3;
-          cursor: not-allowed;
-        }
-      }
-    }
-    
-    .delete-todo {
-      width: 24px;
-      height: 24px;
-      padding: 0;
-      border: 1px solid $lightest-gray;
-      background: $pure-white;
-      color: $dark-gray;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
       justify-content: center;
-      font-weight: bold;
-      font-size: 1rem;
-      
-      &:hover {
-        background: $near-white;
-        color: $darkest-gray;
-        transform: scale(1.1);
+
+      button {
+        flex: 1;
+      }
+    }
+
+    .date-picker {
+      width: 100%;
+      text-align: center;
+    }
+
+    .copy-tomorrow-button {
+      width: 100%;
+      text-align: center;
+    }
+  }
+
+  .pomodoro-section {
+    padding: $space-lg;
+
+    .timer-display {
+      font-size: 2.5rem;
+    }
+
+    .quick-pomodoros {
+      flex-direction: column;
+      align-items: center;
+
+      button {
+        width: 100%;
+        max-width: 280px;
       }
     }
   }
-}
 
-// ============================================
-// ELECTRON IFRAME FIXES
-// ============================================
-
-.meditation-player {
-  margin-top: $spacing-md;
-  border-radius: $border-radius-md;
-  overflow: hidden;
-  @include card-shadow;
-  
-  iframe {
-    border: none;
-    border-radius: $border-radius-md;
-    width: 100%;
-    height: 200px;
-    // Electron-specific fixes
-    background: $pure-black;
-    
-    // Allow fullscreen in Electron
-    &[allowfullscreen] {
-      -webkit-allowfullscreen: true;
-      -moz-allowfullscreen: true;
-    }
+  .energy-grid, .metrics-grid {
+    grid-template-columns: 1fr;
   }
-}
 
-// Electron-specific media query
-@media all and (-webkit-min-device-pixel-ratio:0) and (min-resolution: .001dpcm) {
-  .meditation-player iframe {
-    // Additional WebKit fixes for Electron
-    transform: translateZ(0);
-    backface-visibility: hidden;
-  }
-}
-
-// ============================================
-// RESPONSIVE DESIGN UPDATES
-// ============================================
-
-@media (max-width: 768px) {
   .todo-card {
-    flex-direction: column;
-    align-items: stretch;
-    
-    .todo-content {
-      width: 100%;
-    }
-    
+    flex-wrap: wrap;
+
     .todo-controls {
       justify-content: flex-end;
-      margin-top: $spacing-xs;
-      
-      .todo-color-picker {
-        order: 1;
-      }
-      
-      .todo-priority-buttons {
-        order: 2;
-      }
-      
-      .delete-todo {
-        order: 3;
+      width: 100%;
+    }
+  }
+
+  .habit-item {
+    flex-wrap: nowrap; // keep checkbox + input + delete in one row
+
+    .habit-input {
+      min-width: 0;
+    }
+  }
+
+  .task-input-container {
+    flex-direction: column;
+
+    .add-task-button {
+      width: 100%;
+    }
+  }
+
+  .insight-card .insight-textarea {
+    min-height: 100px;
+    width: 100%;
+  }
+
+  .mit-section .mit-input {
+    font-size: $text-base;
+    width: 100%;
+  }
+
+  .meditation-section {
+    .tracks-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .now-playing .audio-controls {
+      flex-direction: column;
+
+      input {
+        width: 100%;
       }
     }
   }
-  
-  .color-picker {
-    .color-palette {
-      grid-template-columns: repeat(4, 1fr);
-      min-width: 120px;
+
+  .fireplace-section .fullscreen-container {
+    height: 240px;
+
+    .video-controls-overlay {
+      opacity: 1;
     }
   }
 }
+
+// ============================================
+// RESPONSIVE (MOBILE) — 480px
+// ============================================
 
 @media (max-width: 480px) {
+  .daily-entry {
+    padding: $space-sm;
+  }
+
+  .meditation-section .tracks-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .fireplace-section .fullscreen-container {
+    height: 200px;
+  }
+
+  .section-subtitle {
+    font-size: $text-base;
+  }
+
+  .pomodoro-section .timer-display {
+    font-size: 2rem;
+    letter-spacing: 2px;
+  }
+
+  .mit-section,
+  .insight-card,
+  .habit-item,
   .todo-card {
-    .todo-content {
-      .todo-time-container {
-        .todo-time-input {
-          width: 70px;
-          font-size: $font-size-sm;
-        }
-      }
-    }
-  }
-  
-  .color-picker {
-    .color-palette {
-      grid-template-columns: repeat(4, 1fr);
-      gap: 3px;
-      padding: 6px;
-      
-      .color-option {
-        width: 18px;
-        height: 18px;
-      }
-    }
-  }
-}
-
-// Add these styles to your DailyEntry.scss
-
-.todo-time-container {
-  .time-input-group {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-    
-    .time-input-wrapper {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      
-      .time-label {
-        font-size: 10px;
-        color: $medium-gray;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        font-weight: 600;
-      }
-    }
-    
-    .time-separator {
-      color: $light-gray;
-      font-size: 14px;
-      margin: 0 2px;
-      opacity: 0.7;
-    }
-    
-    .todo-time-input {
-      width: 85px;
-      padding: 4px 6px;
-      border: 1px solid $border-color;
-      border-radius: $border-radius-sm;
-      background: $pure-white;
-      color: $text-color;
-      font-size: $font-size-sm;
-      font-family: $font-family;
-      transition: all $transition-fast;
-      
-      &:focus {
-        outline: none;
-        border-color: $medium-gray;
-        box-shadow: 0 0 0 2px rgba($medium-gray, 0.1);
-      }
-      
-      &:hover {
-        border-color: $light-gray;
-      }
-      
-      &::placeholder {
-        color: $light-gray;
-      }
-    }
-    
-    .duration-display {
-      margin-left: 6px;
-      
-      .duration-badge {
-        display: inline-block;
-        padding: 3px 8px;
-        background: $near-white;
-        border: 1px solid $border-color;
-        border-radius: 12px;
-        font-size: 11px;
-        font-weight: 600;
-        color: $darker-gray;
-        white-space: nowrap;
-        transition: all $transition-fast;
-        
-        &:hover {
-          background: $lightest-gray;
-          transform: translateY(-1px);
-        }
-      }
-    }
-  }
-}
-
-// Alternative: If you want ESTIMATED vs ACTUAL times
-.time-input-group.alternative {
-  .time-input-wrapper {
-    &:first-child .time-label {
-      color: $success-color; // Green for estimated
-    }
-    
-    &:last-child .time-label {
-      color: $danger-color; // Red for actual
-    }
-  }
-}
-
-// Alternative 2: If you want PLANNED vs DONE times
-.time-input-group.planned-done {
-  .time-input-wrapper {
-    &:first-child {
-      .time-label::before {
-        content: "📅 ";
-      }
-      .todo-time-input {
-        border-left: 3px solid $primary-color;
-      }
-    }
-    
-    &:last-child {
-      .time-label::before {
-        content: "✅ ";
-      }
-      .todo-time-input {
-        border-left: 3px solid $success-color;
-      }
-    }
-  }
-}
-
-// Responsive adjustments
-@media (max-width: 768px) {
-  .todo-time-container {
-    .time-input-group {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 6px;
-      
-      .time-separator {
-        display: none;
-      }
-      
-      .time-input-wrapper {
-        flex-direction: row;
-        align-items: center;
-        gap: 8px;
-        width: 100%;
-        
-        .time-label {
-          min-width: 40px;
-          text-align: right;
-        }
-        
-        .todo-time-input {
-          flex: 1;
-        }
-      }
-      
-      .duration-display {
-        margin-left: 0;
-        margin-top: 4px;
-        width: 100%;
-        text-align: center;
-      }
-    }
-  }
-}
-
-.rich-text-editor {
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  overflow: hidden;
-  background: white;
-
-  .toolbar {
-    display: flex;
-    gap: 5px;
-    padding: 8px;
-    background: #f8fafc;
-    border-bottom: 1px solid #e2e8f0;
-    
-    button {
-      padding: 4px 8px;
-      border: 1px solid #cbd5e1;
-      background: white;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 12px;
-      transition: all 0.2s;
-      
-      &:hover {
-        background: #f1f5f9;
-        border-color: #94a3b8;
-      }
-      
-      &:active {
-        transform: scale(0.95);
-      }
-    }
-    
-    .color-picker-container {
-      position: relative;
-      display: inline-block;
-      
-      .color-picker-button {
-        font-size: 14px;
-        padding: 4px 8px;
-      }
-      
-      .color-picker-dropdown {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        margin-top: 5px;
-        background: white;
-        border: 1px solid #cbd5e1;
-        border-radius: 8px;
-        padding: 8px;
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 6px;
-        z-index: 1000;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        min-width: 150px;
-        
-        .color-option {
-          width: 28px;
-          height: 28px;
-          border-radius: 4px;
-          border: 2px solid transparent;
-          cursor: pointer;
-          transition: all 0.2s;
-          
-          &:hover {
-            transform: scale(1.1);
-            border-color: #000;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-          }
-          
-          &:active {
-            transform: scale(0.95);
-          }
-        }
-      }
-    }
-  }
-
-  .rich-text-editor {
-  .toolbar {
-    .color-picker-container {
-      position: relative;
-      display: inline-block;
-      
-      .color-picker-button {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        font-size: 12px;
-        padding: 4px 8px;
-      }
-      
-      .color-picker-dropdown {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        margin-top: 5px;
-        background: $pure-white;
-        border: 1px solid $border-color;
-        border-radius: $border-radius-md;
-        padding: 8px;
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 6px;
-        z-index: 1000;
-        box-shadow: 0 4px 12px $shadow-color;
-        min-width: 160px;
-        
-        .color-option {
-          width: 28px;
-          height: 28px;
-          border-radius: $border-radius-sm;
-          border: 2px solid transparent;
-          cursor: pointer;
-          transition: all $transition-fast;
-          
-          &:hover {
-            transform: scale(1.1);
-            border-color: $dark-gray;
-            box-shadow: 0 2px 4px $shadow-color;
-          }
-          
-          &:active {
-            transform: scale(0.95);
-          }
-        }
-      }
-    }
-  }
-}
-  
-  .editor-content {
-    padding: 12px;
-    min-height: 60px;
-    outline: none;
-    line-height: 1.5;
-    font-size: 14px;
-    
-    &:empty:before {
-      content: attr(placeholder);
-      color: #94a3b8;
-    }
-    
-    [style*="color"] {
-      transition: color 0.2s;
-    }
+    // Ensure no horizontal overflow on small screens
+    width: 100%;
+    max-width: 100%;
   }
 }
