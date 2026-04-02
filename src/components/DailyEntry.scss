@@ -640,76 +640,6 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   }
 }
 
-// ============================================
-// FIREPLACE SECTION
-// ============================================
-
-.fireplace-section {
-  margin-bottom: $space-lg;
-
-  .fullscreen-container {
-    position: relative;
-    width: 100%;
-    height: 360px;
-    border-radius: $radius-xl;
-    overflow: hidden;
-    background: #000;
-
-    video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .video-controls-overlay {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
-      padding: $space-md;
-      opacity: 0;
-      transition: opacity 0.3s;
-
-      &:hover {
-        opacity: 1;
-      }
-
-      .controls-content {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: $space-md;
-
-        .volume-controls {
-          display: flex;
-          align-items: center;
-          gap: $space-sm;
-
-          button {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            padding: $space-xs $space-md;
-            border-radius: $radius-md;
-            color: white;
-            cursor: pointer;
-          }
-
-          input {
-            width: 100px;
-          }
-        }
-
-        .instruction-text {
-          color: white;
-          font-size: $text-sm;
-          opacity: 0.8;
-        }
-      }
-    }
-  }
-}
 
 // ============================================
 // COLOR PICKER
@@ -1181,14 +1111,6 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
       }
     }
   }
-
-  .fireplace-section .fullscreen-container {
-    height: 240px;
-
-    .video-controls-overlay {
-      opacity: 1;
-    }
-  }
 }
 
 // ============================================
@@ -1202,10 +1124,6 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
 
   .meditation-section .tracks-grid {
     grid-template-columns: 1fr;
-  }
-
-  .fireplace-section .fullscreen-container {
-    height: 200px;
   }
 
   .section-subtitle {
