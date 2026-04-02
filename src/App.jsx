@@ -1,4 +1,4 @@
-// App.jsx - Add ImportExport import and add to navigation
+// App.jsx - Modified Finance handling to open in new tab
 import React, { useState, useEffect } from 'react';
 import DailyEntry from './components/DailyEntry';
 import Calendar from './components/Calendar';
@@ -30,8 +30,8 @@ function App() {
       setTempFinanceLink('');
       setShowFinanceModal(true);
     } else {
-      // Has link - just navigate
-      window.location.href = financeLink;
+      // Has link - open in new tab
+      window.open(financeLink, '_blank', 'noopener,noreferrer');
     }
   };
 
@@ -53,14 +53,14 @@ function App() {
       setFinanceLink(link);
       setShowFinanceModal(false);
       
-      // If we're saving for the first time, navigate to the link
+      // If we're saving for the first time, open the link
       if (!financeLink) {
-        window.location.href = link;
+        window.open(link, '_blank', 'noopener,noreferrer');
       } else {
-        // If changing link, ask if they want to navigate
+        // If changing link, ask if they want to open it
         const shouldNavigate = window.confirm('Link updated! Do you want to open it now?');
         if (shouldNavigate) {
-          window.location.href = link;
+          window.open(link, '_blank', 'noopener,noreferrer');
         }
       }
     }
