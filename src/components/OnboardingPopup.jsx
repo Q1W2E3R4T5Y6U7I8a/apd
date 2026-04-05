@@ -112,23 +112,23 @@ const OnboardingPopup = ({ onClose }) => {
         {/* Flags - Centered, no text */}
         <div className="flags-container">
           <img 
-            src="/en.png" 
+            src={`${process.env.PUBLIC_URL}/en.png`} 
             alt="English" 
             className={`flag ${language === 'en' ? 'active' : ''}`}
             onClick={() => setLanguage('en')}
-          />
-          <img 
-            src="/ua.png" 
+            />
+            <img 
+            src={`${process.env.PUBLIC_URL}/ua.png`} 
             alt="Ukrainian" 
             className={`flag ${language === 'uk' ? 'active' : ''}`}
             onClick={() => setLanguage('uk')}
-          />
-          <img 
-            src="/fr.png" 
+            />
+            <img 
+            src={`${process.env.PUBLIC_URL}/fr.png`} 
             alt="French" 
             className={`flag ${language === 'fr' ? 'active' : ''}`}
             onClick={() => setLanguage('fr')}
-          />
+            />
         </div>
 
         {/* Close button */}

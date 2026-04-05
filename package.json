@@ -67,7 +67,7 @@
     ],
     "win": {
       "target": "nsis",
-      "icon": "public/logo512.ico"
+      "icon": "public/logo256.ico"
     },
     "nsis": {
       "oneClick": false,
