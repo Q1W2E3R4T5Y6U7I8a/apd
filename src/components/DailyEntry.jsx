@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { format, subDays, addDays, parse } from 'date-fns';
 import './DailyEntry.scss';
 import { loadData, saveData } from '../services/dataService';
+import { useMedia } from '../contexts/MediaContent';
 
 const COLOR_PALETTE = [
   '#ef4444', // red
@@ -243,7 +244,7 @@ const AutoResizeTextarea = ({ value, onChange, placeholder, className, autoFocus
   );
 };
 
-const RichTextEditor = ({ value, onChange, placeholder, className, autoFocus, onColorDetect }) => {
+const RichTextEditor = React.memo(({ value, onChange, placeholder, className, autoFocus, onColorDetect }) => {
   const editorRef = useRef(null);
   const isComposingRef = useRef(false);
 
@@ -322,7 +323,7 @@ const RichTextEditor = ({ value, onChange, placeholder, className, autoFocus, on
       />
     </div>
   );
-};
+});
 
 const MEDITATION_TRACKS = [
   {
@@ -431,64 +432,27 @@ const MEDITATION_TRACKS = [
   },
 ];
 
-const TIMER_TRACKS = [
-  "/timer_music_1.mp3",
-  "/timer_music_2.mp3",
-  "/timer_music_3.mp3",
-  "/timer_music_4.mp3",
-  "/timer_music_5.mp3"
-];
-
 // Helper function to get the correct audio path based on environment
 const getAudioPath = (src) => {
-  // For Electron
-  if (window && window.electronAPI) {
-    return src;
-  }
-  
-  // For web/CRA
-  if (process.env.PUBLIC_URL) {
-    return `${process.env.PUBLIC_URL}${src}`;
-  }
-  
-  // For local development with file protocol
-  if (window.location.protocol === 'file:') {
-    return src;
-  }
-  
+  if (window && window.electronAPI) return src;
+  if (process.env.PUBLIC_URL) return `${process.env.PUBLIC_URL}${src}`;
+  if (window.location.protocol === 'file:') return src;
   return src;
 };
 
 const MeditationSection = () => {
-  const [currentTrack, setCurrentTrack] = useState(null);
-  const [playingTrack, setPlayingTrack] = useState(null);
-  const [currentAudio, setCurrentAudio] = useState(null);
+  const {
+    currentTrack,
+    isPlaying,
+    volume,
+    playTrack,
+    stopMusic,
+    togglePlayPause,
+    handleVolumeChange,
+  } = useMedia();
+
   const [audioError, setAudioError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [volume, setVolume] = useState(0.7);
-  const [isUserInteracted, setIsUserInteracted] = useState(false);
-  const audioRefs = useRef({});
-  const audioContextRef = useRef(null);
-
-  // Track user interaction globally
-  useEffect(() => {
-    const handleUserInteraction = () => {
-      setIsUserInteracted(true);
-      document.removeEventListener('click', handleUserInteraction);
-      document.removeEventListener('touchstart', handleUserInteraction);
-      document.removeEventListener('keydown', handleUserInteraction);
-    };
-    
-    document.addEventListener('click', handleUserInteraction);
-    document.addEventListener('touchstart', handleUserInteraction);
-    document.addEventListener('keydown', handleUserInteraction);
-    
-    return () => {
-      document.removeEventListener('click', handleUserInteraction);
-      document.removeEventListener('touchstart', handleUserInteraction);
-      document.removeEventListener('keydown', handleUserInteraction);
-    };
-  }, []);
 
   const getTrackEmoji = (element) => {
     switch(element) {
@@ -500,194 +464,38 @@ const MeditationSection = () => {
     }
   };
 
-  // Preload audio files
-  useEffect(() => {
-    const preloadAudio = () => {
-      MEDITATION_TRACKS.forEach(track => {
-        if (track.type === 'audio') {
-          const audio = new Audio();
-          audio.preload = 'metadata';
-          audio.src = getAudioPath(track.src);
-          audioRefs.current[track.id] = audio;
-          
-          // Handle load errors
-          audio.addEventListener('error', (e) => {
-            console.warn(`Failed to load audio: ${track.title}`, e);
-            // Try alternative path
-            if (!track.fallbackSrc) {
-              const altPath = track.src.replace(/^\//, './');
-              audio.src = getAudioPath(altPath);
-              track.fallbackSrc = altPath;
-            }
-          });
-        }
-      });
-    };
-    
-    preloadAudio();
-    
-    return () => {
-      Object.values(audioRefs.current).forEach(audio => {
-        if (audio) {
-          audio.pause();
-          audio.currentTime = 0;
-          audio.src = '';
-        }
-      });
-    };
-  }, []);
-
-  const stopAllAudio = () => {
-    Object.values(audioRefs.current).forEach(audio => {
-      if (audio && !audio.paused) {
-        audio.pause();
-        audio.currentTime = 0;
-      }
-    });
-  };
-
   const handleTrackClick = async (track) => {
     setAudioError(null);
     
-    // Check if this track is already playing
-    if (currentTrack?.id === track.id && playingTrack?.type === 'audio') {
-      // Stop current track
-      const audio = audioRefs.current[track.id];
-      if (audio) {
-        try {
-          await audio.pause();
-          audio.currentTime = 0;
-        } catch (error) {
-          console.error('Error stopping audio:', error);
-        }
-      }
-      setCurrentTrack(null);
-      setPlayingTrack(null);
-      setCurrentAudio(null);
+    if (currentTrack?.id === track.id && isPlaying) {
+      stopMusic();
       return;
     }
     
-    // Stop any currently playing audio
-    stopAllAudio();
-    setCurrentTrack(null);
-    setPlayingTrack(null);
-    setCurrentAudio(null);
-
-    setCurrentTrack(track);
-    setPlayingTrack(track);
+    if (currentTrack?.id === track.id && !isPlaying) {
+      togglePlayPause();
+      return;
+    }
     
-    if (track.type === 'audio') {
-      setIsLoading(true);
-      
-      try {
-        const audio = audioRefs.current[track.id];
-        if (!audio) {
-          throw new Error('Audio element not initialized');
-        }
-        
-        // Reset and configure
-        audio.currentTime = 0;
-        audio.loop = true;
-        audio.volume = volume;
-        
-        // Make sure we have a valid source
-        if (!audio.src || audio.src === window.location.href) {
-          audio.src = getAudioPath(track.src);
-          audio.load();
-        }
-        
-        // Wait for audio to be ready
-        await new Promise((resolve, reject) => {
-          const canPlayHandler = () => {
-            audio.removeEventListener('canplaythrough', canPlayHandler);
-            audio.removeEventListener('error', errorHandler);
-            resolve();
-          };
-          
-          const errorHandler = (e) => {
-            audio.removeEventListener('canplaythrough', canPlayHandler);
-            audio.removeEventListener('error', errorHandler);
-            reject(new Error(`Failed to load audio: ${track.title}`));
-          };
-          
-          audio.addEventListener('canplaythrough', canPlayHandler);
-          audio.addEventListener('error', errorHandler);
-          
-          // Timeout fallback
-          setTimeout(() => {
-            audio.removeEventListener('canplaythrough', canPlayHandler);
-            audio.removeEventListener('error', errorHandler);
-            reject(new Error('Audio load timeout'));
-          }, 5000);
-        });
-        
-        // Try to play with user interaction check
-        const playPromise = audio.play();
-        
-        if (playPromise !== undefined) {
-          await playPromise;
-          setCurrentAudio(audio);
-          setAudioError(null);
-        }
-      } catch (error) {
-        console.error('Audio playback failed:', error);
-        setAudioError(`❌ Cannot play "${track.title}". Please check if the audio file exists.`);
-        
-        // Clean up on error
-        const audio = audioRefs.current[track.id];
-        if (audio) {
-          audio.pause();
-          audio.currentTime = 0;
-        }
-        setCurrentTrack(null);
-        setPlayingTrack(null);
-        setCurrentAudio(null);
-        
-        // Auto-clear error message after 3 seconds
-        setTimeout(() => setAudioError(null), 3000);
-      } finally {
-        setIsLoading(false);
-      }
+    setIsLoading(true);
+    try {
+      await playTrack(track);
+      setAudioError(null);
+    } catch (error) {
+      console.error('Audio playback failed:', error);
+      setAudioError(`❌ Cannot play "${track.title}". Please check if the audio file exists.`);
+      setTimeout(() => setAudioError(null), 3000);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleVolumeChange = (e) => {
-    const newVolume = parseFloat(e.target.value);
-    setVolume(newVolume);
-    if (currentAudio) {
-      currentAudio.volume = newVolume;
-    }
-  };
 
-  const togglePlayPause = () => {
-    if (!currentAudio) return;
-    
-    if (currentAudio.paused) {
-      currentAudio.play().catch(error => {
-        console.error('Failed to resume playback:', error);
-        setAudioError('Please interact with the page to resume playback');
-        setTimeout(() => setAudioError(null), 2000);
-      });
-    } else {
-      currentAudio.pause();
-    }
-  };
-
-  // Auto-cleanup on unmount
-  useEffect(() => {
-    return () => {
-      stopAllAudio();
-      if (audioContextRef.current) {
-        audioContextRef.current.close();
-      }
-    };
-  }, []);
 
   return (
     <div className="meditation-section">
       <h3 className="section-subtitle">🧘 Meditation & Ambiance</h3>
       
-      {/* Error Display */}
       {audioError && (
         <div className="audio-error-message" style={{
           backgroundColor: '#fee2e2',
@@ -695,14 +503,12 @@ const MeditationSection = () => {
           padding: '10px',
           borderRadius: '8px',
           marginBottom: '15px',
-          textAlign: 'center',
-          animation: 'fadeInOut 3s ease-in-out'
+          textAlign: 'center'
         }}>
           {audioError}
         </div>
       )}
       
-      {/* Loading Overlay */}
       {isLoading && (
         <div className="loading-overlay" style={{
           position: 'fixed',
@@ -721,75 +527,115 @@ const MeditationSection = () => {
       )}
       
       <div className="meditation-grid">
-
-   
-          
-          <div className="tracks-grid" style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
-            gap: '10px',
-            marginTop: '15px'
-          }}>
-            {MEDITATION_TRACKS.map(track => (
-              <div key={track.id} className="track-container">
-                <button 
-                  onClick={() => handleTrackClick(track)}
-                  disabled={isLoading}
-                  className={`track-button ${currentTrack?.id === track.id ? 'active' : ''} ${track.element}`}
-                  style={{
-                    width: '100%',
-                    padding: '10px',
-                    backgroundColor: currentTrack?.id === track.id ? '#3b82f6' : '#f3f4f6',
-                    color: currentTrack?.id === track.id ? 'white' : '#374151',
-                    border: 'none',
-                    borderRadius: '8px',
-                    cursor: isLoading ? 'wait' : 'pointer',
-                    transition: 'all 0.2s ease',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px'
-                  }}
-                >
-                  <span className="track-emoji">
-                    {getTrackEmoji(track.element)}
-                  </span>
-                  <span style={{ flex: 1, textAlign: 'left' }}>{track.title}</span>
-                  {currentTrack?.id === track.id && playingTrack && (
-                    <span style={{ fontSize: '12px' }}>🔊</span>
-                  )}
-                </button>
-              </div>
-            ))}
-          </div>
-          
-        
-         
+        <div className="tracks-grid" style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+          gap: '10px',
+          marginTop: '15px'
+        }}>
+          {MEDITATION_TRACKS.map(track => (
+            <div key={track.id} className="track-container">
+              <button 
+                onClick={() => handleTrackClick(track)}
+                disabled={isLoading}
+                className={`track-button ${currentTrack?.id === track.id ? 'active' : ''} ${track.element}`}
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  backgroundColor: currentTrack?.id === track.id ? '#3b82f6' : '#f3f4f6',
+                  color: currentTrack?.id === track.id ? 'white' : '#374151',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: isLoading ? 'wait' : 'pointer',
+                  transition: 'all 0.2s ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+              >
+                <span className="track-emoji">
+                  {getTrackEmoji(track.element)}
+                </span>
+                <span style={{ flex: 1, textAlign: 'left' }}>{track.title}</span>
+                {currentTrack?.id === track.id && isPlaying && (
+                  <span style={{ fontSize: '12px' }}>🔊</span>
+                )}
+              </button>
+            </div>
+          ))}
         </div>
       </div>
       
-      
-
+      {currentTrack && (
+        <div className="now-playing" style={{
+          marginTop: '15px',
+          padding: '10px',
+          backgroundColor: '#f0f0f0',
+          borderRadius: '8px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between'
+        }}>
+          <span>Now playing: {currentTrack.title}</span>
+          <div>
+            <button onClick={togglePlayPause} style={{ marginRight: '10px' }}>
+              {isPlaying ? '⏸' : '▶'}
+            </button>
+            <button onClick={stopMusic}>⏹</button>
+          </div>
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.1"
+            value={volume}
+            onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
+            style={{ width: '100px' }}
+          />
+        </div>
+      )}
+    </div>
   );
 };
 
 export default function DailyEntry() {
+  const [pausedTimeLeft, setPausedTimeLeft] = useState(null);
+  const [isPaused, setIsPaused] = useState(false);
   const [entry, setEntry] = useState(initialState);
   const [history, setHistory] = useState([]);
-  const [audio, setAudio] = useState(null);
-  const [isMuted, setIsMuted] = useState(false);
   const [newTodoId, setNewTodoId] = useState(null);
-  const [isPomodoroActive, setIsPomodoroActive] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(0);
-  const [pomodoroDuration, setPomodoroDuration] = useState(45);
-  const [timerEndTime, setTimerEndTime] = useState(null);
-  const timerRef = useRef(null);
-  const tracks = ["/timer_music_1.mp3", "/timer_music_2.mp3", "/timer_music_3.mp3", "/timer_music_4.mp3", "/timer_music_5.mp3"];
+  
 
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
+// Replace your pausePomodoroLocal and resumePomodoroLocal with these:
+
+const pausePomodoroLocal = () => {
+  if (isPomodoroActive) {
+    setPausedTimeLeft(timeLeft); // Store exact seconds remaining
+    setIsPaused(true);
+    cancelPomodoro(); // Stop the timer
+  }
+};
+
+const resumePomodoroLocal = () => {
+  if (pausedTimeLeft > 0) {
+    const minutesDecimal = pausedTimeLeft / 60;
+    startPomodoro(minutesDecimal);
+    setIsPaused(false);
+    setPausedTimeLeft(null);
+  }
+};
+  // Get media context
+  const {
+    isPomodoroActive,
+    timeLeft,
+    pomodoroDuration,
+    setPomodoroDuration,
+    startPomodoro,
+    cancelPomodoro,
+    formatTime,
+    isMuted,
+    setIsMuted,
+  } = useMedia();
 
   const getMetricColor = (value) => {
     if (value === null) return '#94a3b8';
@@ -868,19 +714,7 @@ export default function DailyEntry() {
     alert(`✅ Copied ALL today's data to tomorrow (${tomorrowDate})!`);
   };
 
-  const startPomodoro = (duration) => {
-    const durationInMinutes = typeof duration === 'number' ? duration : pomodoroDuration;
-    const durationInSeconds = durationInMinutes * 60;
-    setIsPomodoroActive(true);
-    setTimeLeft(durationInSeconds);
-    setTimerEndTime(Date.now() + durationInSeconds * 1000);
-    if (typeof duration === 'number') setPomodoroDuration(duration);
-  };
-
-  const handlePomodoroEnd = async () => {
-    clearInterval(timerRef.current);
-    setIsPomodoroActive(false);
-    document.title = 'Daily Entry';
+  const handlePomodoroEndWrapper = async () => {
     const pomodoroUnits = pomodoroDuration / 60;
     setEntry(prev => ({
       ...prev,
@@ -890,44 +724,18 @@ export default function DailyEntry() {
         [pomodoroDuration]: parseFloat(((prev.pomodorosHistory?.[pomodoroDuration] || 0) + pomodoroUnits).toFixed(2))
       }
     }));
-    if (!isMuted) {
-      try {
-        const randomTrack = tracks[Math.floor(Math.random() * tracks.length)];
-        const newAudio = new Audio(randomTrack);
-        newAudio.volume = 1.0;
-        newAudio.preload = 'auto';
-        newAudio.load();
-        
-        try {
-          await newAudio.play();
-          setAudio(newAudio);
-        } catch (playError) {
-          console.log('Pomodoro audio play failed:', playError);
-        }
-      } catch (error) {
-        console.error('Failed to play pomodoro end sound:', error);
+  };
+
+  // Listen for pomodoro completion from context
+  useEffect(() => {
+    const checkPomodoroComplete = setInterval(() => {
+      if (!isPomodoroActive && timeLeft === 0 && window.lastPomodoroCompleted) {
+        handlePomodoroEndWrapper();
+        window.lastPomodoroCompleted = false;
       }
-    }
-  };
-
-  const cancelPomodoro = () => {
-    clearInterval(timerRef.current);
-    setIsPomodoroActive(false);
-    setTimeLeft(0);
-    document.title = 'Daily Entry';
-    if (audio) {
-      audio.pause();
-      audio.currentTime = 0;
-    }
-  };
-
-  const toggleMute = () => {
-    if (audio) {
-      if (isMuted) audio.play();
-      else audio.pause();
-    }
-    setIsMuted(!isMuted);
-  };
+    }, 100);
+    return () => clearInterval(checkPomodoroComplete);
+  }, [isPomodoroActive, timeLeft, pomodoroDuration]);
 
   const handleTodoChange = (id, key, value) => {
     setEntry(prev => ({
@@ -999,73 +807,52 @@ export default function DailyEntry() {
     } else setEntry({ ...initialState, date: today });
   }, []);
 
-  useEffect(() => {
-    if (isPomodoroActive && timerEndTime) {
-      timerRef.current = setInterval(() => {
-        const now = Date.now();
-        const remaining = Math.max(0, Math.floor((timerEndTime - now) / 1000));
-        setTimeLeft(remaining);
-        document.title = `${formatTime(remaining)} - Pomodoro Timer`;
-        if (remaining === 0) handlePomodoroEnd();
-      }, 100);
-    }
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, [isPomodoroActive, timerEndTime]);
-
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible' && isPomodoroActive && timerEndTime) {
-        setTimeLeft(Math.max(0, Math.floor((timerEndTime - Date.now()) / 1000)));
-      }
-    };
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      document.title = 'Daily Entry';
-    };
-  }, [isPomodoroActive, timerEndTime]);
-
-  useEffect(() => {
-    return () => { if (audio) audio.pause(); document.title = 'Daily Entry'; };
-  }, [audio]);
-
   return (
     <div className="daily-entry">
       <div className="pomodoro-section" style={{ marginBottom: '20px', padding: '20px', backgroundColor: '#f5f5f5', borderRadius: '10px', textAlign: 'center' }}>
-        {isPomodoroActive ? (
-          <div>
-            <div className="timer-display" style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '15px' }}>{formatTime(timeLeft)}</div>
-            <div>
-              <button onClick={cancelPomodoro} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#dc2626', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Cancel</button>
-              <button onClick={toggleMute} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#6b7280', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>{isMuted ? '🔇' : '🔊'}</button>
-            </div>
-          </div>
-        ) : (
-          <div>
-            <div style={{ marginBottom: '15px' }}>
-              <input type="number" min="1" max="180" value={pomodoroDuration} onChange={(e) => setPomodoroDuration(parseInt(e.target.value) || 1)} style={{ padding: '10px', marginRight: '10px', borderRadius: '5px', border: '1px solid #ccc', width: '80px', fontSize: '16px' }} />
-              <button onClick={() => startPomodoro()} style={{ padding: '10px 20px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '16px' }}>Start {pomodoroDuration}m</button>
-            </div>
-            <div className="quick-pomodoros">
-              <button onClick={() => startPomodoro(30)} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#3b82f6', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>30m</button>
-              <button onClick={() => startPomodoro(45)} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>45m</button>
-              <button onClick={() => startPomodoro(60)} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#8b5cf6', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>60m</button>
-            </div>
-          </div>
-        )}
+  {isPomodoroActive ? (
+    <div>
+      <div className="timer-display" style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '15px' }}>{formatTime(timeLeft)}</div>
+      <div>
+        <button onClick={pausePomodoroLocal} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#f59e0b', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>⏸ Pause</button>
+        <button onClick={cancelPomodoro} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#dc2626', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Cancel</button>
+        <button onClick={() => setIsMuted(!isMuted)} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#6b7280', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>{isMuted ? '🔇' : '🔊'}</button>
       </div>
+    </div>
+  ) : isPaused ? (
+    <div>
+      <div className="timer-display" style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '15px' }}>{formatTime(pausedTimeLeft)}</div>
+      <div>
+        <button onClick={resumePomodoroLocal} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>▶ Resume</button>
+        <button onClick={() => { setIsPaused(false); setPausedTimeLeft(null); }} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#dc2626', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Cancel</button>
+      </div>
+    </div>
+  ) : (
+    <div>
+      <div style={{ marginBottom: '15px' }}>
+        <input type="number" min="1" max="180" value={pomodoroDuration} onChange={(e) => setPomodoroDuration(parseInt(e.target.value) || 1)} style={{ padding: '10px', marginRight: '10px', borderRadius: '5px', border: '1px solid #ccc', width: '80px', fontSize: '16px' }} />
+        <button onClick={() => startPomodoro()} style={{ padding: '10px 20px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '16px' }}>Start {pomodoroDuration}m</button>
+      </div>
+      <div className="quick-pomodoros">
+        <button onClick={() => startPomodoro(30)} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#3b82f6', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>30m</button>
+        <button onClick={() => startPomodoro(45)} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>45m</button>
+        <button onClick={() => startPomodoro(60)} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#8b5cf6', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>60m</button>
+      </div>
+    </div>
+  )}
+</div>
       
       <div className="card">
-         <div className="section-box date-section">
-    <div className="date-controls">
-      <div className="nav-buttons">
-        <button type="button" onClick={() => changeDateBy(-1)}>← Yesterday</button>
-        <button type="button" onClick={() => changeDateBy(1)}>Tomorrow →</button>
-      </div>
-      <input type="date" value={entry.date.split('/').reverse().join('-')} onChange={handleDateChange} className="date-picker" />
-      <button type="button" onClick={copyToTomorrow} className="copy-tomorrow-button">📋 Copy to Tomorrow</button>
-    </div>
-  </div>
+        <div className="section-box date-section">
+          <div className="date-controls">
+            <div className="nav-buttons">
+              <button type="button" onClick={() => changeDateBy(-1)}>← Yesterday</button>
+              <button type="button" onClick={() => changeDateBy(1)}>Tomorrow →</button>
+            </div>
+            <input type="date" value={entry.date.split('/').reverse().join('-')} onChange={handleDateChange} className="date-picker" />
+            <button type="button" onClick={copyToTomorrow} className="copy-tomorrow-button">📋 Copy to Tomorrow</button>
+          </div>
+        </div>
 
         <div className="bottom-section">
           <div className="three-column-row">

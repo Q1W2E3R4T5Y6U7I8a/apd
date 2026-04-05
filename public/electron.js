@@ -7,8 +7,6 @@ require('@electron/remote/main').initialize();
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
-    width: 1400,
-    height: 900,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -21,8 +19,12 @@ function createWindow() {
       plugins: true, // Required for YouTube
       sandbox: false // Important for iframe permissions
     },
-    icon: path.join(__dirname, 'public/favicon.ico')
+    icon: path.join(__dirname, 'public/favicon.ico'),
+    show: false // Don't show until ready (prevents flickering)
   });
+
+  // Maximize to fill screen (taskbar stays visible like a browser)
+  mainWindow.maximize();
 
   // Enable @electron/remote for this window
   require('@electron/remote/main').enable(mainWindow.webContents);
@@ -39,6 +41,11 @@ function createWindow() {
   } else {
     mainWindow.loadFile(path.join(__dirname, '../build/index.html'));
   }
+
+  // Show window when ready
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show();
+  });
 
   // Configure session permissions for iframes
   const ses = mainWindow.webContents.session;

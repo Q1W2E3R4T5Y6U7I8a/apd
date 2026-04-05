@@ -50,7 +50,7 @@
   },
   "build": {
     "appId": "com.yourname.dailyentry",
-    "productName": "Daily Entry",
+    "productName": "APD |Analytic Personal Dashboard|",
     "directories": {
       "output": "dist"
     },
@@ -67,7 +67,7 @@
     ],
     "win": {
       "target": "nsis",
-      "icon": "public/favicon.ico"
+      "icon": "public/logo512.ico"
     },
     "nsis": {
       "oneClick": false,

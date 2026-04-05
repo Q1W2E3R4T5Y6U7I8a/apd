@@ -12,7 +12,7 @@ function createWindow() {
       contextIsolation: true,
       devTools: true
     },
-    icon: path.join(__dirname, 'build', 'favicon.ico'),
+    icon: path.join(__dirname, 'build', 'logo512.png'),
     show: false
   });
 
