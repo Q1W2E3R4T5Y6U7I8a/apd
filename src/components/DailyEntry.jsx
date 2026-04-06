@@ -424,7 +424,7 @@ const MEDITATION_TRACKS = [
   },
   {
     id: 14,
-    title: "mon amour, mon amie",
+    title: "Mon amour, mon amie",
     type: "audio",
     src: "/timer_music_5.mp3",
     element: "fire",
