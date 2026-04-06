@@ -416,7 +416,7 @@ const MEDITATION_TRACKS = [
   },
   {
     id: 13,
-    title: "itac",
+    title: "Itac",
     type: "audio",
     src: "/timer_music_4.mp3",
     element: "earth",
@@ -810,37 +810,66 @@ const resumePomodoroLocal = () => {
   return (
     <div className="daily-entry">
       <div className="pomodoro-section" style={{ marginBottom: '20px', padding: '20px', backgroundColor: '#f5f5f5', borderRadius: '10px', textAlign: 'center' }}>
-  {isPomodoroActive ? (
-    <div>
-      <div className="timer-display" style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '15px' }}>{formatTime(timeLeft)}</div>
-      <div>
-        <button onClick={pausePomodoroLocal} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#f59e0b', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>⏸ Pause</button>
-        <button onClick={cancelPomodoro} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#dc2626', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Cancel</button>
-        <button onClick={() => setIsMuted(!isMuted)} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#6b7280', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>{isMuted ? '🔇' : '🔊'}</button>
+        {isPomodoroActive ? (
+          <div>
+            <div className="timer-display" style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '15px' }}>{formatTime(timeLeft)}</div>
+            <div>
+              <button onClick={pausePomodoroLocal} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#f59e0b', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>⏸ Pause</button>
+              <button onClick={cancelPomodoro} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#dc2626', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Cancel</button>
+              <button 
+                onClick={() => setIsMuted(!isMuted)} 
+                style={{ 
+                  padding: '8px 16px', 
+                  margin: '0 5px', 
+                  backgroundColor: isMuted ? '#ef4444' : '#10b981', 
+                  color: 'white', 
+                  border: 'none', 
+                  borderRadius: '5px', 
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+                title={isMuted ? "Unmute" : "Mute"}
+              >
+                {isMuted ? '🔇 Unmute' : '🔊 Mute'}
+              </button>
+            </div>
+          </div>
+        ) : isPaused ? (
+          <div>
+            <div className="timer-display" style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '15px' }}>{formatTime(pausedTimeLeft)}</div>
+            <div>
+              <button onClick={resumePomodoroLocal} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>▶ Resume</button>
+              <button onClick={() => { setIsPaused(false); setPausedTimeLeft(null); }} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#dc2626', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Cancel</button>
+            </div>
+          </div>
+        ) : (
+          <div>
+            <div style={{ marginBottom: '15px' }}>
+              <input 
+                type="number" 
+                min="1" 
+                max="180" 
+                value={pomodoroDuration} 
+                onChange={(e) => setPomodoroDuration(parseInt(e.target.value) || 1)} 
+                style={{ padding: '10px', marginRight: '10px', borderRadius: '5px', border: '1px solid #ccc', width: '80px', fontSize: '16px' }} 
+              />
+              <button onClick={() => startPomodoro()} style={{ padding: '10px 20px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '16px' }}>Start {pomodoroDuration}m</button>
+            </div>
+            <div className="quick-pomodoros">
+              <button onClick={() => startPomodoro(30)} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#3b82f6', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>30m</button>
+              <button onClick={() => startPomodoro(45)} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>45m</button>
+              <button onClick={() => startPomodoro(60)} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#8b5cf6', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>60m</button>
+            </div>
+            
+            {/* Optional: Add mute indicator when no timer is running */}
+            {isMuted && (
+              <div style={{ marginTop: '10px', fontSize: '12px', color: '#ef4444' }}>
+                🔇 Sound is muted - timer completion music will not play
+              </div>
+            )}
+          </div>
+        )}
       </div>
-    </div>
-  ) : isPaused ? (
-    <div>
-      <div className="timer-display" style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '15px' }}>{formatTime(pausedTimeLeft)}</div>
-      <div>
-        <button onClick={resumePomodoroLocal} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>▶ Resume</button>
-        <button onClick={() => { setIsPaused(false); setPausedTimeLeft(null); }} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#dc2626', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Cancel</button>
-      </div>
-    </div>
-  ) : (
-    <div>
-      <div style={{ marginBottom: '15px' }}>
-        <input type="number" min="1" max="180" value={pomodoroDuration} onChange={(e) => setPomodoroDuration(parseInt(e.target.value) || 1)} style={{ padding: '10px', marginRight: '10px', borderRadius: '5px', border: '1px solid #ccc', width: '80px', fontSize: '16px' }} />
-        <button onClick={() => startPomodoro()} style={{ padding: '10px 20px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '16px' }}>Start {pomodoroDuration}m</button>
-      </div>
-      <div className="quick-pomodoros">
-        <button onClick={() => startPomodoro(30)} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#3b82f6', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>30m</button>
-        <button onClick={() => startPomodoro(45)} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>45m</button>
-        <button onClick={() => startPomodoro(60)} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#8b5cf6', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>60m</button>
-      </div>
-    </div>
-  )}
-</div>
       
       <div className="card">
         <div className="section-box date-section">

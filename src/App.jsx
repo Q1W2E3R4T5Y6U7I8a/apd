@@ -8,7 +8,7 @@ import Constitution from './components/Constitution';
 import ImportExport from './components/ImportExport';
 import { MediaProvider } from './contexts/MediaContent';
 import Terminal from './components/Terminal'; 
-import OnboardingPopup from './components/OnboardingPopup'; 
+import OnBoardingPopUp from './components/OnBoardingPopUp'; 
 
 function App() {
   const [page, setPage] = useState('daily');
@@ -24,6 +24,114 @@ function App() {
   useEffect(() => {
     // No auto-open
   }, [financeLink]);
+
+  // ========== ELECTRON FOCUS FIX ==========
+  useEffect(() => {
+    // Fix for Electron contentEditable focus loss
+    let lastFocusedEditor = null;
+    
+    const saveFocusedEditor = () => {
+      const activeElement = document.activeElement;
+      if (activeElement && activeElement.contentEditable === 'true') {
+        lastFocusedEditor = activeElement;
+      }
+    };
+    
+    const restoreEditorFocus = () => {
+      if (lastFocusedEditor && document.body.contains(lastFocusedEditor)) {
+        // Check if something else stole focus (like a toolbar button)
+        const activeElement = document.activeElement;
+        if (activeElement && activeElement.tagName === 'BUTTON') {
+          setTimeout(() => {
+            lastFocusedEditor.focus();
+            // Restore cursor position
+            const selection = window.getSelection();
+            if (selection && selection.rangeCount === 0 && lastFocusedEditor.innerText) {
+              const range = document.createRange();
+              range.selectNodeContents(lastFocusedEditor);
+              range.collapse(false);
+              selection.removeAllRanges();
+              selection.addRange(range);
+            }
+          }, 10);
+        }
+      }
+    };
+    
+    // Prevent toolbar buttons from stealing focus completely
+    const preventToolbarFocusSteal = (e) => {
+      if (e.target.tagName === 'BUTTON' && e.target.closest('.toolbar')) {
+        e.preventDefault();
+        // Execute button action without stealing focus
+        setTimeout(() => {
+          if (lastFocusedEditor) {
+            lastFocusedEditor.focus();
+          }
+        }, 0);
+      }
+    };
+    
+    // Handle click outside to save last editor
+    const handleGlobalClick = (e) => {
+      const target = e.target;
+      if (target && target.contentEditable === 'true') {
+        lastFocusedEditor = target;
+      } else if (target && target.tagName === 'BUTTON') {
+        // If clicking a button, restore focus to last editor after
+        setTimeout(() => {
+          if (lastFocusedEditor && document.body.contains(lastFocusedEditor)) {
+            lastFocusedEditor.focus();
+          }
+        }, 50);
+      }
+    };
+    
+    // Fix for drag operations that steal focus
+    const preventDragSteal = (e) => {
+      if (e.target && e.target.contentEditable === 'true') {
+        e.dataTransfer.effectAllowed = 'none';
+        e.preventDefault();
+      }
+    };
+    
+    document.addEventListener('focusin', saveFocusedEditor);
+    document.addEventListener('click', handleGlobalClick);
+    document.addEventListener('mousedown', preventToolbarFocusSteal, true);
+    document.addEventListener('dragstart', preventDragSteal);
+    
+    return () => {
+      document.removeEventListener('focusin', saveFocusedEditor);
+      document.removeEventListener('click', handleGlobalClick);
+      document.removeEventListener('mousedown', preventToolbarFocusSteal, true);
+      document.removeEventListener('dragstart', preventDragSteal);
+    };
+  }, []);
+  
+  // Keyboard shortcut to force focus refresh (Ctrl+Shift+R)
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Ctrl+Shift+R to refresh editor focus
+      if (e.ctrlKey && e.shiftKey && e.key === 'R') {
+        e.preventDefault();
+        const editors = document.querySelectorAll('[contentEditable="true"]');
+        if (editors.length > 0) {
+          const lastEditor = editors[editors.length - 1];
+          lastEditor.focus();
+          const selection = window.getSelection();
+          const range = document.createRange();
+          range.selectNodeContents(lastEditor);
+          range.collapse(false);
+          selection.removeAllRanges();
+          selection.addRange(range);
+          console.log('Focus refreshed on editor');
+        }
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+  // ========== END ELECTRON FOCUS FIX ==========
 
   const handleFinanceClick = () => {
     if (!financeLink) {
@@ -103,7 +211,7 @@ function App() {
     <MediaProvider>
       <div className="app-container">
          {showOnboarding && (
-          <OnboardingPopup onClose={() => setShowOnboarding(false)} />
+          <OnBoardingPopUp onClose={() => setShowOnboarding(false)} />
         )}
 
         <nav className="main-nav">

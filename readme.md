@@ -9,6 +9,7 @@
 #BIG FIXES
 + Fix the audio
 + Fix pause button
+- Make fully customizable music (choose tracks/delete etc)
 
 #SMALL FIXES
 + On phone, Statistics looks off if a big text
