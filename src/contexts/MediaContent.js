@@ -9,7 +9,9 @@ export const MediaProvider = ({ children }) => {
   const [timeLeft, setTimeLeft] = useState(0);
   const [pomodoroDuration, setPomodoroDuration] = useState(45);
   const [timerEndTime, setTimerEndTime] = useState(null);
+  const [isBeeping, setIsBeeping] = useState(false);
   const timerRef = useRef(null);
+  const beepRef = useRef(null);
   
   const [currentTrack, setCurrentTrack] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -23,7 +25,24 @@ export const MediaProvider = ({ children }) => {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const getAudioPath = (src) => {
+    if (window?.electronAPI) return src;
+    if (process.env.PUBLIC_URL) return `${process.env.PUBLIC_URL}${src}`;
+    if (window.location.protocol === 'file:') return src;
+    return src;
+  };
+
+  const stopBeep = () => {
+    if (beepRef.current) {
+      beepRef.current.pause();
+      beepRef.current.currentTime = 0;
+      beepRef.current = null;
+    }
+    setIsBeeping(false);
+  };
+
   const startPomodoro = (duration) => {
+    stopBeep();
     const durationInMinutes = typeof duration === 'number' ? duration : pomodoroDuration;
     const durationInSeconds = durationInMinutes * 60;
     setIsPomodoroActive(true);
@@ -34,6 +53,7 @@ export const MediaProvider = ({ children }) => {
 
   const cancelPomodoro = () => {
     if (timerRef.current) clearInterval(timerRef.current);
+    stopBeep();
     setIsPomodoroActive(false);
     setTimeLeft(0);
     setTimerEndTime(null);
@@ -52,10 +72,15 @@ export const MediaProvider = ({ children }) => {
           setIsPomodoroActive(false);
           setTimerEndTime(null);
           document.title = 'Daily Entry';
-          window.lastPomodoroCompleted = true;
           if (!isMuted) {
-            const beep = new Audio('/notification.mp3');
+            const beep = new Audio(getAudioPath('/notification.mp3'));
             beep.play().catch(console.log);
+            beepRef.current = beep;
+            setIsBeeping(true);
+            beep.onended = () => {
+              beepRef.current = null;
+              setIsBeeping(false);
+            };
           }
         }
       }, 100);
@@ -117,6 +142,7 @@ export const MediaProvider = ({ children }) => {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
       if (audioRef.current) audioRef.current.pause();
+      stopBeep();
     };
   }, []);
 
@@ -134,6 +160,8 @@ export const MediaProvider = ({ children }) => {
       volume,
       isMuted,
       setIsMuted,
+      isBeeping,
+      stopBeep,
       playTrack,
       stopMusic,
       togglePlayPause,

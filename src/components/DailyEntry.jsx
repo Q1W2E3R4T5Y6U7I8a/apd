@@ -5,54 +5,22 @@ import { loadData, saveData } from '../services/dataService';
 import { useMedia } from '../contexts/MediaContent';
 
 const COLOR_PALETTE = [
-  '#ef4444', // red
-  '#10b981', // green  
-  '#3b82f6', // blue
-  '#f59e0b', // yellow
-  '#8b5cf6', // purple
-  '#ec4899', // pink
-  '#f97316', // orange
-  '#6b7280', // gray
-  '#000000', // black
-  '#ffffff'  // white
+  '#ef4444', '#10b981', '#3b82f6', '#f59e0b', '#8b5cf6',
+  '#ec4899', '#f97316', '#6b7280', '#000000', '#ffffff'
 ];
 
 const initialState = {
   date: format(new Date(), 'dd/MM/yyyy'),
   efficiency: null,
   habits: [
-    {
-      id: 1,
-      text: 'Exercise',
-      completedByDate: {
-        'dd/MM/yyyy': true,
-        '29/07/2025': false,
-      }
-    },
-    {
-      id: 2,
-      text: 'Meditation',
-      completedByDate: {
-        'dd/MM/yyyy': true,
-        '29/07/2025': false,
-      }
-    },
+    { id: 1, text: 'Exercise', completedByDate: { 'dd/MM/yyyy': true, '29/07/2025': false } },
+    { id: 2, text: 'Meditation', completedByDate: { 'dd/MM/yyyy': true, '29/07/2025': false } },
   ],
   productivity: null,
   happiness: null,
   pomodoros: 0,
-  pomodorosHistory: {
-    '30': 0,
-    '45': 0,
-    '60': 0,
-    'custom': 0
-  },
-  energy: {
-    air: null,
-    fire: null,
-    water: null,
-    earth: null,
-  },
+  pomodorosHistory: { '30': 0, '45': 0, '60': 0, 'custom': 0 },
+  energy: { air: null, fire: null, water: null, earth: null },
   victory: '',
   loss: '',
   insight: '',
@@ -68,31 +36,86 @@ const initialState = {
 
 const calculateDuration = (startTime, endTime) => {
   if (!startTime || !endTime) return '';
+  const parseTime = (t) => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
+  let diff = parseTime(endTime) - parseTime(startTime);
+  if (diff < 0) diff += 24 * 60;
+  const h = Math.floor(diff / 60), m = diff % 60;
+  if (h === 0) return `${m}m`;
+  if (m === 0) return `${h}h`;
+  return `${h}h ${m}m`;
+};
+
+// Info Button Component for Energy Elements
+const InfoButton = ({ element }) => {
+  const [showTooltip, setShowTooltip] = useState(false);
   
-  const parseTime = (timeStr) => {
-    const [hours, minutes] = timeStr.split(':').map(Number);
-    return hours * 60 + minutes;
+  const getInfoText = (elem) => {
+    switch(elem) {
+      case 'fire':
+        return '🔥 Fire: Passion, drive, motivation, and creative energy. How inspired and enthusiastic do you feel?';
+      case 'water':
+        return '💧 Water: Flow state, adaptability, and ease of movement through life. How smoothly are things flowing?';
+      case 'air':
+        return '💨 Air: Meaning in life, clarity of thought. How clear is your direction/sense of yourself?';
+      case 'earth':
+        return '🌍 Earth: Groundedness, discipline, stability, and physical energy. How rooted and organized do you feel?';
+      default:
+        return '';
+    }
   };
-  
-  const startMinutes = parseTime(startTime);
-  const endMinutes = parseTime(endTime);
-  
-  let durationMinutes = endMinutes - startMinutes;
-  
-  if (durationMinutes < 0) {
-    durationMinutes += 24 * 60;
-  }
-  
-  const hours = Math.floor(durationMinutes / 60);
-  const minutes = durationMinutes % 60;
-  
-  if (hours === 0) {
-    return `${minutes}m`;
-  } else if (minutes === 0) {
-    return `${hours}h`;
-  } else {
-    return `${hours}h ${minutes}m`;
-  }
+
+  return (
+   <div className="info-button-container" style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
+      <button
+        type="button"
+        className="energy-info-button"
+        onMouseEnter={() => setShowTooltip(true)}
+        onMouseLeave={() => setShowTooltip(false)}
+        style={{
+          width: '18px',
+          height: '18px',
+          borderRadius: '50%',
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          color: 'white',
+          border: 'none',
+          fontSize: '12px',
+          cursor: 'pointer',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 0,
+          opacity: 0.5,
+          transition: 'opacity 0.2s ease'
+        }}
+        onMouseOver={(e) => e.currentTarget.style.opacity = '1'}
+        onMouseOut={(e) => e.currentTarget.style.opacity = '0.5'}
+      >
+        ℹ️
+      </button>
+      {showTooltip && (
+        <div className="info-tooltip" style={{
+          position: 'absolute',
+          bottom: '50%',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 1000,
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          pointerEvents: 'none'
+        }}>
+          {getInfoText(element)}
+          <div style={{
+            position: 'absolute',
+            top: '100%',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            borderWidth: '5px',
+            borderStyle: 'solid',
+            borderColor: '#1e293b transparent transparent transparent'
+          }} />
+        </div>
+      )}
+    </div>
+  );
 };
 
 const ColorPicker = ({ selectedColor, onSelect, className = '' }) => {
@@ -100,10 +123,8 @@ const ColorPicker = ({ selectedColor, onSelect, className = '' }) => {
   const pickerRef = useRef(null);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (pickerRef.current && !pickerRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
+    const handleClickOutside = (e) => {
+      if (pickerRef.current && !pickerRef.current.contains(e.target)) setIsOpen(false);
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -111,67 +132,18 @@ const ColorPicker = ({ selectedColor, onSelect, className = '' }) => {
 
   return (
     <div className={`color-picker ${className}`} ref={pickerRef} style={{ position: 'relative', display: 'inline-block' }}>
-      <button 
-        type="button" 
-        className="color-picker-toggle"
-        onClick={() => setIsOpen(!isOpen)}
-        style={{ 
-          backgroundColor: selectedColor || 'transparent',
-          border: selectedColor === '#ffffff' ? '1px solid #ccc' : '1px solid #ddd',
-          width: '28px',
-          height: '28px',
-          borderRadius: '4px',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '12px',
-          transition: 'all 0.2s ease'
-        }}
-        title="Select background color"
-      >
-        🎨
-      </button>
-      
+      <button type="button" className="color-picker-toggle" onClick={() => setIsOpen(!isOpen)}
+        style={{ backgroundColor: selectedColor || 'transparent', border: selectedColor === '#ffffff' ? '1px solid #ccc' : '1px solid #ddd', width: '28px', height: '28px', borderRadius: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', transition: 'all 0.2s ease' }}
+        title="Select background color">🎨</button>
       {isOpen && (
-        <div className="color-palette" style={{
-          position: 'absolute',
-          top: '100%',
-          left: 0,
-          zIndex: 1000,
-          background: 'white',
-          border: '1px solid #ccc',
-          borderRadius: '8px',
-          padding: '8px',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(5, 1fr)',
-          gap: '6px',
-          marginTop: '4px',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-          minWidth: '140px'
-        }}>
+        <div className="color-palette" style={{ position: 'absolute', top: '100%', left: 0, zIndex: 1000, background: 'white', border: '1px solid #ccc', borderRadius: '8px', padding: '8px', display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '6px', marginTop: '4px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', minWidth: '140px' }}>
           {COLOR_PALETTE.map((color, index) => (
-            <button
-              key={index}
-              type="button"
-              className="color-option"
-              style={{ 
-                backgroundColor: color,
-                border: color === '#ffffff' ? '1px solid #ccc' : 'none',
-                width: '24px',
-                height: '24px',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease'
-              }}
-              onClick={() => {
-                onSelect(color);
-                setIsOpen(false);
-              }}
+            <button key={index} type="button" className="color-option"
+              style={{ backgroundColor: color, border: color === '#ffffff' ? '1px solid #ccc' : 'none', width: '24px', height: '24px', borderRadius: '4px', cursor: 'pointer', transition: 'all 0.2s ease' }}
+              onClick={() => { onSelect(color); setIsOpen(false); }}
               onMouseEnter={(e) => e.target.style.transform = 'scale(1.1)'}
               onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
-              title={`Color ${index + 1}`}
-            />
+              title={`Color ${index + 1}`} />
           ))}
         </div>
       )}
@@ -181,67 +153,31 @@ const ColorPicker = ({ selectedColor, onSelect, className = '' }) => {
 
 const AutoResizeTextarea = ({ value, onChange, placeholder, className, autoFocus, onColorDetect }) => {
   const textareaRef = useRef(null);
-  
   const adjustHeight = useCallback(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
       textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
     }
   }, []);
-  
+
   useEffect(() => {
     adjustHeight();
-    if (autoFocus && textareaRef.current) {
-      textareaRef.current.focus();
-    }
+    if (autoFocus && textareaRef.current) textareaRef.current.focus();
   }, [adjustHeight, autoFocus]);
 
   const detectColors = (text) => {
-    const colorMap = {
-      '#red': '#ef4444',
-      '#green': '#10b981', 
-      '#blue': '#3b82f6',
-      '#yellow': '#f59e0b',
-      '#purple': '#8b5cf6',
-      '#pink': '#ec4899',
-      '#orange': '#f97316',
-      '#gray': '#6b7280',
-      '#black': '#000000',
-      '#white': '#ffffff'
-    };
-
-    const foundColors = [];
-    for (const [colorCode, hexValue] of Object.entries(colorMap)) {
-      if (text.includes(colorCode)) {
-        foundColors.push(hexValue);
-      }
-    }
-    
-    return foundColors;
+    const colorMap = { '#red': '#ef4444', '#green': '#10b981', '#blue': '#3b82f6', '#yellow': '#f59e0b', '#purple': '#8b5cf6', '#pink': '#ec4899', '#orange': '#f97316', '#gray': '#6b7280', '#black': '#000000', '#white': '#ffffff' };
+    return Object.entries(colorMap).filter(([k]) => text.includes(k)).map(([, v]) => v);
   };
 
   const handleChange = (e) => {
     const newValue = e.target.value;
     onChange(newValue);
-    
-    if (onColorDetect) {
-      const colors = detectColors(newValue);
-      onColorDetect(colors);
-    }
-    
+    if (onColorDetect) onColorDetect(detectColors(newValue));
     adjustHeight();
   };
 
-  return (
-    <textarea
-      ref={textareaRef}
-      value={value}
-      onChange={handleChange}
-      placeholder={placeholder}
-      className={className}
-      rows={1}
-    />
-  );
+  return <textarea ref={textareaRef} value={value} onChange={handleChange} placeholder={placeholder} className={className} rows={1} />;
 };
 
 const RichTextEditor = React.memo(({ value, onChange, placeholder, className, autoFocus, onColorDetect }) => {
@@ -249,15 +185,8 @@ const RichTextEditor = React.memo(({ value, onChange, placeholder, className, au
   const isComposingRef = useRef(false);
 
   const detectColors = (text) => {
-    const colorMap = {
-      '#red': '#ef4444', '#green': '#10b981', '#blue': '#3b82f6',
-      '#yellow': '#f59e0b', '#purple': '#8b5cf6', '#pink': '#ec4899',
-      '#orange': '#f97316', '#gray': '#6b7280', '#black': '#000000', '#white': '#ffffff'
-    };
-    
-    return Object.entries(colorMap)
-      .filter(([colorCode]) => text.includes(colorCode))
-      .map(([, hexValue]) => hexValue);
+    const colorMap = { '#red': '#ef4444', '#green': '#10b981', '#blue': '#3b82f6', '#yellow': '#f59e0b', '#purple': '#8b5cf6', '#pink': '#ec4899', '#orange': '#f97316', '#gray': '#6b7280', '#black': '#000000', '#white': '#ffffff' };
+    return Object.entries(colorMap).filter(([k]) => text.includes(k)).map(([, v]) => v);
   };
 
   const setCaretToEnd = (el) => {
@@ -311,178 +240,43 @@ const RichTextEditor = React.memo(({ value, onChange, placeholder, className, au
         <button type="button" onClick={() => applyFormat('italic')}><i>I</i></button>
         <button type="button" onClick={() => applyFormat('underline')}><u>U</u></button>
       </div>
-      <div 
-        ref={editorRef} 
-        contentEditable 
-        onInput={handleInput} 
-        onCompositionStart={handleCompositionStart}
-        onCompositionEnd={handleCompositionEnd} 
-        placeholder={placeholder} 
-        className="editor-content"
-        suppressContentEditableWarning={true} 
-      />
+      <div ref={editorRef} contentEditable onInput={handleInput} onCompositionStart={handleCompositionStart} onCompositionEnd={handleCompositionEnd} placeholder={placeholder} className="editor-content" suppressContentEditableWarning={true} />
     </div>
   );
 });
 
 const MEDITATION_TRACKS = [
-  {
-    id: 1,
-    title: "Blue Eyed",
-    type: "audio",
-    src: "/Blue_eyed.mp3",
-    element: "fire",
-    fallbackSrc: null
-  },
-  {
-    id: 2,
-    title: "Last Agni Kai",
-    type: "audio",
-    src: "/Agni_Kai.mp3",
-    element: "fire",
-    fallbackSrc: null
-  },
-  {
-    id: 3,
-    title: "Tibetian Bowl",
-    type: "audio",
-    src: "/Tibetian_bowl.mp3",
-    element: "air",
-    fallbackSrc: null
-  },
-  {
-    id: 5,
-    title: "Space Rangers",
-    type: "audio",
-    src: "/Space_Rangers.mp3",
-    element: "earth",
-    fallbackSrc: null
-  },
-  {
-    id: 6,
-    title: "Gibran Alcocer",
-    type: "audio",
-    src: "/Gibran_Alcocer.mp3",
-    element: "air",
-    fallbackSrc: null
-  },
-  {
-    id: 7,
-    title: "Eunaudi",
-    type: "audio",
-    src: "/Eunaudi.mp3",
-    element: "air",
-    fallbackSrc: null
-  },
-  {
-    id: 8,
-    title: "Handpan",
-    type: "audio",
-    src: "/handpan.mp3",
-    element: "water",
-    fallbackSrc: null
-  },
-  {
-    id: 9,
-    title: "Blume",
-    type: "audio",
-    src: "/blume.mp3",
-    element: "water",
-    fallbackSrc: null
-  },
-  {
-    id: 10,
-    title: "Blade runner",
-    type: "audio",
-    src: "/timer_music_1.mp3",
-    element: "fire",
-    fallbackSrc: null
-  },
-  {
-    id: 11,
-    title: "Evangelion",
-    type: "audio",
-    src: "/timer_music_2.mp3",
-    element: "air",
-    fallbackSrc: null
-  },
-  {
-    id: 12,
-    title: "Nine lives",
-    type: "audio",
-    src: "/timer_music_3.mp3",
-    element: "water",
-    fallbackSrc: null
-  },
-  {
-    id: 13,
-    title: "Itac",
-    type: "audio",
-    src: "/timer_music_4.mp3",
-    element: "earth",
-    fallbackSrc: null
-  },
-  {
-    id: 14,
-    title: "Mon amour, mon amie",
-    type: "audio",
-    src: "/timer_music_5.mp3",
-    element: "fire",
-    fallbackSrc: null
-  },
+  { id: 1, title: "Blue Eyed", type: "audio", src: "/Blue_eyed.mp3", element: "fire", fallbackSrc: null },
+  { id: 2, title: "Last Agni Kai", type: "audio", src: "/Agni_Kai.mp3", element: "fire", fallbackSrc: null },
+  { id: 3, title: "Tibetian Bowl", type: "audio", src: "/Tibetian_bowl.mp3", element: "air", fallbackSrc: null },
+  { id: 5, title: "Space Rangers", type: "audio", src: "/Space_Rangers.mp3", element: "earth", fallbackSrc: null },
+  { id: 6, title: "Gibran Alcocer", type: "audio", src: "/Gibran_Alcocer.mp3", element: "air", fallbackSrc: null },
+  { id: 7, title: "Eunaudi", type: "audio", src: "/Eunaudi.mp3", element: "air", fallbackSrc: null },
+  { id: 8, title: "Handpan", type: "audio", src: "/handpan.mp3", element: "water", fallbackSrc: null },
+  { id: 9, title: "Blume", type: "audio", src: "/blume.mp3", element: "water", fallbackSrc: null },
+  { id: 10, title: "Blade runner", type: "audio", src: "/timer_music_1.mp3", element: "fire", fallbackSrc: null },
+  { id: 11, title: "Evangelion", type: "audio", src: "/timer_music_2.mp3", element: "air", fallbackSrc: null },
+  { id: 12, title: "Nine lives", type: "audio", src: "/timer_music_3.mp3", element: "water", fallbackSrc: null },
+  { id: 13, title: "Itac", type: "audio", src: "/timer_music_4.mp3", element: "earth", fallbackSrc: null },
+  { id: 14, title: "Mon amour, mon amie", type: "audio", src: "/timer_music_5.mp3", element: "fire", fallbackSrc: null },
 ];
 
-// Helper function to get the correct audio path based on environment
-const getAudioPath = (src) => {
-  if (window && window.electronAPI) return src;
-  if (process.env.PUBLIC_URL) return `${process.env.PUBLIC_URL}${src}`;
-  if (window.location.protocol === 'file:') return src;
-  return src;
-};
-
 const MeditationSection = () => {
-  const {
-    currentTrack,
-    isPlaying,
-    volume,
-    playTrack,
-    stopMusic,
-    togglePlayPause,
-    handleVolumeChange,
-  } = useMedia();
-
+  const { currentTrack, isPlaying, volume, playTrack, stopMusic, togglePlayPause, handleVolumeChange, isBeeping, stopBeep } = useMedia();
   const [audioError, setAudioError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const getTrackEmoji = (element) => {
-    switch(element) {
-      case 'air': return '💨';
-      case 'water': return '💧';
-      case 'earth': return '🌍';
-      case 'fire': return '🔥';
-      default: return '🎵';
-    }
-  };
+  const getTrackEmoji = (element) => ({ air: '💨', water: '💧', earth: '🌍', fire: '🔥' }[element] || '🎵');
 
   const handleTrackClick = async (track) => {
     setAudioError(null);
-    
-    if (currentTrack?.id === track.id && isPlaying) {
-      stopMusic();
-      return;
-    }
-    
-    if (currentTrack?.id === track.id && !isPlaying) {
-      togglePlayPause();
-      return;
-    }
-    
+    if (currentTrack?.id === track.id && isPlaying) { stopMusic(); return; }
+    if (currentTrack?.id === track.id && !isPlaying) { togglePlayPause(); return; }
     setIsLoading(true);
     try {
       await playTrack(track);
       setAudioError(null);
     } catch (error) {
-      console.error('Audio playback failed:', error);
       setAudioError(`❌ Cannot play "${track.title}". Please check if the audio file exists.`);
       setTimeout(() => setAudioError(null), 3000);
     } finally {
@@ -490,108 +284,38 @@ const MeditationSection = () => {
     }
   };
 
-
-
   return (
     <div className="meditation-section">
       <h3 className="section-subtitle">🧘 Meditation & Ambiance</h3>
-      
       {audioError && (
-        <div className="audio-error-message" style={{
-          backgroundColor: '#fee2e2',
-          color: '#dc2626',
-          padding: '10px',
-          borderRadius: '8px',
-          marginBottom: '15px',
-          textAlign: 'center'
-        }}>
-          {audioError}
-        </div>
+        <div style={{ backgroundColor: '#fee2e2', color: '#dc2626', padding: '10px', borderRadius: '8px', marginBottom: '15px', textAlign: 'center' }}>{audioError}</div>
       )}
-      
       {isLoading && (
-        <div className="loading-overlay" style={{
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          backgroundColor: 'rgba(0,0,0,0.8)',
-          color: 'white',
-          padding: '20px',
-          borderRadius: '10px',
-          zIndex: 9999,
-          textAlign: 'center'
-        }}>
-          Loading audio...
-        </div>
+        <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', backgroundColor: 'rgba(0,0,0,0.8)', color: 'white', padding: '20px', borderRadius: '10px', zIndex: 9999, textAlign: 'center' }}>Loading audio...</div>
       )}
-      
       <div className="meditation-grid">
-        <div className="tracks-grid" style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
-          gap: '10px',
-          marginTop: '15px'
-        }}>
+        <div className="tracks-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '10px', marginTop: '15px' }}>
           {MEDITATION_TRACKS.map(track => (
             <div key={track.id} className="track-container">
-              <button 
-                onClick={() => handleTrackClick(track)}
-                disabled={isLoading}
+              <button onClick={() => handleTrackClick(track)} disabled={isLoading}
                 className={`track-button ${currentTrack?.id === track.id ? 'active' : ''} ${track.element}`}
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  backgroundColor: currentTrack?.id === track.id ? '#3b82f6' : '#f3f4f6',
-                  color: currentTrack?.id === track.id ? 'white' : '#374151',
-                  border: 'none',
-                  borderRadius: '8px',
-                  cursor: isLoading ? 'wait' : 'pointer',
-                  transition: 'all 0.2s ease',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}
-              >
-                <span className="track-emoji">
-                  {getTrackEmoji(track.element)}
-                </span>
+                style={{ width: '100%', padding: '10px', backgroundColor: currentTrack?.id === track.id ? '#3b82f6' : '#f3f4f6', color: currentTrack?.id === track.id ? 'white' : '#374151', border: 'none', borderRadius: '8px', cursor: isLoading ? 'wait' : 'pointer', transition: 'all 0.2s ease', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span className="track-emoji">{getTrackEmoji(track.element)}</span>
                 <span style={{ flex: 1, textAlign: 'left' }}>{track.title}</span>
-                {currentTrack?.id === track.id && isPlaying && (
-                  <span style={{ fontSize: '12px' }}>🔊</span>
-                )}
+                {currentTrack?.id === track.id && isPlaying && <span style={{ fontSize: '12px' }}>🔊</span>}
               </button>
             </div>
           ))}
         </div>
       </div>
-      
       {currentTrack && (
-        <div className="now-playing" style={{
-          marginTop: '15px',
-          padding: '10px',
-          backgroundColor: '#f0f0f0',
-          borderRadius: '8px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}>
+        <div className="now-playing" style={{ marginTop: '15px', padding: '10px', backgroundColor: '#f0f0f0', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <span>Now playing: {currentTrack.title}</span>
           <div>
-            <button onClick={togglePlayPause} style={{ marginRight: '10px' }}>
-              {isPlaying ? '⏸' : '▶'}
-            </button>
+            <button onClick={togglePlayPause} style={{ marginRight: '10px' }}>{isPlaying ? '⏸' : '▶'}</button>
             <button onClick={stopMusic}>⏹</button>
           </div>
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="0.1"
-            value={volume}
-            onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
-            style={{ width: '100px' }}
-          />
+          <input type="range" min="0" max="1" step="0.1" value={volume} onChange={(e) => handleVolumeChange(parseFloat(e.target.value))} style={{ width: '100px' }} />
         </div>
       )}
     </div>
@@ -604,27 +328,7 @@ export default function DailyEntry() {
   const [entry, setEntry] = useState(initialState);
   const [history, setHistory] = useState([]);
   const [newTodoId, setNewTodoId] = useState(null);
-  
 
-// Replace your pausePomodoroLocal and resumePomodoroLocal with these:
-
-const pausePomodoroLocal = () => {
-  if (isPomodoroActive) {
-    setPausedTimeLeft(timeLeft); // Store exact seconds remaining
-    setIsPaused(true);
-    cancelPomodoro(); // Stop the timer
-  }
-};
-
-const resumePomodoroLocal = () => {
-  if (pausedTimeLeft > 0) {
-    const minutesDecimal = pausedTimeLeft / 60;
-    startPomodoro(minutesDecimal);
-    setIsPaused(false);
-    setPausedTimeLeft(null);
-  }
-};
-  // Get media context
   const {
     isPomodoroActive,
     timeLeft,
@@ -635,7 +339,30 @@ const resumePomodoroLocal = () => {
     formatTime,
     isMuted,
     setIsMuted,
+    isBeeping,
+    stopBeep,
   } = useMedia();
+
+  const prevPomodoroActiveRef = useRef(false);
+  const completionHandledRef = useRef(false);
+  const wasManuallyStoppedRef = useRef(false);
+
+  const pausePomodoroLocal = () => {
+    if (isPomodoroActive) {
+      wasManuallyStoppedRef.current = true;
+      setPausedTimeLeft(timeLeft);
+      setIsPaused(true);
+      cancelPomodoro();
+    }
+  };
+
+  const resumePomodoroLocal = () => {
+    if (pausedTimeLeft > 0) {
+      startPomodoro(pausedTimeLeft / 60);
+      setIsPaused(false);
+      setPausedTimeLeft(null);
+    }
+  };
 
   const getMetricColor = (value) => {
     if (value === null) return '#94a3b8';
@@ -643,6 +370,27 @@ const resumePomodoroLocal = () => {
     if (value < 66) return '#f59e0b';
     return '#10b981';
   };
+
+  // Get gradient background for energy sliders
+const getEnergyGradient = (element, value) => {
+  const percent = value ?? 50;
+  switch(element) {
+    case 'air':
+      // Gray to White gradient (starts gray, fills to white based on percentage)
+      return `linear-gradient(to right, #94a3b8 0%, #ffffff ${percent}%, #e2e8f0 ${percent}%, #e2e8f0 100%)`;
+    case 'water':
+      // Blue gradient (starts dark blue, fills to light blue)
+      return `linear-gradient(to right, #2563eb 0%, #38bdf8 ${percent}%, #e2e8f0 ${percent}%, #e2e8f0 100%)`;
+    case 'fire':
+      // Red/Orange gradient
+      return `linear-gradient(to right, #dc2626 0%, #f97316 ${percent}%, #e2e8f0 ${percent}%, #e2e8f0 100%)`;
+    case 'earth':
+      // Green gradient
+      return `linear-gradient(to right, #059669 0%, #84cc16 ${percent}%, #e2e8f0 ${percent}%, #e2e8f0 100%)`;
+    default:
+      return `linear-gradient(to right, #e2e8f0 0%, #e2e8f0 100%)`;
+  }
+};
 
   const handleChange = (key, value) => setEntry(prev => ({ ...prev, [key]: value }));
   const handleEnergy = (key, value) => setEntry(prev => ({ ...prev, energy: { ...prev.energy, [key]: value } }));
@@ -657,12 +405,8 @@ const resumePomodoroLocal = () => {
     const newDate = format(addDays(parsedDate, days), 'dd/MM/yyyy');
     const prevEntry = history.find(e => e.date === entry.date);
     const found = history.find(e => e.date === newDate);
-    const copiedHabits = prevEntry?.habits?.map(h => ({
-      ...h,
-      completedByDate: { ...h.completedByDate, [newDate]: h.completedByDate?.[newDate] ?? false }
-    })) || [];
+    const copiedHabits = prevEntry?.habits?.map(h => ({ ...h, completedByDate: { ...h.completedByDate, [newDate]: h.completedByDate?.[newDate] ?? false } })) || [];
     const copiedTodos = found?.todos || prevEntry?.todos || initialState.todos;
-
     setEntry(found ? {
       ...found,
       habits: copiedHabits.length ? copiedHabits : found.habits || [],
@@ -682,39 +426,30 @@ const resumePomodoroLocal = () => {
     const tomorrowDate = format(addDays(parsedTodayDate, 1), 'dd/MM/yyyy');
     const yesterdayDate = format(subDays(parsedTodayDate, 1), 'dd/MM/yyyy');
     const yesterdayEntry = history.find(e => e.date === yesterdayDate);
-    
     if (yesterdayEntry) {
-      const statsToCompare = ['efficiency', 'productivity', 'happiness', 'pomodoros'];
-      const areStatsSame = statsToCompare.every(stat => entry[stat] === yesterdayEntry[stat]);
-      const areEnergySame = ['air', 'fire', 'water', 'earth'].every(key => entry.energy[key] === yesterdayEntry.energy[key]);
-      
+      const areStatsSame = ['efficiency', 'productivity', 'happiness', 'pomodoros'].every(s => entry[s] === yesterdayEntry[s]);
+      const areEnergySame = ['air', 'fire', 'water', 'earth'].every(k => entry.energy[k] === yesterdayEntry.energy[k]);
       if (areStatsSame && areEnergySame) {
         if (!window.confirm("Today's performance metrics and energy levels are exactly the same as yesterday. Are you sure you want to copy this data to tomorrow?")) return;
       }
     }
-    
     const tomorrowEntry = {
       ...entry,
       date: tomorrowDate,
       todos: entry.todos.map(todo => ({ ...todo })),
-      habits: entry.habits.map(habit => ({
-        ...habit,
-        completedByDate: { ...habit.completedByDate, [tomorrowDate]: false }
-      })),
+      habits: entry.habits.map(habit => ({ ...habit, completedByDate: { ...habit.completedByDate, [tomorrowDate]: false } })),
     };
-    
     const tomorrowIndex = history.findIndex(e => e.date === tomorrowDate);
     const updatedHistory = [...history];
     if (tomorrowIndex >= 0) updatedHistory[tomorrowIndex] = tomorrowEntry;
     else updatedHistory.push(tomorrowEntry);
-    
     saveData(updatedHistory);
     setHistory(updatedHistory);
     setEntry(tomorrowEntry);
     alert(`✅ Copied ALL today's data to tomorrow (${tomorrowDate})!`);
   };
 
-  const handlePomodoroEndWrapper = async () => {
+  const handlePomodoroEndWrapper = () => {
     const pomodoroUnits = pomodoroDuration / 60;
     setEntry(prev => ({
       ...prev,
@@ -726,31 +461,28 @@ const resumePomodoroLocal = () => {
     }));
   };
 
-  // Listen for pomodoro completion from context
   useEffect(() => {
-    const checkPomodoroComplete = setInterval(() => {
-      if (!isPomodoroActive && timeLeft === 0 && window.lastPomodoroCompleted) {
+    if (isPomodoroActive) {
+      completionHandledRef.current = false;
+      wasManuallyStoppedRef.current = false;
+    }
+    if (prevPomodoroActiveRef.current && !isPomodoroActive && timeLeft === 0) {
+      if (!completionHandledRef.current && !wasManuallyStoppedRef.current) {
+        completionHandledRef.current = true;
         handlePomodoroEndWrapper();
-        window.lastPomodoroCompleted = false;
       }
-    }, 100);
-    return () => clearInterval(checkPomodoroComplete);
-  }, [isPomodoroActive, timeLeft, pomodoroDuration]);
+    }
+    prevPomodoroActiveRef.current = isPomodoroActive;
+  }, [isPomodoroActive, timeLeft]);
 
   const handleTodoChange = (id, key, value) => {
-    setEntry(prev => ({
-      ...prev,
-      todos: prev.todos.map(todo => todo.id === id ? { ...todo, [key]: value } : todo)
-    }));
+    setEntry(prev => ({ ...prev, todos: prev.todos.map(todo => todo.id === id ? { ...todo, [key]: value } : todo) }));
   };
 
   const addNewTodo = () => {
     const newId = Date.now();
     setNewTodoId(newId);
-    setEntry(prev => ({
-      ...prev,
-      todos: [...prev.todos, { id: newId, text: '', completed: false, color: '', timeStart: '', timeEnd: '' }]
-    }));
+    setEntry(prev => ({ ...prev, todos: [...prev.todos, { id: newId, text: '', completed: false, color: '', timeStart: '', timeEnd: '' }] }));
   };
 
   const deleteTodo = (id) => setEntry(prev => ({ ...prev, todos: prev.todos.filter(todo => todo.id !== id) }));
@@ -815,21 +547,8 @@ const resumePomodoroLocal = () => {
             <div className="timer-display" style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '15px' }}>{formatTime(timeLeft)}</div>
             <div>
               <button onClick={pausePomodoroLocal} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#f59e0b', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>⏸ Pause</button>
-              <button onClick={cancelPomodoro} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#dc2626', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Cancel</button>
-              <button 
-                onClick={() => setIsMuted(!isMuted)} 
-                style={{ 
-                  padding: '8px 16px', 
-                  margin: '0 5px', 
-                  backgroundColor: isMuted ? '#ef4444' : '#10b981', 
-                  color: 'white', 
-                  border: 'none', 
-                  borderRadius: '5px', 
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease'
-                }}
-                title={isMuted ? "Unmute" : "Mute"}
-              >
+              <button onClick={() => { wasManuallyStoppedRef.current = true; cancelPomodoro(); }} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#dc2626', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Cancel</button>
+              <button onClick={() => setIsMuted(!isMuted)} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: isMuted ? '#ef4444' : '#10b981', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', transition: 'all 0.2s ease' }} title={isMuted ? "Unmute" : "Mute"}>
                 {isMuted ? '🔇 Unmute' : '🔊 Mute'}
               </button>
             </div>
@@ -844,15 +563,13 @@ const resumePomodoroLocal = () => {
           </div>
         ) : (
           <div>
+            {isBeeping && (
+              <button onClick={stopBeep} style={{ padding: '10px 20px', marginBottom: '15px', backgroundColor: '#dc2626', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '16px' }}>
+                🔔 Stop Alarm
+              </button>
+            )}
             <div style={{ marginBottom: '15px' }}>
-              <input 
-                type="number" 
-                min="1" 
-                max="180" 
-                value={pomodoroDuration} 
-                onChange={(e) => setPomodoroDuration(parseInt(e.target.value) || 1)} 
-                style={{ padding: '10px', marginRight: '10px', borderRadius: '5px', border: '1px solid #ccc', width: '80px', fontSize: '16px' }} 
-              />
+              <input type="number" min="1" max="180" value={pomodoroDuration} onChange={(e) => setPomodoroDuration(parseInt(e.target.value) || 1)} style={{ padding: '10px', marginRight: '10px', borderRadius: '5px', border: '1px solid #ccc', width: '80px', fontSize: '16px' }} />
               <button onClick={() => startPomodoro()} style={{ padding: '10px 20px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '16px' }}>Start {pomodoroDuration}m</button>
             </div>
             <div className="quick-pomodoros">
@@ -860,8 +577,6 @@ const resumePomodoroLocal = () => {
               <button onClick={() => startPomodoro(45)} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>45m</button>
               <button onClick={() => startPomodoro(60)} style={{ padding: '8px 16px', margin: '0 5px', backgroundColor: '#8b5cf6', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>60m</button>
             </div>
-            
-            {/* Optional: Add mute indicator when no timer is running */}
             {isMuted && (
               <div style={{ marginTop: '10px', fontSize: '12px', color: '#ef4444' }}>
                 🔇 Sound is muted - timer completion music will not play
@@ -870,7 +585,7 @@ const resumePomodoroLocal = () => {
           </div>
         )}
       </div>
-      
+
       <div className="card">
         <div className="section-box date-section">
           <div className="date-controls">
@@ -890,8 +605,23 @@ const resumePomodoroLocal = () => {
               <div className="energy-grid">
                 {Object.entries(entry.energy).map(([key, value]) => (
                   <div key={key} className={`energy-card energy-${key}`}>
-                    <label className="energy-label">{key.charAt(0).toUpperCase() + key.slice(1)}<span className="energy-value">{value ?? ''}%</span></label>
-                    <input type="range" min="0" max="100" value={value ?? 50} onChange={e => handleEnergy(key, +e.target.value)} className="energy-slider" />
+                    <label className="energy-label">
+                      {key.charAt(0).toUpperCase() + key.slice(1)}
+                      <InfoButton element={key} />
+                      <span className="energy-value">{value ?? ''}%</span>
+                    </label>
+                    <input 
+                      type="range" 
+                      min="0" 
+                      max="100" 
+                      value={value ?? 50} 
+                      onChange={e => handleEnergy(key, +e.target.value)} 
+                      className="energy-slider"
+                      style={{ 
+                        background: getEnergyGradient(key, value),
+                        transition: 'background 0.1s ease'
+                      }}
+                    />
                   </div>
                 ))}
               </div>
@@ -968,13 +698,13 @@ const resumePomodoroLocal = () => {
                     <label className="input-label">💤 Dreams & What I feel</label>
                     <AutoResizeTextarea value={entry.loss} onChange={(value) => handleChange('loss', value)} placeholder="Insight into subconscious" className="insight-textarea" />
                   </div>
-                  <div className="insight-card insight-card">
+                  <div className="insight-card">
                     <label className="input-label">🤔 Insights & Learnings</label>
                     <AutoResizeTextarea value={entry.insight} onChange={(value) => handleChange('insight', value)} placeholder="What did u find out today?" className="insight-textarea" />
                   </div>
                 </div>
               </div>
-              
+
               <div className="section-box habits-section">
                 <h3 className="section-subtitle">Habits Tracker</h3>
                 <div className="habits-list">
@@ -996,14 +726,11 @@ const resumePomodoroLocal = () => {
                     </div>
                   ))}
                   <button className="add-habit-button" onClick={() => {
-                    setEntry(prev => ({
-                      ...prev,
-                      habits: [...prev.habits, { id: Date.now(), text: '', completedByDate: { [entry.date]: false } }]
-                    }));
+                    setEntry(prev => ({ ...prev, habits: [...prev.habits, { id: Date.now(), text: '', completedByDate: { [entry.date]: false } }] }));
                   }}>+ Add Habit</button>
                 </div>
               </div>
-              
+
               <div className="section-box mit-section">
                 <h3 className="section-subtitle">Most Important Task</h3>
                 <AutoResizeTextarea value={entry.mostImportantTask || ''} onChange={(value) => handleChange('mostImportantTask', value)} placeholder="What's the single, most important task you will dedicate at least 4-6 hours to?" className="mit-input" />
