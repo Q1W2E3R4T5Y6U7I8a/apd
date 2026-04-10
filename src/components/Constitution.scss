@@ -484,3 +484,182 @@ $transition:    all 0.3s ease;
     button { width: 100%; justify-content: center; }
   }
 }
+// ============================================
+// EDIT MODE STYLES (Add to your existing SCSS)
+// ============================================
+
+.toolbar {
+  display: flex;
+  justify-content: center;
+
+  flex-wrap: wrap;
+
+  .toolbar-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(4px);
+    color: white;
+
+    &:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.1);
+    }
+  }
+
+  .edit-btn {
+    background: linear-gradient(135deg, #000000, #000000);
+  }
+
+  .save-btn {
+    background: #43e97b;
+    color: #1a2a1a;
+  }
+
+  .cancel-btn {
+    background: #ff0000;
+  }
+
+  .reset-btn {
+    background: white;
+    color: black
+  }
+}
+
+.edit-header-input {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 12px 20px;
+  font-size: 1.4rem;
+  background: #1a1a2e;
+  border: 2px solid #667eea;
+  border-radius: 8px;
+  color: white;
+  text-align: center;
+  font-family: inherit;
+
+  &:focus {
+    outline: none;
+    border-color: #43e97b;
+  }
+}
+
+.edit-title-input {
+  font-size: 1.8rem;
+  font-weight: bold;
+  background: transparent;
+  border: 2px solid #667eea;
+  border-radius: 6px;
+  padding: 4px 12px;
+  color: inherit;
+  font-family: inherit;
+  flex: 1;
+
+  &:focus {
+    outline: none;
+    border-color: #43e97b;
+  }
+}
+
+.edit-principle-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.edit-principle-input {
+  flex: 1;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #667eea;
+  border-radius: 6px;
+  color: white;
+  font-family: inherit;
+  font-size: 1rem;
+
+  &:focus {
+    outline: none;
+    border-color: #43e97b;
+  }
+}
+
+.delete-principle-btn {
+  background: rgba(255, 100, 100, 0.2);
+  border: 1px solid rgba(255, 100, 100, 0.5);
+  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  color: #ff6464;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: rgba(255, 100, 100, 0.4);
+    transform: scale(1.05);
+  }
+}
+
+.add-principle-btn {
+  margin-top: 16px;
+  padding: 8px 16px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #ffffff;
+  border-radius: 6px;
+  color: #000000;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  &:hover {
+    background: rgba(67, 233, 123, 0.2);
+    transform: translateY(-1px);
+  }
+}
+
+// Mobile adjustments
+@media (max-width: 768px) {
+
+
+  .edit-title-input {
+    font-size: 1.2rem;
+  }
+
+  .edit-header-input {
+    font-size: 1.1rem;
+  }
+
+    .constitution-edit-principle-row {
+    display: flex;
+    flex-direction: row;  // Keep horizontal
+    align-items: center;
+    justify-content: space-between; // Space between input and button
+    gap: 8px;
+    width: 100%;
+  }
+
+  .constitution-edit-principle-input {
+    flex: 1;
+    min-width: 0; // Allows input to shrink if needed
+  }
+
+  .constitution-delete-principle-btn {
+    flex-shrink: 0; // Button stays at full width
+    margin-left: auto; // Push to the right edge
+  }
+}

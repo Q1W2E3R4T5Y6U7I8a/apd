@@ -3,16 +3,14 @@ import "./Constitution.scss";
 
 // Default constitution data
 const defaultConstitution = {
-  "header": "Default Constitution - Modify me!",
+  "header": "The Elemental Constitution",
   "sections": [
     {
       "element": "air",
       "title": "Air Element",
       "icon": "fas fa-wind",
       "principles": [
-        "1. This is default air principle 1",
-        "1.1 Default air principle 1.1",
-        "1.2 Default air principle 1.2"
+        "Freedom of thought"
       ]
     },
     {
@@ -20,113 +18,90 @@ const defaultConstitution = {
       "title": "Fire Element",
       "icon": "fas fa-fire",
       "principles": [
-        "2. This is default fire principle 1",
-        "2.1 Default fire principle 2.1"
+        "Pursue passion and purpose",
+      ]
+    },
+    {
+      "element": "water",
+      "title": "Water Element",
+      "icon": "fas fa-water",
+      "principles": [
+        "Flow with life's currents",
+      ]
+    },
+    {
+      "element": "earth",
+      "title": "Earth Element",
+      "icon": "fas fa-mountain",
+      "principles": [
+        "Build strong foundations",
+      ]
+    },
+    {
+      "element": "principles",
+      "title": "Principles",
+      "icon": "fas fa-seedling",
+      "principles": [
+        "Small actions compound",
+        "Consistency over intensity"
       ]
     }
   ]
 };
+
+
 
 // localStorage key
 const CONSTITUTION_STORAGE_KEY = 'constitution-data';
 
 function Constitution() {
   const [constitutionData, setConstitutionData] = useState(null);
-  const [showJsonEditor, setShowJsonEditor] = useState(false);
-  const [jsonText, setJsonText] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+  const [editData, setEditData] = useState(null);
 
   useEffect(() => {
-    // Load constitution data on component mount
     loadConstitutionData();
-    
-    const sections = document.querySelectorAll(".element-section");
-    sections.forEach((section, index) => {
-      setTimeout(() => {
-        section.style.opacity = "1";
-        section.style.transform = "translateY(0)";
-      }, 300 * index);
-    });
-
-    const onScroll = () => {
-      const scrollY = window.scrollY;
-      const header = document.querySelector(".header");
-      if (header) header.style.backgroundPositionY = `-${scrollY * 0.2}px`;
-    };
-
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Save constitution data to localStorage
   const saveConstitutionToStorage = (data) => {
     try {
       localStorage.setItem(CONSTITUTION_STORAGE_KEY, JSON.stringify(data));
     } catch (error) {
-      console.error('Error saving constitution to localStorage:', error);
+      console.error('Error saving constitution:', error);
     }
   };
 
-  // Load constitution data from localStorage
   const loadConstitutionFromStorage = () => {
     try {
       const stored = localStorage.getItem(CONSTITUTION_STORAGE_KEY);
       return stored ? JSON.parse(stored) : null;
     } catch (error) {
-      console.error('Error loading constitution from localStorage:', error);
+      console.error('Error loading constitution:', error);
       return null;
     }
   };
 
-  // Load constitution data (priority: localStorage -> JSON file -> default)
   const loadConstitutionData = async () => {
-    // First try to load from localStorage
     const storedData = loadConstitutionFromStorage();
     if (storedData) {
       setConstitutionData(storedData);
       return;
     }
-
-    // If no localStorage data, try to load from JSON file
-    try {
-      const response = await fetch('/constitution.json');
-      if (response.ok) {
-        const data = await response.json();
-        setConstitutionData(data);
-        // Also save the loaded JSON data to localStorage for persistence
-        saveConstitutionToStorage(data);
-      } else {
-        // If file doesn't exist, use default data
-        setConstitutionData(defaultConstitution);
-        saveConstitutionToStorage(defaultConstitution);
-      }
-    } catch (error) {
-      console.error('Error loading constitution data:', error);
-      // Use default data as fallback
-      setConstitutionData(defaultConstitution);
-      saveConstitutionToStorage(defaultConstitution);
-    }
+    setConstitutionData(defaultConstitution);
+    saveConstitutionToStorage(defaultConstitution);
   };
 
-  // Update constitution data and persist to localStorage
-  const updateConstitutionData = (newData) => {
-    setConstitutionData(newData);
-    saveConstitutionToStorage(newData);
-  };
-
-  // Export constitution data as JSON file
   const exportConstitution = () => {
-    const dataStr = JSON.stringify(constitutionData || defaultConstitution, null, 2);
+    const dataStr = JSON.stringify(constitutionData, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    
     const link = document.createElement('a');
     link.href = URL.createObjectURL(dataBlob);
-    link.download = 'constitution.json';
+    link.download = `constitution_${new Date().toISOString().slice(0,19)}.json`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-  // Import constitution data from file
   const importConstitution = (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -135,112 +110,212 @@ function Constitution() {
     reader.onload = (e) => {
       try {
         const data = JSON.parse(e.target.result);
-        updateConstitutionData(data);
-        alert('Constitution imported successfully! Data will persist after refresh.');
+        setConstitutionData(data);
+        saveConstitutionToStorage(data);
+        alert('✓ Constitution imported successfully!');
       } catch (error) {
-        alert('Error importing constitution: Invalid JSON file');
-        console.error('Error parsing JSON:', error);
+        alert('✗ Invalid JSON file.');
       }
     };
     reader.readAsText(file);
-    
-    // Reset input to allow importing same file again
     event.target.value = '';
   };
 
-  // Open JSON editor with current data
-  const openJsonEditor = () => {
-    setJsonText(JSON.stringify(constitutionData, null, 2));
-    setShowJsonEditor(true);
-  };
-
-  // Apply JSON changes
-  const applyJsonChanges = () => {
-    try {
-      const data = JSON.parse(jsonText);
-      updateConstitutionData(data);
-      setShowJsonEditor(false);
-      alert('JSON changes applied successfully!');
-    } catch (error) {
-      alert('Invalid JSON format. Please check your syntax.');
-      console.error('Error parsing JSON:', error);
+  const resetToDefault = () => {
+    if (window.confirm('Reset to default constitution? All changes will be lost.')) {
+      setConstitutionData(defaultConstitution);
+      saveConstitutionToStorage(defaultConstitution);
     }
   };
 
-  // Close JSON editor without saving
-  const closeJsonEditor = () => {
-    setShowJsonEditor(false);
-    setJsonText('');
+  const startEditing = () => {
+    setEditData(JSON.parse(JSON.stringify(constitutionData)));
+    setIsEditing(true);
+  };
+
+  const saveEdits = () => {
+    setConstitutionData(editData);
+    saveConstitutionToStorage(editData);
+    setIsEditing(false);
+    setEditData(null);
+  };
+
+  const cancelEditing = () => {
+    setIsEditing(false);
+    setEditData(null);
+  };
+
+  const updateHeader = (value) => {
+    setEditData({ ...editData, header: value });
+  };
+
+  const updateSectionTitle = (sectionIndex, value) => {
+    const updatedSections = [...editData.sections];
+    updatedSections[sectionIndex] = { ...updatedSections[sectionIndex], title: value };
+    setEditData({ ...editData, sections: updatedSections });
+  };
+
+  const updateSectionIcon = (sectionIndex, value) => {
+    const updatedSections = [...editData.sections];
+    updatedSections[sectionIndex] = { ...updatedSections[sectionIndex], icon: value };
+    setEditData({ ...editData, sections: updatedSections });
+  };
+
+  const updatePrinciple = (sectionIndex, principleIndex, value) => {
+    const updatedSections = [...editData.sections];
+    const updatedPrinciples = [...updatedSections[sectionIndex].principles];
+    updatedPrinciples[principleIndex] = value;
+    updatedSections[sectionIndex] = { ...updatedSections[sectionIndex], principles: updatedPrinciples };
+    setEditData({ ...editData, sections: updatedSections });
+  };
+
+  const addPrinciple = (sectionIndex) => {
+    const updatedSections = [...editData.sections];
+    const updatedPrinciples = [...updatedSections[sectionIndex].principles, "New principle..."];
+    updatedSections[sectionIndex] = { ...updatedSections[sectionIndex], principles: updatedPrinciples };
+    setEditData({ ...editData, sections: updatedSections });
+  };
+
+  const deletePrinciple = (sectionIndex, principleIndex) => {
+    const updatedSections = [...editData.sections];
+    const updatedPrinciples = updatedSections[sectionIndex].principles.filter((_, i) => i !== principleIndex);
+    updatedSections[sectionIndex] = { ...updatedSections[sectionIndex], principles: updatedPrinciples };
+    setEditData({ ...editData, sections: updatedSections });
+  };
+
+  // Add new element/section
+  const addNewElement = () => {
+    const newElement = {
+      element: `element_${Date.now()}`,
+      title: "New Element",
+      icon: "fas fa-star",
+      principles: ["Enter first principle..."]
+    };
+    setEditData({
+      ...editData,
+      sections: [...editData.sections, newElement]
+    });
+  };
+
+  // Delete entire section
+  const deleteSection = (sectionIndex) => {
+    if (window.confirm('Delete this entire section?')) {
+      const updatedSections = editData.sections.filter((_, i) => i !== sectionIndex);
+      setEditData({ ...editData, sections: updatedSections });
+    }
   };
 
   if (!constitutionData) {
     return <div className="constitution loading">Loading Constitution...</div>;
   }
 
+  const displayData = isEditing ? editData : constitutionData;
+
   return (
     <div className="constitution">
       <div className="header">
-        <p>{constitutionData.header}</p>
+        {isEditing ? (
+          <input
+            type="text"
+            value={displayData.header}
+            onChange={(e) => updateHeader(e.target.value)}
+            className="edit-header-input"
+          />
+        ) : (
+          <p>{displayData.header}</p>
+        )}
       </div>
 
-      {/* Import/Export Buttons */}
-      <div className="import-export-buttons">
-        <input
-          type="file"
-          id="import-file"
-          accept=".json"
-          onChange={importConstitution}
-          style={{ display: 'none' }}
-        />
-        <button className="edit-json-btn" onClick={openJsonEditor}>
-          <i className="fas fa-code"></i> Edit JSON
-        </button>
+      <div className="toolbar">
+        {!isEditing ? (
+          <>
+            <button className="toolbar-btn edit-btn" onClick={startEditing}>
+              <i className="fas fa-pen"></i> Edit Constitution
+            </button>
+            <button className="toolbar-btn reset-btn" onClick={resetToDefault}>
+              <i className="fas fa-undo"></i> Reset
+            </button>
+          </>
+        ) : (
+          <>
+            <button className="toolbar-btn save-btn" onClick={saveEdits}>
+              <i className="fas fa-check"></i> Save Changes
+            </button>
+            <button className="toolbar-btn cancel-btn" onClick={cancelEditing}>
+              <i className="fas fa-times"></i> Cancel
+            </button>
+            <button className="toolbar-btn add-element-btn" onClick={addNewElement}>
+              <i className="fas fa-plus"></i> Add Element
+            </button>
+          </>
+        )}
       </div>
-
-      {/* JSON Editor Modal */}
-      {showJsonEditor && (
-        <div className="json-editor-modal">
-          <div className="json-editor-content">
-            <div className="json-editor-header">
-              <h3>Edit Constitution JSON</h3>
-              <button className="close-button" onClick={closeJsonEditor}>
-                <i className="fas fa-times"></i>
-              </button>
-            </div>
-            <textarea
-              value={jsonText}
-              onChange={(e) => setJsonText(e.target.value)}
-              className="json-textarea"
-              placeholder="Paste or edit your JSON here..."
-              spellCheck="false"
-            />
-            <div className="json-editor-buttons">
-              <button className="apply-btn" onClick={applyJsonChanges}>
-                <i className="fas fa-check"></i> Apply Changes
-              </button>
-              <button className="cancel-btn" onClick={closeJsonEditor}>
-                <i className="fas fa-times"></i> Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       <div className="container">
-        {constitutionData.sections.map((section, index) => (
+        {displayData.sections.map((section, sectionIdx) => (
           <section key={section.element} className={`element-section ${section.element}`}>
             <div className="element-header">
-              <i className={section.icon}></i>
-              <h2>{section.title}</h2>
+              {isEditing ? (
+                <>
+                  <input
+                    type="text"
+                    value={section.title}
+                    onChange={(e) => updateSectionTitle(sectionIdx, e.target.value)}
+                    className="edit-title-input"
+                  />
+                  <button
+                    onClick={() => deleteSection(sectionIdx)}
+                    className="delete-section-btn"
+                    title="Delete section"
+                  >
+                    <i className="fas fa-trash"></i>
+                  </button>
+                </>
+              ) : (
+                <>
+                  <i className={section.icon}></i>
+                  <h2>{section.title}</h2>
+                </>
+              )}
             </div>
+
             <ul className="principle-list">
-              {section.principles.map((principle, idx) => (
-                <li key={idx}>{principle}</li>
+              {section.principles.map((principle, principleIdx) => (
+                <li key={principleIdx}>
+                  {isEditing ? (
+                    <div className="edit-principle-row">
+                      <input
+                        type="text"
+                        value={principle}
+                        onChange={(e) => updatePrinciple(sectionIdx, principleIdx, e.target.value)}
+                        className="edit-principle-input"
+                      />
+                      <button
+                        onClick={() => deletePrinciple(sectionIdx, principleIdx)}
+                        className="delete-principle-btn"
+                        title="Delete principle"
+                      >
+                        <i className="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  ) : (
+                    principle
+                  )}
+                </li>
               ))}
             </ul>
+
+            {isEditing && (
+              <div className="section-actions">
+                <button onClick={() => addPrinciple(sectionIdx)} className="add-principle-btn">
+                  <i className="fas fa-plus"></i> Add Principle
+                </button>
+              </div>
+            )}
           </section>
         ))}
       </div>
+
     </div>
   );
 }
