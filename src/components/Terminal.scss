@@ -1,0 +1,437 @@
+// Hacker Green Terminal Theme
+$hacker-green: #00ff41;
+$hacker-green-dark: #00cc33;
+$hacker-green-dim: #00aa33;
+$hacker-bg: #0a0f0a;
+$hacker-surface: #0d140d;
+$hacker-border: #1a3a1a;
+$hacker-text: #33ff66;
+$hacker-error: #ff3333;
+$hacker-warning: #ffcc00;
+
+.terminal-minimized-btn {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 999;
+  cursor: pointer;
+  animation: slideIn 0.3s ease-out;
+}
+
+.terminal-minimized-content {
+  background: $hacker-bg;
+  border: 1px solid $hacker-green;
+  border-radius: 4px;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
+  font-size: 11px;
+  transition: all 0.2s ease;
+
+
+  &:hover {
+    border-color: $hacker-green;
+
+    background: $hacker-surface;
+  }
+
+  .terminal-blink {
+    color: $hacker-green;
+    font-size: 8px;
+    animation: pulse 1.5s infinite;
+  }
+
+  .terminal-text {
+    color: $hacker-green;
+    letter-spacing: 1px;
+    font-weight: bold;
+  }
+
+  .terminal-expand {
+    color: $hacker-green;
+    font-weight: bold;
+  }
+}
+
+.terminal-window {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 600px;
+  max-width: calc(100vw - 40px);
+  background: $hacker-bg;
+  border: 1px solid $hacker-green;
+  border-radius: 4px;
+  z-index: 1000;
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
+  font-size: 12px;
+
+  animation: slideUp 0.2s ease-out;
+}
+
+.terminal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: $hacker-surface;
+  border-bottom: 1px solid $hacker-green;
+  border-radius: 4px 4px 0 0;
+
+  .terminal-blink {
+    color: $hacker-green;
+    font-size: 8px;
+    animation: pulse 1.5s infinite;
+  }
+
+  .terminal-title {
+    color: $hacker-green;
+    font-size: 11px;
+    letter-spacing: 1px;
+    flex: 1;
+    margin-left: 8px;
+    font-weight: bold;
+  }
+
+  .terminal-close {
+    color: $hacker-green;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 0 4px;
+    transition: all 0.2s;
+
+    &:hover {
+      color: $hacker-error;
+      transform: scale(1.1);
+    }
+  }
+}
+
+.terminal-body {
+  height: 400px;
+  overflow-y: auto;
+  padding: 12px;
+  color: $hacker-text;
+  background: $hacker-bg;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $hacker-surface;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $hacker-green;
+    border-radius: 3px;
+  }
+}
+
+.terminal-line {
+  margin-bottom: 8px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: monospace;
+
+  &.command {
+    color: $hacker-warning;
+    
+    &::before {
+      content: '>';
+      margin-right: 8px;
+      color: $hacker-green;
+    }
+  }
+
+  &.output {
+    color: $hacker-text;
+    margin-left: 16px;
+    margin-bottom: 12px;
+  }
+}
+
+.terminal-input-line {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: $hacker-surface;
+  border-top: 1px solid $hacker-green;
+  border-radius: 0 0 4px 4px;
+
+  .terminal-prompt {
+    color: $hacker-green;
+    font-weight: bold;
+    margin-right: 8px;
+  }
+
+  .terminal-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: $hacker-green;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    outline: none;
+
+    &::placeholder {
+      color: $hacker-green-dim;
+    }
+  }
+
+  .terminal-cursor {
+    color: $hacker-green;
+    margin-left: 4px;
+    animation: blink 1s infinite;
+  }
+}
+
+.terminal-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 12px;
+  background: $hacker-surface;
+  border-top: 1px solid $hacker-green;
+  font-size: 9px;
+  color: $hacker-green-dim;
+  letter-spacing: 1px;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+// ============================================
+// IMPROVED MOBILE VIEW (≤ 768px)
+// ============================================
+@media (max-width: 768px) {
+  // Terminal Window - Full screen on mobile
+  .terminal-window {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    border-radius: 0;
+    border: none;
+    border-top: 1px solid $hacker-green;
+    border-bottom: 1px solid $hacker-green;
+    z-index: 1000;
+    animation: slideUpMobile 0.25s ease-out;
+  }
+
+  // Mobile slide animation
+  @keyframes slideUpMobile {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  // Terminal Header - More compact
+  .terminal-header {
+    padding: 12px 16px;
+    border-radius: 0;
+    
+    .terminal-blink {
+      font-size: 10px;
+    }
+    
+    .terminal-title {
+      font-size: 13px;
+      text-align: center;
+    }
+    
+    .terminal-close {
+      font-size: 18px;
+      padding: 0 8px;
+    }
+  }
+
+  // Terminal Body - Full height with padding
+  .terminal-body {
+    height: calc(100vh - 110px); // Account for header + input line + footer
+    padding: 16px;
+    font-size: 14px; // Larger text for readability
+    -webkit-overflow-scrolling: touch; // Smooth scroll on iOS
+  }
+
+  // Terminal lines - Better spacing for touch
+  .terminal-line {
+    margin-bottom: 12px;
+    font-size: 14px;
+    line-height: 1.6;
+    
+    &.command {
+      &::before {
+        margin-right: 10px;
+      }
+    }
+    
+    &.output {
+      margin-left: 20px;
+      margin-bottom: 14px;
+    }
+  }
+
+  // Input line - Larger touch targets
+  .terminal-input-line {
+    padding: 12px 16px;
+    
+    .terminal-prompt {
+      font-size: 14px;
+      margin-right: 10px;
+    }
+    
+    .terminal-input {
+      font-size: 14px;
+      padding: 8px 0;
+    }
+    
+    .terminal-cursor {
+      font-size: 14px;
+    }
+  }
+
+  // Footer - Smaller but visible
+  .terminal-footer {
+    padding: 6px 16px;
+    font-size: 10px;
+  }
+
+  // Minimized button - Better position for mobile
+  .terminal-minimized-btn {
+    bottom: 15px;
+    left: 15px;
+    z-index: 1001;
+  }
+  
+  .terminal-minimized-content {
+    padding: 8px 14px;
+    font-size: 12px;
+    backdrop-filter: blur(4px);
+    background: rgba(10, 15, 10, 0.95);
+    
+    .terminal-blink {
+      font-size: 10px;
+    }
+    
+    .terminal-text {
+      font-size: 12px;
+    }
+  }
+
+  // Larger scrollbar for touch
+  .terminal-body::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .terminal-body::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+  }
+}
+
+// ============================================
+// EXTRA SMALL PHONES (≤ 480px)
+// ============================================
+@media (max-width: 480px) {
+  .terminal-body {
+    height: calc(100vh - 100px);
+    padding: 12px;
+    font-size: 13px;
+  }
+  
+  .terminal-line {
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+  
+  .terminal-header {
+    padding: 10px 12px;
+    
+    .terminal-title {
+      font-size: 12px;
+    }
+  }
+  
+  .terminal-input-line {
+    padding: 10px 12px;
+    
+    .terminal-prompt,
+    .terminal-input {
+      font-size: 13px;
+    }
+  }
+  
+  .terminal-footer {
+    font-size: 9px;
+    padding: 4px 12px;
+  }
+  
+  .terminal-minimized-content {
+    padding: 6px 10px;
+    font-size: 10px;
+    
+    .terminal-text {
+      font-size: 10px;
+    }
+  }
+}
+
+// ============================================
+// LANDSCAPE MODE ON MOBILE
+// ============================================
+@media (max-width: 768px) and (orientation: landscape) {
+  .terminal-body {
+    height: calc(100vh - 90px);
+  }
+  
+  .terminal-header {
+    padding: 8px 12px;
+  }
+  
+  .terminal-input-line {
+    padding: 8px 12px;
+  }
+  
+  .terminal-line {
+    margin-bottom: 8px;
+    font-size: 12px;
+  }
+}
