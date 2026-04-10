@@ -43,6 +43,7 @@ export default function Statistics() {
   const [syncStatus, setSyncStatus] = useState('');
   const [showImportModal, setShowImportModal] = useState(false);
   const [dateRange, setDateRange] = useState('all');
+  const [includeZeroPomodoros, setIncludeZeroPomodoros] = useState(false); // Only for pomodoros
 
   useEffect(() => {
     loadHistory();
@@ -51,6 +52,10 @@ export default function Statistics() {
   useEffect(() => {
     filterHistoryByDateRange();
   }, [history, dateRange]);
+
+  useEffect(() => {
+    calculateAverages(filteredHistory);
+  }, [filteredHistory, includeZeroPomodoros]);
 
   const loadHistory = () => {
     const data = loadData();
@@ -97,7 +102,6 @@ export default function Statistics() {
     }
 
     setFilteredHistory(filtered);
-    calculateAverages(filtered);
   };
 
   const calculateAverages = (data) => {
@@ -118,46 +122,50 @@ export default function Statistics() {
     };
     
     data.forEach(entry => {
-      const hasPerformanceData = 
-        (entry.efficiency && entry.efficiency > 0) || 
-        (entry.productivity && entry.productivity > 0) || 
-        (entry.happiness && entry.happiness > 0) ||
-        (entry.pomodoros && entry.pomodoros > 0);
+      // Efficiency, Productivity, Happiness - only count days with actual values
+      if (entry.efficiency && entry.efficiency > 0) {
+        metrics.efficiency.sum += entry.efficiency;
+        metrics.efficiency.count++;
+      }
+      if (entry.productivity && entry.productivity > 0) {
+        metrics.productivity.sum += entry.productivity;
+        metrics.productivity.count++;
+      }
+      if (entry.happiness && entry.happiness > 0) {
+        metrics.happiness.sum += entry.happiness;
+        metrics.happiness.count++;
+      }
       
-      if (hasPerformanceData) {
-        if (entry.efficiency && entry.efficiency > 0) {
-          metrics.efficiency.sum += entry.efficiency;
-          metrics.efficiency.count++;
+      // Energy levels - only count days with actual values
+      if (entry.energy) {
+        if (entry.energy.air && entry.energy.air > 0) {
+          metrics.air.sum += entry.energy.air;
+          metrics.air.count++;
         }
-        if (entry.productivity && entry.productivity > 0) {
-          metrics.productivity.sum += entry.productivity;
-          metrics.productivity.count++;
+        if (entry.energy.fire && entry.energy.fire > 0) {
+          metrics.fire.sum += entry.energy.fire;
+          metrics.fire.count++;
         }
-        if (entry.happiness && entry.happiness > 0) {
-          metrics.happiness.sum += entry.happiness;
-          metrics.happiness.count++;
+        if (entry.energy.water && entry.energy.water > 0) {
+          metrics.water.sum += entry.energy.water;
+          metrics.water.count++;
         }
+        if (entry.energy.earth && entry.energy.earth > 0) {
+          metrics.earth.sum += entry.energy.earth;
+          metrics.earth.count++;
+        }
+      }
+      
+      // Pomodoros - conditional based on toggle
+      if (includeZeroPomodoros) {
+        // Count ALL days (include zeros)
+        metrics.pomodoros.sum += entry.pomodoros || 0;
+        metrics.pomodoros.count++;
+      } else {
+        // Only count days with actual pomodoros
         if (entry.pomodoros && entry.pomodoros > 0) {
           metrics.pomodoros.sum += entry.pomodoros;
           metrics.pomodoros.count++;
-        }
-        if (entry.energy) {
-          if (entry.energy.air && entry.energy.air > 0) {
-            metrics.air.sum += entry.energy.air;
-            metrics.air.count++;
-          }
-          if (entry.energy.fire && entry.energy.fire > 0) {
-            metrics.fire.sum += entry.energy.fire;
-            metrics.fire.count++;
-          }
-          if (entry.energy.water && entry.energy.water > 0) {
-            metrics.water.sum += entry.energy.water;
-            metrics.water.count++;
-          }
-          if (entry.energy.earth && entry.energy.earth > 0) {
-            metrics.earth.sum += entry.energy.earth;
-            metrics.earth.count++;
-          }
         }
       }
     });
@@ -318,17 +326,6 @@ export default function Statistics() {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
-  const getDateRangeLabel = () => {
-    switch(dateRange) {
-      case 'week': return 'Last 7 Days';
-      case '14days': return 'Last 14 Days';
-      case '30days': return 'Last 30 Days';
-      case '90days': return 'Last 90 Days';
-      case 'all': return 'All Time';
-      default: return 'All Time';
-    }
-  };
-
   if (history.length === 0) {
     return (
       <div className="statistics-page">
@@ -379,7 +376,7 @@ export default function Statistics() {
       y: {
         min: 0,
         max: Math.max(30, ...filteredHistory.map(entry => entry.pomodoros || 0)),
-        title: { display: true, text: 'Minutes', color: '#000', font: { size: 16, weight: 'bold' } },
+        title: { display: true, text: 'Pomodoros', color: '#000', font: { size: 16, weight: 'bold' } },
         ticks: { color: '#000', font: { size: 14, weight: 'bold' }, callback: value => value }
       }
     }
@@ -411,14 +408,23 @@ export default function Statistics() {
         </div>
       )}
 
-      <div className="date-range-selector">
-        <div className="range-buttons">
-          <button onClick={() => setDateRange('week')} className={`range-btn ${dateRange === 'week' ? 'active' : ''}`}>7 Days</button>
-          <button onClick={() => setDateRange('14days')} className={`range-btn ${dateRange === '14days' ? 'active' : ''}`}>14 Days</button>
-          <button onClick={() => setDateRange('30days')} className={`range-btn ${dateRange === '30days' ? 'active' : ''}`}>30 Days</button>
-          <button onClick={() => setDateRange('90days')} className={`range-btn ${dateRange === '90days' ? 'active' : ''}`}>90 Days</button>
-          <button onClick={() => setDateRange('all')} className={`range-btn ${dateRange === 'all' ? 'active' : ''}`}>All Time</button>
+      <div className="controls-wrapper">
+        <div className="date-range-selector">
+          <div className="range-buttons">
+            <button onClick={() => setDateRange('week')} className={`range-btn ${dateRange === 'week' ? 'active' : ''}`}>7 Days</button>
+            <button onClick={() => setDateRange('14days')} className={`range-btn ${dateRange === '14days' ? 'active' : ''}`}>14 Days</button>
+            <button onClick={() => setDateRange('30days')} className={`range-btn ${dateRange === '30days' ? 'active' : ''}`}>30 Days</button>
+            <button onClick={() => setDateRange('90days')} className={`range-btn ${dateRange === '90days' ? 'active' : ''}`}>90 Days</button>
+            <button onClick={() => setDateRange('all')} className={`range-btn ${dateRange === 'all' ? 'active' : ''}`}>All Time</button>
+          </div>
         </div>
+
+        <button 
+          onClick={() => setIncludeZeroPomodoros(!includeZeroPomodoros)} 
+          className={`pomodoro-toggle ${includeZeroPomodoros ? 'active' : ''}`}
+        >
+          {includeZeroPomodoros ? '📊 Pomodoro Avg: Including Zeros' : '🎯 Pomodoro Avg: Active Days Only'}
+        </button>
       </div>
 
       <div className="averages-section">
@@ -440,6 +446,7 @@ export default function Statistics() {
             <div className="average-item">
               <span className="average-label">Pomodoros:</span>
               <span className="average-value">{averages.pomodoros !== null ? averages.pomodoros : 'N/A'}</span>
+              {includeZeroPomodoros && <span className="avg-hint"> (incl. zero days)</span>}
             </div>
           </div>
           <div className="average-card">
@@ -617,7 +624,6 @@ export default function Statistics() {
                 </div>
               </div>
 
-              {/* NEW: Habits Section */}
               <div className="insight-type habits-column">
                 <h3 className="insights-title">✅ Habits Tracker</h3>
                 <div className="insights-list">
@@ -650,7 +656,6 @@ export default function Statistics() {
                 </div>
               </div>
 
-              {/* NEW: Most Important Task Section */}
               <div className="insight-type mit-column">
                 <h3 className="insights-title">⭐ Most Important Task</h3>
                 <div className="insights-list">

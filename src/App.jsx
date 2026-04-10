@@ -350,11 +350,11 @@ function App() {
       </div>
       <div className="bottom-buttons">
         <button 
-          className="minimal-btn info-btn"
+          className="minimal-btn info-button"
           onClick={handleInfoClick}
           title="About APD"
         >
-          ℹ️
+          ℹ
         </button>
       </div>
       <Terminal />

@@ -714,11 +714,9 @@ ${s.bestHabits.map((h, i) => `║        ${i+1}. ${h.name.padEnd(25)} ${h.rate.t
   // ========== RENDER ==========
   if (!isVisible) {
     return (
-      <div className="terminal-minimized-btn" onClick={() => setIsVisible(true)}>
-        <div className="terminal-minimized-content">
-          <span className="terminal-expand">[+]</span>
-        </div>
-      </div>
+      <button type="button" className="terminal-toggle-btn" onClick={() => setIsVisible(true)} title="Open terminal">
+        [+]
+      </button>
     );
   }
 
