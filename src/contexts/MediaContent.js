@@ -26,9 +26,10 @@ export const MediaProvider = ({ children }) => {
   };
 
   const getAudioPath = (src) => {
-    if (window?.electronAPI) return src;
+    const normalizedSrc = src.startsWith('/') ? src.slice(1) : src;
+    if (window?.electronAPI) return normalizedSrc;
     if (process.env.PUBLIC_URL) return `${process.env.PUBLIC_URL}${src}`;
-    if (window.location.protocol === 'file:') return src;
+    if (window.location.protocol === 'file:') return normalizedSrc;
     return src;
   };
 
@@ -96,7 +97,7 @@ export const MediaProvider = ({ children }) => {
       audioRef.current = null;
     }
     
-    const audio = new Audio(track.src);
+    const audio = new Audio(getAudioPath(track.src));
     audio.loop = true;
     audio.volume = volume;
     

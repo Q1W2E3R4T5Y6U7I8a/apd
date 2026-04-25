@@ -34,3 +34,5 @@ coverage/
 # Electron
 dist-electron/
 .vercel
+
+readmePersonal.md
