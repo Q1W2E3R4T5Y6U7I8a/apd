@@ -28,6 +28,7 @@ const OnboardingPopup = ({ onClose }) => {
 > [3] Export data to file — so AI can analyze it
 >
 > Please don't hesitate to contact for feedback or just to chat ^^`,
+      devStatus: "📦 The app is in development. For the moment it's only in English. Here is a group where we discuss features. As a developer, I'm not sure if someone likes this app — if you do, please tell me and I will start working on updates!",
       links: [
         { name: "TELEGRAM", url: "https://t.me/makarakma", icon: "💬" },
         { name: "INSTAGRAM", url: "https://instagram.com/makarkarma", icon: "📸" },
@@ -54,6 +55,7 @@ const OnboardingPopup = ({ onClose }) => {
 > [3] Експорт даних у файл — щоб AI міг аналізувати
 >
 > Не соромтеся звертатися для зворотного зв'язку або просто поспілкуватися ^^`,
+      devStatus: "📦 Додаток на стадії розробки. Наразі він доступний лише англійською мовою. Ось група, де ми обговорюємо функції. Як розробник, я не впевнений, чи комусь подобається цей додаток — якщо так, будь ласка, скажи мені, і я почну працювати над оновленнями!",
       links: [
         { name: "TELEGRAM", url: "https://t.me/makarakma", icon: "💬" },
         { name: "INSTAGRAM", url: "https://instagram.com/makarkarma", icon: "📸" },
@@ -80,6 +82,7 @@ const OnboardingPopup = ({ onClose }) => {
 > [3] Export des données — pour que l'IA puisse analyser
 >
 > N'hésitez pas à me contacter pour un retour ou juste discuter ^^`,
+      devStatus: "📦 L'app est en développement. Pour le moment, elle n'est disponible qu'en anglais. Voici un groupe où nous discutons des fonctionnalités. En tant que développeur, je ne suis pas sûr si quelqu'un aime cette app — si c'est le cas, dites-moi et je commencerai à travailler sur les mises à jour!",
       links: [
         { name: "TELEGRAM", url: "https://t.me/makarakma", icon: "💬" },
         { name: "INSTAGRAM", url: "https://instagram.com/makarkarma", icon: "📸" },
@@ -144,6 +147,10 @@ const OnboardingPopup = ({ onClose }) => {
                 <a href={current.dataScienceLink} target="_blank" rel="noopener noreferrer" className="ds-link">
                   🌍 DUMY
                 </a>
+              </div>
+
+              <div className="dev-status-section">
+                <p className="dev-status-text">{current.devStatus}</p>
               </div>
 
               <button className="close-button" onClick={handleClose}>

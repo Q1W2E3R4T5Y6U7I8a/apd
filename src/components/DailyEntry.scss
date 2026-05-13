@@ -494,6 +494,8 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   display: flex;
   flex-direction: column;
   gap: $space-sm;
+  min-width: 0;
+  width: 100%;
 }
 
 .todo-card {
@@ -505,6 +507,8 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   border: 1px solid $border-light;
   border-radius: $radius-lg;
   transition: all 0.2s;
+  min-width: 0;
+  flex-wrap: wrap;
 
   &:hover {
     box-shadow: $shadow-md;
@@ -532,8 +536,11 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   }
 
   .todo-content {
-    flex: 1;
+    flex: 1 1 auto;
     min-width: 0;
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
 
   .todo-controls {
@@ -640,25 +647,241 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
 
 .todo-time-container {
   margin-top: $space-sm;
+  min-width: 0;
 
   .time-input-group {
     display: flex;
     align-items: center;
-    gap: $space-sm;
-    flex-wrap: nowrap;
+    gap: $space-xs;
+    flex-wrap: wrap;
+    min-width: 0;
+    overflow-wrap: break-word;
+  }
 
-    .todo-time-input {
-      padding: $space-xs $space-sm;
-      border: 1px solid $border-light;
-      border-radius: $radius-sm;
-      font-size: $text-sm;
-      width: 90px;
+  .time-input-wrapper {
+    display: flex;
+    align-items: center;
+  }
 
-      &:focus {
-        outline: none;
-        border-color: $accent;
-      }
+  .todo-time-input {
+    padding: 4px 6px;
+    border: 1px solid $border-light;
+    border-radius: $radius-sm;
+    background: $bg-secondary;
+    color: $text-primary;
+    font-size: 16px;
+    font-family: $font-sans;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    flex-shrink: 0;
+    width: auto;
+    max-width: 100px;
+
+    &:focus {
+      outline: none;
+      border-color: $accent;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
     }
+
+    &:hover {
+      border-color: $border-medium;
+    }
+
+    &::-webkit-calendar-picker-indicator {
+      opacity: 0.6;
+      cursor: pointer;
+    }
+
+    &::-webkit-calendar-picker-indicator:hover {
+      opacity: 1;
+    }
+  }
+
+  .time-segment {
+    display: flex;
+    align-items: center;
+    background: $bg-secondary;
+    border: 1px solid $border-light;
+    border-radius: $radius-md;
+    overflow: hidden;
+    transition: all 0.2s ease;
+    box-shadow: $shadow-sm;
+
+    &:hover {
+      border-color: $border-medium;
+      box-shadow: $shadow-md;
+    }
+
+    &:focus-within {
+      border-color: $accent;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+  }
+
+  .time-raw-input {
+    width: 40px;
+    border: none;
+    background: transparent;
+    text-align: center;
+    font-size: $text-sm;
+    font-family: $font-mono;
+    font-weight: 500;
+    color: $text-primary;
+    padding: 8px 2px;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    
+    -moz-appearance: textfield;
+
+    &:focus {
+      outline: none;
+      background: rgba(59, 130, 246, 0.05);
+    }
+
+    &::placeholder {
+      color: $text-muted;
+      font-weight: 400;
+    }
+  }
+
+  .time-period-select {
+    width: 50px;
+    border: none;
+    background: $bg-tertiary;
+    text-align: center;
+    font-size: $text-sm;
+    font-family: $font-mono;
+    font-weight: 600;
+    color: $text-primary;
+    padding: 8px 4px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    border-left: 1px solid $border-light;
+    transition: all 0.2s ease;
+
+    &:focus {
+      outline: none;
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    &:hover {
+      background: darken($bg-tertiary, 3%);
+    }
+
+    option {
+      font-family: $font-mono;
+      font-weight: 600;
+    }
+  }
+
+  .time-colon {
+    font-size: $text-base;
+    font-family: $font-mono;
+    font-weight: 700;
+    color: $text-secondary;
+    padding: 0 1px;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .time-separator {
+    font-size: $text-sm;
+    color: $text-secondary;
+    margin: 0 4px;
+    pointer-events: none;
+    user-select: none;
+    font-weight: 300;
+  }
+
+  .duration-badge {
+    background: $accent;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: $font-mono;
+    white-space: nowrap;
+    margin-left: $space-xs;
+    box-shadow: $shadow-sm;
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: $shadow-md;
+    }
+  }
+
+  .duration-display {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.time-wheel {
+  position: relative;
+
+  .time-wheel-trigger {
+    padding: 4px 8px;
+    font-size: $text-sm;
+    font-family: $font-mono;
+    color: $text-primary;
+    cursor: pointer;
+    min-width: 32px;
+    text-align: center;
+    user-select: none;
+    border-radius: $radius-sm;
+
+    &:hover {
+      background: $bg-tertiary;
+    }
+  }
+
+  .time-wheel-inner {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    background: $bg-secondary;
+    border: 1px solid $border-medium;
+    border-radius: $radius-md;
+    box-shadow: $shadow-lg;
+    max-height: 200px;
+    overflow-y: auto;
+    min-width: 52px;
+    scrollbar-width: thin;
+  }
+
+  .time-wheel-item {
+    padding: 6px 10px;
+    font-size: $text-sm;
+    font-family: $font-mono;
+    color: $text-primary;
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.1s;
+
+    &:hover {
+      background: $bg-tertiary;
+    }
+
+    &[data-selected='true'] {
+      background: #eff6ff;
+      color: $accent;
+      font-weight: 700;
+    }
+  }
+
+  .time-wheel-clear {
+    color: $text-muted;
+    border-bottom: 1px solid $border-light;
+    font-size: 11px;
   }
 }
 
@@ -989,6 +1212,8 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   box-shadow: $shadow-sm;
   margin-bottom: $space-lg;
   transition: box-shadow 0.2s ease;
+  min-width: 0;
+  overflow: hidden;
 
   &:hover {
     box-shadow: $shadow-md;
@@ -1030,6 +1255,9 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
     min-height: 100px;
     line-height: 1.5;
     transition: all 0.2s;
+    box-sizing: border-box;
+    overflow-wrap: break-word;
+    word-break: break-word;
 
     &:focus {
       outline: none;

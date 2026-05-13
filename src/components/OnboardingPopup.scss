@@ -1,115 +1,152 @@
-// Hacker Green Terminal Theme
-$hacker-green: #00ff41;
-$hacker-green-dim: #00cc33;
-$hacker-bg: #0a0f0a;
-$hacker-surface: #0d140d;
-$hacker-border: #1a3a1a;
+// Clean Modern Theme Variables
+$bg-primary: #f8fafc;
+$bg-secondary: #ffffff;
+$bg-tertiary: #f1f5f9;
+$text-primary: #0f172a;
+$text-secondary: #475569;
+$text-muted: #94a3b8;
+$border-light: #e2e8f0;
+$border-medium: #cbd5e1;
+$accent: #3b82f6;
+$accent-dark: #2563eb;
+$success: #22c55e;
+$danger: #ef4444;
+$warning: #f59e0b;
 
+$space-xs: 4px;
+$space-sm: 8px;
+$space-md: 16px;
+$space-lg: 24px;
+$space-xl: 32px;
+
+$radius-sm: 6px;
+$radius-md: 10px;
+$radius-lg: 14px;
+$radius-xl: 20px;
+
+$shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+$font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+$font-mono: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+$text-sm: 0.875rem;
+$text-base: 1rem;
+$text-lg: 1.125rem;
+
+// Onboarding Overlay
 .onboarding-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.95);
+  background: rgba(15, 23, 42, 0.8);
   z-index: 10000;
   display: flex;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(8px);
-  animation: fadeIn 0.2s ease-out;
+  backdrop-filter: blur(12px);
+  animation: fadeIn 0.3s ease-out;
 }
 
 .onboarding-popup {
   position: relative;
   width: 90%;
-  max-width: 750px;
-  animation: slideUp 0.2s ease-out;
+  max-width: 650px;
+  animation: slideUp 0.3s ease-out;
 }
 
-// Flags container - centered
+// Flags container
 .flags-container {
   display: flex;
   justify-content: center;
-  gap: 20px;
-  margin-bottom: 16px;
+  gap: $space-lg;
+  margin-bottom: $space-lg;
   z-index: 10;
   position: relative;
 
   .flag {
-    width: 40px;
-    height: 40px;
-    border-radius: 4px;
+    width: 44px;
+    height: 44px;
+    border-radius: $radius-md;
     cursor: pointer;
-    border: 2px solid transparent;
+    border: 2px solid $border-light;
     transition: all 0.2s ease;
     object-fit: cover;
+    box-shadow: $shadow-sm;
 
     &:hover {
       transform: scale(1.1);
-      border-color: $hacker-green;
-      box-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+      border-color: $accent;
+      box-shadow: $shadow-md;
     }
 
     &.active {
-      border-color: $hacker-green;
-      box-shadow: 0 0 15px rgba(0, 255, 65, 0.7);
+      border-color: $accent;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
     }
   }
 }
 
 .close-popup {
   position: absolute;
-  top: -10px;
-  right: -10px;
-  background: $hacker-bg;
-  border: 1px solid $hacker-green;
-  color: $hacker-green;
+  top: -12px;
+  right: -12px;
+  background: $bg-secondary;
+  border: 1px solid $border-light;
+  color: $text-secondary;
   font-size: 14px;
-  padding: 4px 10px;
+  padding: 6px 12px;
+  border-radius: $radius-md;
   cursor: pointer;
-  font-family: monospace;
+  font-family: $font-sans;
+  font-weight: 600;
   z-index: 10;
   transition: all 0.2s;
+  box-shadow: $shadow-md;
 
   &:hover {
-    background: $hacker-green;
-    color: $hacker-bg;
+    background: $danger;
+    color: white;
+    border-color: $danger;
   }
 }
 
+// Terminal Window (now a clean card)
 .terminal-window-mini {
-  background: $hacker-bg;
-  border: 1px solid $hacker-green;
-  border-radius: 4px;
+  background: $bg-secondary;
+  border: 1px solid $border-light;
+  border-radius: $radius-xl;
   overflow: hidden;
-  box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
+  box-shadow: $shadow-lg;
 }
 
 .terminal-header-mini {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  background: $hacker-surface;
-  border-bottom: 1px solid $hacker-green;
+  gap: $space-sm;
+  padding: $space-md $space-lg;
+  background: $bg-tertiary;
+  border-bottom: 1px solid $border-light;
 
   .terminal-blink {
-    color: $hacker-green;
-    font-size: 8px;
-    animation: pulse 1.5s infinite;
+    color: $success;
+    font-size: 10px;
+    animation: pulse 2s infinite;
   }
 
   .terminal-title {
-    color: $hacker-green;
-    font-size: 11px;
-    letter-spacing: 1px;
-    font-family: monospace;
+    color: $text-primary;
+    font-size: $text-sm;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    font-family: $font-sans;
   }
 }
 
 .terminal-body-mini {
-  padding: 20px;
+  padding: $space-xl;
   max-height: 60vh;
   overflow-y: auto;
 
@@ -118,115 +155,161 @@ $hacker-border: #1a3a1a;
   }
 
   &::-webkit-scrollbar-track {
-    background: $hacker-surface;
+    background: $bg-tertiary;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: $hacker-green;
+    background: $border-medium;
     border-radius: 3px;
+    
+    &:hover {
+      background: $text-muted;
+    }
   }
 }
 
 .terminal-message {
-  color: $hacker-green;
-  font-family: 'Share Tech Mono', 'Courier New', monospace;
-  font-size: 11px;
-  line-height: 1.6;
-  margin: 0 0 20px 0;
+  color: $text-primary;
+  font-family: $font-sans;
+  font-size: $text-base;
+  line-height: 1.7;
+  margin: 0 0 $space-lg 0;
   white-space: pre-wrap;
   word-wrap: break-word;
 }
 
 .contact-section {
-  margin: 16px 0;
-  padding: 12px;
-  border-left: 2px solid $hacker-green;
-  background: rgba(0, 255, 65, 0.05);
+  margin: $space-lg 0;
+  padding: $space-lg;
+  border-left: 4px solid $accent;
+  background: $bg-tertiary;
+  border-radius: 0 $radius-md $radius-md 0;
 
   .contact-prompt {
-    color: $hacker-green;
-    font-family: monospace;
-    font-size: 11px;
+    color: $text-primary;
+    font-family: $font-sans;
+    font-size: $text-sm;
+    font-weight: 600;
     display: block;
-    margin-bottom: 10px;
+    margin-bottom: $space-md;
   }
 
   .contact-links {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: $space-md;
 
     .contact-link {
-      color: $hacker-green-dim;
+      color: $accent;
       text-decoration: none;
-      font-family: monospace;
-      font-size: 10px;
+      font-family: $font-sans;
+      font-size: $text-sm;
+      font-weight: 500;
+      padding: $space-xs $space-md;
+      background: $bg-secondary;
+      border: 1px solid $border-light;
+      border-radius: $radius-sm;
       transition: all 0.2s;
 
       &:hover {
-        color: $hacker-green;
-        transform: translateX(4px);
+        color: white;
+        background: $accent;
+        border-color: $accent;
+        transform: translateY(-2px);
+        box-shadow: $shadow-md;
       }
     }
   }
 }
 
 .datascience-section {
-  margin: 16px 0;
-  padding: 12px;
-  border-left: 2px solid $hacker-green;
-  background: rgba(0, 255, 65, 0.05);
+  margin: $space-lg 0;
+  padding: $space-lg;
+  border-left: 4px solid $success;
+  background: $bg-tertiary;
+  border-radius: 0 $radius-md $radius-md 0;
 
   .ds-prompt {
-    color: $hacker-green;
-    font-family: monospace;
-    font-size: 11px;
+    color: $text-primary;
+    font-family: $font-sans;
+    font-size: $text-sm;
+    font-weight: 600;
     display: block;
-    margin-bottom: 10px;
+    margin-bottom: $space-md;
   }
 
   .ds-link {
-    color: $hacker-green-dim;
+    color: $success;
     text-decoration: none;
-    font-family: monospace;
-    font-size: 11px;
+    font-family: $font-sans;
+    font-size: $text-sm;
+    font-weight: 500;
+    padding: $space-xs $space-md;
+    background: $bg-secondary;
+    border: 1px solid $border-light;
+    border-radius: $radius-sm;
     display: inline-block;
     transition: all 0.2s;
 
     &:hover {
-      color: $hacker-green;
-      transform: translateX(4px);
+      color: white;
+      background: $success;
+      border-color: $success;
+      transform: translateY(-2px);
+      box-shadow: $shadow-md;
     }
+  }
+}
+
+.dev-status-section {
+  margin: $space-lg 0;
+  padding: $space-lg;
+  border-left: 4px solid $warning;
+  background: $bg-tertiary;
+  border-radius: 0 $radius-md $radius-md 0;
+
+  .dev-status-text {
+    color: $text-primary;
+    font-family: $font-sans;
+    font-size: $text-sm;
+    line-height: 1.6;
+    margin: 0;
+    font-weight: 500;
   }
 }
 
 .close-button {
   width: 100%;
-  margin-top: 20px;
-  padding: 10px;
-  background: transparent;
-  border: 1px solid $hacker-green;
-  color: $hacker-green;
-  font-family: monospace;
-  font-size: 11px;
+  margin-top: $space-lg;
+  padding: $space-md;
+  background: $bg-secondary;
+  border: 2px solid $border-light;
+  color: $text-secondary;
+  font-family: $font-sans;
+  font-size: $text-sm;
+  font-weight: 600;
+  border-radius: $radius-md;
   cursor: pointer;
   transition: all 0.2s;
 
   &:hover {
-    background: $hacker-green;
-    color: $hacker-bg;
+    background: $accent;
+    color: white;
+    border-color: $accent;
+    box-shadow: $shadow-md;
+    transform: translateY(-2px);
   }
 }
 
 .terminal-footer-mini {
   display: flex;
   justify-content: space-between;
-  padding: 6px 12px;
-  background: $hacker-surface;
-  border-top: 1px solid $hacker-green;
-  font-size: 9px;
-  color: $hacker-green-dim;
-  font-family: monospace;
+  padding: $space-sm $space-lg;
+  background: $bg-tertiary;
+  border-top: 1px solid $border-light;
+  font-size: $text-sm;
+  color: $text-muted;
+  font-family: $font-sans;
 }
 
 @keyframes fadeIn {
@@ -247,28 +330,36 @@ $hacker-border: #1a3a1a;
 
 @keyframes pulse {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
+  50% { opacity: 0.5; }
 }
 
 @media (max-width: 768px) {
   .flags-container {
-    gap: 12px;
+    gap: $space-md;
     
     .flag {
-      width: 32px;
-      height: 32px;
+      width: 36px;
+      height: 36px;
     }
   }
 
   .terminal-message {
-    font-size: 9px;
+    font-size: $text-sm;
   }
 
   .close-button {
-    font-size: 9px;
+    font-size: $text-sm;
   }
 
   .contact-link {
-    font-size: 8px;
+    font-size: $text-sm;
+  }
+  
+  .onboarding-popup {
+    max-width: 95%;
+  }
+  
+  .terminal-body-mini {
+    padding: $space-lg;
   }
 }

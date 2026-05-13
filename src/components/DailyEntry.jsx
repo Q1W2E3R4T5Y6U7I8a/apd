@@ -658,7 +658,7 @@ const getEnergyGradient = (element, value) => {
                           <div className="time-input-wrapper">
                             <input type="time" value={todo.timeStart || ''} onChange={(e) => handleTodoChange(todo.id, 'timeStart', e.target.value)} className="todo-time-input" />
                           </div>
-                          <div className="time-separator">-</div>
+                          <div className="time-separator">to</div>
                           <div className="time-input-wrapper">
                             <input type="time" value={todo.timeEnd || ''} onChange={(e) => handleTodoChange(todo.id, 'timeEnd', e.target.value)} className="todo-time-input" />
                           </div>
