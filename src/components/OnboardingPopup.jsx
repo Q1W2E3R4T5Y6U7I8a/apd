@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import './OnBoardingPopUp.scss';
+import './OnboardingPopup.scss';
 
-const OnBoardingPopUp = ({ onClose }) => {
+const OnboardingPopup = ({ onClose }) => {
   const [language, setLanguage] = useState('en');
 
   const handleClose = () => {
@@ -158,4 +158,4 @@ const OnBoardingPopUp = ({ onClose }) => {
   );
 };
 
-export default OnBoardingPopUp;
+export default OnboardingPopup;

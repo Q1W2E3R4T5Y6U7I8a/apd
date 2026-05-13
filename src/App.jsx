@@ -8,7 +8,8 @@ import Constitution from './components/Constitution';
 import ImportExport from './components/ImportExport';
 import { MediaProvider } from './contexts/MediaContent';
 import Terminal from './components/Terminal'; 
-import OnBoardingPopUp from './components/OnBoardingPopUp'; 
+import OnboardingPopup from './components/OnboardingPopup';
+
 
 function App() {
   const [page, setPage] = useState('daily');
@@ -211,7 +212,7 @@ function App() {
     <MediaProvider>
       <div className="app-container">
          {showOnboarding && (
-          <OnBoardingPopUp onClose={() => setShowOnboarding(false)} />
+          <OnboardingPopup onClose={() => setShowOnboarding(false)} />
         )}
 
         <nav className="main-nav">
