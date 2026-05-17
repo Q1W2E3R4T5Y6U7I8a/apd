@@ -310,6 +310,14 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   width: 100%;
 }
 
+.two-column-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-lg;
+  margin-bottom: $space-lg;
+  width: 100%;
+}
+
 .bottom-section {
   display: flex;
   flex-direction: column;
@@ -547,6 +555,7 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
     display: flex;
     gap: $space-xs;
     flex-shrink: 0;
+    margin-left: auto; // This pushes controls to the right
   }
 
   .delete-todo {
@@ -557,6 +566,7 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
     color: $text-muted;
     padding: 0 $space-xs;
     transition: all 0.2s;
+    margin-left: auto; // This ensures delete button stays at the far right
 
     &:hover {
       color: $danger;
@@ -1370,11 +1380,6 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
     max-width: 100%;
   }
 
-  .three-column-row {
-    grid-template-columns: 1fr;
-    gap: $space-md;
-  }
-
   .date-controls {
     flex-direction: column;
     align-items: center;
@@ -1565,3 +1570,179 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   }
 }
 
+
+// ============================================
+// RESPONSIVE (MOBILE) — 768px
+// ============================================
+
+@media (max-width: 768px) {
+  .daily-entry {
+    padding: $space-md;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  // Stack ALL grid columns on mobile
+  .three-column-row,
+  .two-column-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  .date-controls {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: $space-sm;
+
+    .nav-buttons {
+      width: 100%;
+      justify-content: center;
+
+      button {
+        flex: 1;
+      }
+    }
+
+    .date-picker {
+      width: 100%;
+      text-align: center;
+    }
+
+    .copy-tomorrow-button {
+      width: 100%;
+      text-align: center;
+    }
+  }
+
+  .pomodoro-section {
+    padding: $space-md;
+
+    .timer-display {
+      font-size: 2rem;
+      letter-spacing: 2px;
+    }
+
+    .quick-pomodoros {
+      flex-direction: column;
+      align-items: center;
+      gap: $space-xs;
+
+      button {
+        width: 100%;
+        max-width: 100%;
+      }
+    }
+  }
+
+  .energy-grid, 
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  // Stack insight cards vertically
+  .insights-grid {
+    flex-direction: column;
+    gap: $space-md;
+  }
+
+  .insight-card {
+    .insight-textarea {
+      min-height: 80px;
+    }
+  }
+
+  .todo-card {
+    flex-wrap: wrap;
+
+    .todo-controls {
+      justify-content: flex-end;
+      width: 100%;
+    }
+  }
+
+  .habit-item {
+    flex-wrap: nowrap;
+
+    .habit-input {
+      min-width: 0;
+    }
+  }
+
+  // MIT full width on mobile
+  .mit-section {
+    width: 100%;
+    
+    .mit-input {
+      font-size: $text-base;
+      min-height: 80px;
+    }
+  }
+
+  // Make time inputs more mobile-friendly
+  .todo-time-container {
+    .time-input-group {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  // Meditation tracks
+  .meditation-section {
+    .tracks-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .now-playing {
+      flex-direction: column;
+      gap: $space-md;
+
+      .audio-controls {
+        flex-direction: column;
+        width: 100%;
+
+        input {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
+
+// ============================================
+// RESPONSIVE (MOBILE) — 480px
+// ============================================
+
+@media (max-width: 480px) {
+  .daily-entry {
+    padding: $space-sm;
+  }
+
+  .meditation-section .tracks-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-subtitle {
+    font-size: $text-base;
+  }
+
+  .pomodoro-section .timer-display {
+    font-size: 1.5rem;
+  }
+
+  // Smaller touch targets but still usable
+  .todo-checkbox {
+    width: 24px;
+    height: 24px;
+  }
+
+  .delete-todo,
+  .delete-habit {
+    padding: $space-sm;
+  }
+
+  .habit-input,
+  .mit-input,
+  .insight-textarea {
+    font-size: 16px !important; // Prevent iOS zoom
+  }
+}

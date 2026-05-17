@@ -651,6 +651,14 @@ const getEnergyGradient = (element, value) => {
                 {entry.todos.map((todo, index) => (
                   <div key={todo.id} className={`todo-card ${todo.completed ? 'completed' : ''}`} style={{ backgroundColor: todo.color || 'transparent', transition: 'background-color 0.2s ease' }}>
                     <input type="checkbox" checked={todo.completed || false} onChange={(e) => handleTodoChange(todo.id, 'completed', e.target.checked)} className="todo-checkbox" />
+                    <div className="todo-controls">
+                      <ColorPicker selectedColor={todo.color} onSelect={(color) => handleTodoChange(todo.id, 'color', color)} className="todo-color-picker" />
+                      <div className="todo-priority-buttons">
+                        <button onClick={() => moveTodo(todo.id, 'up')} disabled={index === 0}>↑</button>
+                        <button onClick={() => moveTodo(todo.id, 'down')} disabled={index === entry.todos.length - 1}>↓</button>
+                      </div>
+                      <button className="delete-todo" onClick={() => deleteTodo(todo.id)}>×</button>
+                    </div>
                     <div className="todo-content">
                       <RichTextEditor value={todo.text || ''} onChange={(value) => handleTodoChange(todo.id, 'text', value)} onColorDetect={(colors) => colors.length > 0 && handleTodoChange(todo.id, 'color', colors[0])} placeholder="Enter a task... (use #red, #green, #blue, etc.)" className="todo-input" autoFocus={todo.id === newTodoId} />
                       <div className="todo-time-container">
@@ -670,14 +678,7 @@ const getEnergyGradient = (element, value) => {
                         </div>
                       </div>
                     </div>
-                    <div className="todo-controls">
-                      <ColorPicker selectedColor={todo.color} onSelect={(color) => handleTodoChange(todo.id, 'color', color)} className="todo-color-picker" />
-                      <div className="todo-priority-buttons">
-                        <button onClick={() => moveTodo(todo.id, 'up')} disabled={index === 0}>↑</button>
-                        <button onClick={() => moveTodo(todo.id, 'down')} disabled={index === entry.todos.length - 1}>↓</button>
-                      </div>
-                      <button className="delete-todo" onClick={() => deleteTodo(todo.id)}>×</button>
-                    </div>
+                    
                   </div>
                 ))}
                 <button className="add-todo-button" onClick={addNewTodo}>+ Add Task</button>
@@ -686,7 +687,7 @@ const getEnergyGradient = (element, value) => {
           </div>
 
           <div className="new-row">
-            <div className="three-column-row">
+            <div className="two-column-row">
               <div className="section-box insights-section">
                 <h3 className="section-subtitle">Daily Reflections</h3>
                 <div className="insights-grid">
@@ -729,12 +730,11 @@ const getEnergyGradient = (element, value) => {
                     setEntry(prev => ({ ...prev, habits: [...prev.habits, { id: Date.now(), text: '', completedByDate: { [entry.date]: false } }] }));
                   }}>+ Add Habit</button>
                 </div>
-              </div>
-
-              <div className="section-box mit-section">
+                <div className="section-box mit-section">
                 <h3 className="section-subtitle">Most Important Task</h3>
                 <AutoResizeTextarea value={entry.mostImportantTask || ''} onChange={(value) => handleChange('mostImportantTask', value)} placeholder="What's the single, most important task you will dedicate at least 4-6 hours to?" className="mit-input" />
               </div>
+              </div>   
             </div>
           </div>
 

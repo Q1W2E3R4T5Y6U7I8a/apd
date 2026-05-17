@@ -36,3 +36,4 @@ dist-electron/
 .vercel
 
 readmePersonal.md
+.env*.local
