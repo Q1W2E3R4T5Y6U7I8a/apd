@@ -181,7 +181,7 @@ function App() {
             <div className="finance-button-group">
               <button
                 onClick={handleFinanceClick}
-                className="nav-button"
+                className={`nav-button ${page === 'finance' ? 'active' : ''}`}
               >
                 <span className="nav-icon">💰</span>
                 <span className="nav-text">Finance</span>
@@ -215,7 +215,7 @@ function App() {
             <div className="finance-button-group">
               <button
                 onClick={handleFinanceClick}
-                className="nav-button"
+                className={`nav-button ${page === 'finance' ? 'active' : ''}`}
               >
                 <span className="nav-icon">💰</span>
                 <span className="nav-text">Finance</span>
