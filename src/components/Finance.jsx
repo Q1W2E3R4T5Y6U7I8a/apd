@@ -4,7 +4,7 @@ import './Finance.scss';
 
 const STORAGE_KEY = 'apd-finance-v1';
 
-const defaultCategories = [
+const defaultExpenseCategories = [
   { id: 'food', label: 'Food', icon: '🍜', color: '#18c47d' },
   { id: 'transport', label: 'Transport', icon: '◈', color: '#1877e8' },
   { id: 'home', label: 'Home', icon: '⌂', color: '#f4b942' },
@@ -14,9 +14,15 @@ const defaultCategories = [
   { id: 'education', label: 'Growth', icon: '↗', color: '#22a8aa' },
 ];
 
-const incomeCategory = { id: 'income', label: 'Income', icon: '↑', color: '#18c47d' };
+const defaultIncomeCategories = [
+  { id: 'income', label: 'General', icon: '↑', color: '#18c47d' },
+  { id: 'salary', label: 'Salary', icon: '💼', color: '#1877e8' },
+  { id: 'freelance', label: 'Freelance', icon: '✎', color: '#9b66ee' },
+  { id: 'investments', label: 'Investments', icon: '⇧', color: '#22a8aa' },
+  { id: 'gifts', label: 'Gifts', icon: '❋', color: '#ed5d94' },
+];
+
 const unknownCategory = { id: 'unknown', label: 'Archived', icon: '•', color: '#999' };
-const categoryIcons = ['🍜', '◈', '⌂', '✚', '✦', '◌', '↗', '⚡', '💼', '🚗', '🏡', '🍏', '🎁', '📚', '💊'];
 
 const emptyFinanceData = {
   currency: 'CHF',
@@ -24,8 +30,14 @@ const emptyFinanceData = {
     { id: 'main-account', name: 'Main account', balance: 0, color: '#1877e8' },
     { id: 'cash', name: 'Cash', balance: 0, color: '#18c47d' },
   ],
-  categories: defaultCategories,
-  budgets: Object.fromEntries(defaultCategories.map((category) => [category.id, 0])),
+  categories: {
+    expense: defaultExpenseCategories,
+    income: defaultIncomeCategories,
+  },
+  budgets: {
+    expense: Object.fromEntries(defaultExpenseCategories.map((category) => [category.id, 0])),
+    income: Object.fromEntries(defaultIncomeCategories.map((category) => [category.id, 0])),
+  },
   transactions: [],
 };
 
@@ -37,12 +49,32 @@ const loadFinanceData = () => {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
     if (!saved) return emptyFinanceData;
 
+    // Older saves stored a flat categories array (expenses only) and a flat
+    // budgets map. Migrate those into the new { expense, income } shape
+    // without losing anything the person already set up.
+    const savedCategories = saved.categories;
+    const isLegacyCategories = Array.isArray(savedCategories);
+    const expenseCategories = isLegacyCategories
+      ? (savedCategories.length ? savedCategories : emptyFinanceData.categories.expense)
+      : (savedCategories?.expense?.length ? savedCategories.expense : emptyFinanceData.categories.expense);
+    const incomeCategories = (!isLegacyCategories && savedCategories?.income?.length)
+      ? savedCategories.income
+      : emptyFinanceData.categories.income;
+
+    const savedBudgets = saved.budgets || {};
+    const hasSplitBudgets = 'expense' in savedBudgets || 'income' in savedBudgets;
+    const expenseBudgets = hasSplitBudgets ? (savedBudgets.expense || {}) : savedBudgets;
+    const incomeBudgets = hasSplitBudgets ? (savedBudgets.income || {}) : {};
+
     return {
       ...emptyFinanceData,
       ...saved,
       accounts: saved.accounts?.length ? saved.accounts : emptyFinanceData.accounts,
-      categories: saved.categories?.length ? saved.categories : emptyFinanceData.categories,
-      budgets: { ...emptyFinanceData.budgets, ...(saved.budgets || {}) },
+      categories: { expense: expenseCategories, income: incomeCategories },
+      budgets: {
+        expense: { ...emptyFinanceData.budgets.expense, ...expenseBudgets },
+        income: { ...emptyFinanceData.budgets.income, ...incomeBudgets },
+      },
       transactions: saved.transactions || [],
     };
   } catch (error) {
@@ -54,15 +86,16 @@ const loadFinanceData = () => {
 const transactionId = () => `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 const SHEET_NAME = 'APD';
 const SHEET_HEADERS = [
-  'EntryType', 'Id', 'Name', 'Balance', 'Color', 'Category', 'Budget', 'Date', 'Type', 'Amount', 'AccountId', 'Note',
+  'EntryType', 'Id', 'Name', 'Balance', 'Color', 'Icon', 'Kind',
+  'Category', 'Budget', 'Date', 'Type', 'Amount', 'AccountId', 'Note',
 ];
 
 export default function Finance() {
   const [finance, setFinance] = useState(loadFinanceData);
   const [showAccountForm, setShowAccountForm] = useState(false);
-  const [showCategoryForm, setShowCategoryForm] = useState(false);
   const [newAccount, setNewAccount] = useState({ name: '', balance: '' });
-  const [newCategory, setNewCategory] = useState({ label: '', color: '#22a8aa', icon: categoryIcons[0] });
+  const [budgetTab, setBudgetTab] = useState('expense');
+  const [newCategory, setNewCategory] = useState({ label: '', color: '#22a8aa' });
   const [form, setForm] = useState({
     type: 'expense',
     amount: '',
@@ -81,7 +114,8 @@ export default function Finance() {
     });
   };
 
-  const categories = finance.categories || defaultCategories;
+  const expenseCategories = finance.categories?.expense || defaultExpenseCategories;
+  const incomeCategories = finance.categories?.income || defaultIncomeCategories;
 
   const money = useMemo(
     () => new Intl.NumberFormat(undefined, {
@@ -109,7 +143,8 @@ export default function Finance() {
       income,
       spending,
       balance: finance.accounts.reduce((sum, account) => sum + Number(account.balance || 0), 0),
-      budget: Object.values(finance.budgets).reduce((sum, value) => sum + Number(value || 0), 0),
+      expenseBudget: Object.values(finance.budgets.expense).reduce((sum, value) => sum + Number(value || 0), 0),
+      incomeGoal: Object.values(finance.budgets.income).reduce((sum, value) => sum + Number(value || 0), 0),
     };
   }, [finance.accounts, finance.budgets, monthTransactions]);
 
@@ -123,6 +158,33 @@ export default function Finance() {
     [monthTransactions]
   );
 
+  const incomeByCategory = useMemo(
+    () => monthTransactions
+      .filter((transaction) => transaction.type === 'income')
+      .reduce((summary, transaction) => ({
+        ...summary,
+        [transaction.category]: (summary[transaction.category] || 0) + transaction.amount,
+      }), {}),
+    [monthTransactions]
+  );
+
+  const incomeBreakdown = useMemo(() => {
+    const total = totals.income;
+    return incomeCategories
+      .map((category) => {
+        const amount = incomeByCategory[category.id] || 0;
+        return {
+          id: category.id,
+          label: category.label,
+          color: category.color,
+          amount,
+          percent: total ? (amount / total) * 100 : 0,
+        };
+      })
+      .filter((entry) => entry.amount > 0)
+      .sort((a, b) => b.amount - a.amount);
+  }, [incomeByCategory, incomeCategories, totals.income]);
+
   const recentTransactions = useMemo(
     () => [...finance.transactions]
       .sort((a, b) => new Date(b.date) - new Date(a.date) || b.createdAt - a.createdAt)
@@ -132,11 +194,11 @@ export default function Finance() {
 
   const setCurrency = (currency) => updateFinance((current) => ({ ...current, currency }));
 
-  const updateBudget = (categoryId, value) => {
-    const budget = Math.max(0, Number(value) || 0);
+  const updateBudget = (kind, categoryId, value) => {
+    const amount = Math.max(0, Number(value) || 0);
     updateFinance((current) => ({
       ...current,
-      budgets: { ...current.budgets, [categoryId]: budget },
+      budgets: { ...current.budgets, [kind]: { ...current.budgets[kind], [categoryId]: amount } },
     }));
   };
 
@@ -148,21 +210,33 @@ export default function Finance() {
     const id = `${label.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`;
     updateFinance((current) => ({
       ...current,
-      categories: [
+      categories: {
         ...current.categories,
-        { id, label, icon: newCategory.icon || '◌', color: newCategory.color || '#22a8aa' },
-      ],
-      budgets: { ...current.budgets, [id]: 0 },
+        [budgetTab]: [
+          ...current.categories[budgetTab],
+          { id, label, icon: '◌', color: newCategory.color || '#22a8aa' },
+        ],
+      },
+      budgets: {
+        ...current.budgets,
+        [budgetTab]: { ...current.budgets[budgetTab], [id]: 0 },
+      },
     }));
 
-    setNewCategory({ label: '', color: '#22a8aa', icon: categoryIcons[0] });
+    setNewCategory({ label: '', color: '#22a8aa' });
   };
 
-  const deleteCategory = (categoryId) => {
+  const deleteCategory = (kind, categoryId) => {
     updateFinance((current) => ({
       ...current,
-      categories: current.categories.filter((category) => category.id !== categoryId),
-      budgets: Object.fromEntries(Object.entries(current.budgets).filter(([key]) => key !== categoryId)),
+      categories: {
+        ...current.categories,
+        [kind]: current.categories[kind].filter((category) => category.id !== categoryId),
+      },
+      budgets: {
+        ...current.budgets,
+        [kind]: Object.fromEntries(Object.entries(current.budgets[kind]).filter(([key]) => key !== categoryId)),
+      },
     }));
   };
 
@@ -198,13 +272,13 @@ export default function Finance() {
   const addTransaction = (event) => {
     event.preventDefault();
     const amount = Number(form.amount);
-    if (!amount || amount <= 0 || !form.accountId) return;
+    if (!amount || amount <= 0 || !form.accountId || !form.category) return;
 
     const transaction = {
       id: transactionId(),
       type: form.type,
       amount,
-      category: form.type === 'income' ? incomeCategory.id : form.category,
+      category: form.category,
       accountId: form.accountId,
       note: form.note.trim() || (form.type === 'income' ? 'Income' : 'New expense'),
       date: form.date,
@@ -264,17 +338,19 @@ export default function Finance() {
     setShowAccountForm(false);
   };
 
-  const categoryFor = (categoryId) => {
-    if (categoryId === incomeCategory.id) return incomeCategory;
-    return categories.find((category) => category.id === categoryId) || unknownCategory;
-  };
-  const budgetProgress = totals.budget > 0 ? Math.min((totals.spending / totals.budget) * 100, 100) : 0;
-  const budgetRemaining = totals.budget - totals.spending;
+  const categoryFor = (categoryId) => (
+    [...expenseCategories, ...incomeCategories].find((category) => category.id === categoryId) || unknownCategory
+  );
+
+  const expenseBudgetProgress = totals.expenseBudget > 0 ? Math.min((totals.spending / totals.expenseBudget) * 100, 100) : 0;
+  const expenseBudgetRemaining = totals.expenseBudget - totals.spending;
+  const incomeGoalProgress = totals.incomeGoal > 0 ? Math.min((totals.income / totals.incomeGoal) * 100, 100) : 0;
+  const incomeGoalRemaining = totals.incomeGoal - totals.income;
 
   const analytics = useMemo(() => {
     const transactions = finance.transactions || [];
     const accounts = finance.accounts || [];
-    const budgets = finance.budgets || {};
+    const expenseBudgets = finance.budgets?.expense || {};
 
     const monthLabels = Array.from({ length: 6 }, (_, index) => {
       const date = new Date();
@@ -319,13 +395,13 @@ export default function Finance() {
     });
 
     const averageBudgetUsage = (() => {
-      const budgeted = categories.filter((category) => Number(budgets[category.id] || 0) > 0);
+      const budgeted = expenseCategories.filter((category) => Number(expenseBudgets[category.id] || 0) > 0);
       if (!budgeted.length) return 0;
       const totalUsage = budgeted.reduce((sum, category) => {
         const spent = monthTransactions
           .filter((transaction) => transaction.type === 'expense' && transaction.category === category.id)
           .reduce((innerSum, transaction) => innerSum + Number(transaction.amount || 0), 0);
-        return sum + (spent / Math.max(1, Number(budgets[category.id] || 0)));
+        return sum + (spent / Math.max(1, Number(expenseBudgets[category.id] || 0)));
       }, 0);
       return totalUsage / budgeted.length;
     })();
@@ -345,7 +421,11 @@ export default function Finance() {
       return `${index === 0 ? 'M' : 'L'}${x},${y}`;
     }).join(' ');
 
+    // Only accounts with a positive balance count as an "asset" here — this
+    // keeps the donut, the legend and the conic-gradient all derived from
+    // the exact same filtered list, so they can never drift apart.
     const assetValues = accounts.map((account) => ({
+      id: account.id,
       name: account.name || 'Account',
       color: account.color || '#1877e8',
       value: Math.max(0, Number(account.balance) || 0),
@@ -390,48 +470,46 @@ export default function Finance() {
       formatPercent: (value) => `${Math.round(value)}%`,
       formatCurrency: (value) => money.format(value),
     };
-  }, [finance.budgets, finance.categories, finance.transactions, money, monthTransactions, categories]);
+  }, [finance.accounts, finance.budgets, finance.transactions, expenseCategories, money, monthTransactions]);
 
   const exportFinanceToXlsx = () => {
     const workbook = XLSX.utils.book_new();
 
+    const blankRow = {
+      EntryType: '', Id: '', Name: '', Balance: '', Color: '', Icon: '', Kind: '',
+      Category: '', Budget: '', Date: '', Type: '', Amount: '', AccountId: '', Note: '',
+    };
+
     const rows = [
       ...finance.accounts.map((account) => ({
+        ...blankRow,
         EntryType: 'Account',
         Id: account.id,
         Name: account.name,
         Balance: account.balance,
         Color: account.color,
-        Category: '',
-        Budget: '',
-        Date: '',
-        Type: '',
-        Amount: '',
-        AccountId: '',
-        Note: '',
       })),
-      ...Object.entries(finance.budgets).map(([category, limit]) => ({
+      ...['expense', 'income'].flatMap((kind) => finance.categories[kind].map((category) => ({
+        ...blankRow,
+        EntryType: 'Category',
+        Id: category.id,
+        Name: category.label,
+        Color: category.color,
+        Icon: category.icon,
+        Kind: kind,
+      }))),
+      ...['expense', 'income'].flatMap((kind) => Object.entries(finance.budgets[kind]).map(([category, limit]) => ({
+        ...blankRow,
         EntryType: 'Budget',
-        Id: '',
-        Name: '',
-        Balance: '',
-        Color: '',
         Category: category,
         Budget: limit,
-        Date: '',
-        Type: '',
-        Amount: '',
-        AccountId: '',
-        Note: '',
-      })),
+        Kind: kind,
+      }))),
       ...finance.transactions.map((transaction) => ({
+        ...blankRow,
         EntryType: 'Transaction',
         Id: transaction.id,
-        Name: '',
-        Balance: '',
-        Color: '',
         Category: transaction.category,
-        Budget: '',
         Date: transaction.date,
         Type: transaction.type,
         Amount: transaction.amount,
@@ -465,75 +543,78 @@ export default function Finance() {
 
     const data = await file.arrayBuffer();
     const workbook = XLSX.read(data, { type: 'array' });
-    const parseSheet = (sheetName) => {
-      const sheet = workbook.Sheets[sheetName];
-      return sheet ? XLSX.utils.sheet_to_json(sheet, { defval: '' }) : [];
-    };
-
     const sheetName = workbook.SheetNames.includes(SHEET_NAME) ? SHEET_NAME : workbook.SheetNames[0];
-    const importedRows = parseSheet(sheetName);
+    const sheet = workbook.Sheets[sheetName];
+    const importedRows = sheet ? XLSX.utils.sheet_to_json(sheet, { defval: '' }) : [];
+
     const importedAccounts = [];
-    const importedBudgets = [];
+    const importedCategories = { expense: [], income: [] };
+    const importedBudgets = { expense: [], income: [] };
     const importedTransactions = [];
 
     importedRows.forEach((row, index) => {
-      const type = (row.EntryType || row.entryType || row.Section || row.TypeOfRow || '').toString().trim();
+      const type = (row.EntryType || row.entryType || '').toString().trim();
+      const kind = (row.Kind || row.kind || 'expense').toString().trim() === 'income' ? 'income' : 'expense';
+
       if (type === 'Account') {
         importedAccounts.push({
-          id: row.Id || row.id || row.AccountId || `imported-account-${index}`,
-          name: row.Name || row.name || row.AccountName || `Account ${index + 1}`,
-          balance: Number(row.Balance || row.balance || row.AccountBalance || 0),
-          color: row.Color || row.color || row.AccountColor || ['#18c47d', '#1877e8', '#ec3e4f', '#9b66ee'][index % 4],
+          id: row.Id || `imported-account-${index}`,
+          name: row.Name || `Account ${index + 1}`,
+          balance: Number(row.Balance || 0),
+          color: row.Color || ['#18c47d', '#1877e8', '#ec3e4f', '#9b66ee'][index % 4],
         });
       }
-      if (type === 'Budget') {
-        const key = (row.Category || row.category || row.BudgetCategory || '').toString().trim();
-        if (key) {
-          importedBudgets.push({ key, value: Number(row.Budget || row.budget || row.Limit || 0) });
+
+      if (type === 'Category') {
+        const id = (row.Id || '').toString().trim();
+        if (id) {
+          importedCategories[kind].push({
+            id,
+            label: row.Name || id,
+            icon: row.Icon || '◌',
+            color: row.Color || '#22a8aa',
+          });
         }
       }
+
+      if (type === 'Budget') {
+        const key = (row.Category || '').toString().trim();
+        if (key) {
+          importedBudgets[kind].push({ key, value: Number(row.Budget || 0) });
+        }
+      }
+
       if (type === 'Transaction') {
         importedTransactions.push({
-          id: row.Id || row.id || row.TransactionId || `imported-trans-${index}`,
+          id: row.Id || `imported-trans-${index}`,
           type: row.Type?.toString().toLowerCase().includes('income') ? 'income' : 'expense',
-          amount: Number(row.Amount || row.amount || row.Value || 0),
-          category: row.Category || row.category || row.TransactionCategory || 'food',
-          accountId: row.AccountId || row.accountId || row.Account || 'main-account',
-          note: row.Note || row.note || row.Description || '',
-          date: row.Date || row.date || today(),
+          amount: Number(row.Amount || 0),
+          category: row.Category || 'food',
+          accountId: row.AccountId || 'main-account',
+          note: row.Note || '',
+          date: row.Date || today(),
           createdAt: Date.now() + index,
         });
       }
     });
 
-    const normalizedAccounts = importedAccounts.map((row, index) => ({
-      id: row.id || `imported-account-${index}`,
-      name: row.name || `Account ${index + 1}`,
-      balance: Number(row.balance || 0),
-      color: row.color || ['#18c47d', '#1877e8', '#ec3e4f', '#9b66ee'][index % 4],
-    }));
-
-    const normalizedBudgets = importedBudgets.reduce((result, row) => {
-      if (!row.key) return result;
-      return { ...result, [row.key]: Number(row.value || 0) };
-    }, {});
-
-    const normalizedTransactions = importedTransactions.map((row, index) => ({
-      id: row.id || `imported-trans-${index}`,
-      type: row.type,
-      amount: Number(row.amount || 0),
-      category: row.category || 'food',
-      accountId: row.accountId || 'main-account',
-      note: row.note || '',
-      date: row.date || today(),
-      createdAt: row.createdAt || Date.now() + index,
-    }));
+    const normalizedBudgets = {
+      expense: importedBudgets.expense.reduce((result, row) => ({ ...result, [row.key]: Number(row.value || 0) }), {}),
+      income: importedBudgets.income.reduce((result, row) => ({ ...result, [row.key]: Number(row.value || 0) }), {}),
+    };
 
     updateFinance((current) => ({
       ...current,
-      accounts: normalizedAccounts.length ? normalizedAccounts : current.accounts,
-      budgets: { ...current.budgets, ...normalizedBudgets },
-      transactions: normalizedTransactions.length ? normalizedTransactions : current.transactions,
+      accounts: importedAccounts.length ? importedAccounts : current.accounts,
+      categories: {
+        expense: importedCategories.expense.length ? importedCategories.expense : current.categories.expense,
+        income: importedCategories.income.length ? importedCategories.income : current.categories.income,
+      },
+      budgets: {
+        expense: { ...current.budgets.expense, ...normalizedBudgets.expense },
+        income: { ...current.budgets.income, ...normalizedBudgets.income },
+      },
+      transactions: importedTransactions.length ? importedTransactions : current.transactions,
     }));
     event.target.value = '';
   };
@@ -599,9 +680,33 @@ export default function Finance() {
               <p className="panel-index">01 / LEDGER</p>
               <h2>Add movement</h2>
             </div>
-            <div className="transaction-switch" role="group" aria-label="Transaction type">
-              <button type="button" className={form.type === 'expense' ? 'selected expense' : ''} onClick={() => setForm((current) => ({ ...current, type: 'expense' }))}>Expense</button>
-              <button type="button" className={form.type === 'income' ? 'selected income' : ''} onClick={() => setForm((current) => ({ ...current, type: 'income' }))}>Income</button>
+            <div className="type-switch" role="group" aria-label="Transaction type">
+              <button
+                type="button"
+                className={form.type === 'expense' ? 'selected expense' : ''}
+                onClick={() => setForm((current) => ({
+                  ...current,
+                  type: 'expense',
+                  category: expenseCategories.some((category) => category.id === current.category)
+                    ? current.category
+                    : (expenseCategories[0]?.id || ''),
+                }))}
+              >
+                Expense
+              </button>
+              <button
+                type="button"
+                className={form.type === 'income' ? 'selected income' : ''}
+                onClick={() => setForm((current) => ({
+                  ...current,
+                  type: 'income',
+                  category: incomeCategories.some((category) => category.id === current.category)
+                    ? current.category
+                    : (incomeCategories[0]?.id || ''),
+                }))}
+              >
+                Income
+              </button>
             </div>
           </div>
 
@@ -623,13 +728,12 @@ export default function Finance() {
             <label>
               <span>Category</span>
               <select
-                value={form.type === 'income' ? incomeCategory.id : form.category}
-                disabled={form.type === 'income'}
+                value={form.category}
                 onChange={(event) => setForm((current) => ({ ...current, category: event.target.value }))}
               >
-                {form.type === 'income'
-                  ? <option value={incomeCategory.id}>{incomeCategory.icon} {incomeCategory.label}</option>
-                  : categories.map((category) => <option key={category.id} value={category.id}>{category.icon} {category.label}</option>)}
+                {(form.type === 'income' ? incomeCategories : expenseCategories).map((category) => (
+                  <option key={category.id} value={category.id}>{category.icon} {category.label}</option>
+                ))}
               </select>
             </label>
             <label>
@@ -656,22 +760,63 @@ export default function Finance() {
               <p className="panel-index">02 / BUDGET</p>
               <h2>Monthly runway</h2>
             </div>
-            <span className={`budget-state ${budgetRemaining < 0 ? 'over' : 'on-track'}`}>{budgetRemaining < 0 ? 'Over limit' : 'On track'}</span>
           </div>
-          <div className="runway-content">
-            <div className="budget-orbit" style={{ '--budget-progress': `${budgetProgress}%` }}>
-              <div>
-                <strong>{Math.round(budgetProgress)}%</strong>
-                <span>used</span>
+          <div className="runway-grid">
+            <div className="runway-block">
+              <div className="runway-block-head">
+                <span>Spending budget</span>
+                <span className={`budget-state ${expenseBudgetRemaining < 0 ? 'over' : 'on-track'}`}>
+                  {expenseBudgetRemaining < 0 ? 'Over limit' : 'On track'}
+                </span>
+              </div>
+              <div className="runway-content">
+                <div className="budget-orbit expense-orbit" style={{ '--budget-progress': `${expenseBudgetProgress}%` }}>
+                  <div>
+                    <strong>{Math.round(expenseBudgetProgress)}%</strong>
+                    <span>used</span>
+                  </div>
+                </div>
+                <div className="runway-values">
+                  <div><span>Spent</span><strong>{money.format(totals.spending)}</strong></div>
+                  <div><span>Budget</span><strong>{money.format(totals.expenseBudget)}</strong></div>
+                  <div><span>Left</span><strong>{money.format(expenseBudgetRemaining)}</strong></div>
+                </div>
               </div>
             </div>
-            <div className="runway-values">
-              <div><span>Spent</span><strong>{money.format(totals.spending)}</strong></div>
-              <div><span>Budget</span><strong>{money.format(totals.budget)}</strong></div>
-              <div><span>Left</span><strong>{money.format(budgetRemaining)}</strong></div>
+
+            <div className="runway-block">
+              <div className="runway-block-head">
+                <span>Income goal</span>
+                <span className={`budget-state ${totals.incomeGoal > 0 && totals.income < totals.incomeGoal ? 'over' : 'on-track'}`}>
+                  {totals.incomeGoal > 0 ? (totals.income >= totals.incomeGoal ? 'Goal reached' : 'Below goal') : 'No goal set'}
+                </span>
+              </div>
+              <div className="runway-content">
+                <div className="budget-orbit income-orbit" style={{ '--budget-progress': `${incomeGoalProgress}%` }}>
+                  <div>
+                    <strong>{Math.round(incomeGoalProgress)}%</strong>
+                    <span>earned</span>
+                  </div>
+                </div>
+                <div className="runway-values">
+                  <div><span>Earned</span><strong>{money.format(totals.income)}</strong></div>
+                  <div><span>Goal</span><strong>{money.format(totals.incomeGoal)}</strong></div>
+                  <div><span>{incomeGoalRemaining < 0 ? 'Surplus' : 'Left'}</span><strong>{money.format(Math.abs(incomeGoalRemaining))}</strong></div>
+                </div>
+              </div>
+              {incomeBreakdown.length > 0 && (
+                <div className="income-breakdown">
+                  <p>What this month's income consists of</p>
+                  {incomeBreakdown.map((entry) => (
+                    <span key={entry.id} style={{ '--legend-color': entry.color }}>
+                      <strong>{entry.label}</strong> — {Math.round(entry.percent)}% ({money.format(entry.amount)})
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
-          <p className="budget-note">Set a monthly ceiling per category below to activate your budget signal.</p>
+          <p className="budget-note">Set a monthly limit for expenses and a goal for income below to activate these signals.</p>
         </section>
       </div>
 
@@ -682,69 +827,60 @@ export default function Finance() {
               <p className="panel-index">03 / ALLOCATION</p>
               <h2>Category budgets</h2>
             </div>
-            <button className="text-action" type="button" onClick={() => setShowCategoryForm((visible) => !visible)}>
-              {showCategoryForm ? 'Close' : '+ Category'}
-            </button>
+            <div className="type-switch" role="group" aria-label="Budget type">
+              <button type="button" className={budgetTab === 'expense' ? 'selected expense' : ''} onClick={() => setBudgetTab('expense')}>Expenses</button>
+              <button type="button" className={budgetTab === 'income' ? 'selected income' : ''} onClick={() => setBudgetTab('income')}>Income</button>
+            </div>
           </div>
-          {showCategoryForm && (
-            <form className="new-category-form" onSubmit={addCategory}>
-              <input
-                type="text"
-                placeholder="New category"
-                value={newCategory.label}
-                onChange={(event) => setNewCategory((current) => ({ ...current, label: event.target.value }))}
-                required
-              />
-              <div className="category-icon-picker" aria-label="Select category icon">
-                {categoryIcons.map((icon) => (
-                  <button
-                    key={icon}
-                    type="button"
-                    className={newCategory.icon === icon ? 'selected' : ''}
-                    onClick={() => setNewCategory((current) => ({ ...current, icon }))}
-                    aria-label={`Select ${icon} icon`}
-                  >
-                    {icon}
-                  </button>
-                ))}
-              </div>
-              <input
-                type="color"
-                value={newCategory.color}
-                onChange={(event) => setNewCategory((current) => ({ ...current, color: event.target.value }))}
-                aria-label="Category color"
-              />
-              <button type="submit">Add category</button>
-            </form>
-          )}
+          <form className="new-category-form" onSubmit={addCategory}>
+            <input
+              type="text"
+              placeholder={budgetTab === 'income' ? 'New income source' : 'New category'}
+              value={newCategory.label}
+              onChange={(event) => setNewCategory((current) => ({ ...current, label: event.target.value }))}
+              required
+            />
+            <input
+              type="color"
+              value={newCategory.color}
+              onChange={(event) => setNewCategory((current) => ({ ...current, color: event.target.value }))}
+              aria-label="Category color"
+            />
+            <button type="submit">Add {budgetTab === 'income' ? 'source' : 'category'}</button>
+          </form>
           <div className="budget-grid">
-            {categories.map((category) => {
-              const spent = spendingByCategory[category.id] || 0;
-              const budget = Number(finance.budgets[category.id] || 0);
-              const progress = budget > 0 ? Math.min((spent / budget) * 100, 100) : 0;
-              const isOverBudget = budget > 0 && spent > budget;
+            {(budgetTab === 'income' ? incomeCategories : expenseCategories).map((category) => {
+              const activity = (budgetTab === 'income' ? incomeByCategory : spendingByCategory)[category.id] || 0;
+              const budget = Number(finance.budgets[budgetTab][category.id] || 0);
+              const progress = budget > 0 ? Math.min((activity / budget) * 100, 100) : 0;
+              const isOverBudget = budgetTab === 'expense' && budget > 0 && activity > budget;
+              const isBelowGoal = budgetTab === 'income' && budget > 0 && activity < budget;
 
               return (
-                <article className={`category-budget ${isOverBudget ? 'over-budget' : ''}`} key={category.id} style={{ '--category-color': category.color }}>
+                <article
+                  className={`category-budget ${isOverBudget ? 'over-budget' : ''} ${isBelowGoal ? 'below-goal' : ''}`}
+                  key={category.id}
+                  style={{ '--category-color': category.color }}
+                >
                   <div className="category-budget-topline">
                     <span className="category-icon">{category.icon}</span>
                     <span className="category-name">{category.label}</span>
-                    <strong>{money.format(spent)}</strong>
+                    <strong>{money.format(activity)}</strong>
                   </div>
                   <div className="category-progress"><span style={{ width: `${progress}%` }} /></div>
                   <label>
-                    <span>Limit</span>
+                    <span>{budgetTab === 'income' ? 'Goal' : 'Limit'}</span>
                     <input
                       type="number"
                       min="0"
                       step="1"
                       value={budget || ''}
-                      placeholder="Set budget"
-                      onChange={(event) => updateBudget(category.id, event.target.value)}
-                      aria-label={`${category.label} monthly budget`}
+                      placeholder={budgetTab === 'income' ? 'Set goal' : 'Set budget'}
+                      onChange={(event) => updateBudget(budgetTab, category.id, event.target.value)}
+                      aria-label={`${category.label} monthly ${budgetTab === 'income' ? 'goal' : 'budget'}`}
                     />
                   </label>
-                  <button type="button" className="delete-category" onClick={() => deleteCategory(category.id)} aria-label={`Delete ${category.label}`}>
+                  <button type="button" className="delete-category" onClick={() => deleteCategory(budgetTab, category.id)} aria-label={`Delete ${category.label}`}>
                     Remove
                   </button>
                 </article>
@@ -881,7 +1017,7 @@ export default function Finance() {
                 <path d={analytics.linePaths.total} className="line total-line" />
                 {analytics.monthLabels.map((label, index) => {
                   const x = 26 + index * 42;
-                  return <line key={label} x1={x} y1="148" x2={x} y2="156" className="axis-tick" />;
+                  return <line key={`${label}-${index}`} x1={x} y1="148" x2={x} y2="156" className="axis-tick" />;
                 })}
               </svg>
             </div>
@@ -937,13 +1073,14 @@ export default function Finance() {
               <strong>{analytics.formatCurrency(analytics.assetTotal)}</strong>
             </div>
             <div className="asset-legend">
-              {(analytics.assetLegend || []).map((segment, index) => (
-                <span key={`${segment.name}-${index}`} style={{ '--legend-color': segment.color }}>
-                  <strong>{segment.name || 'Account'}</strong> — {Math.round(segment.percent)}% of assets
+              {(analytics.assetLegend || []).slice(0, 3).map((segment) => (
+                <span key={segment.id} style={{ '--legend-color': segment.color }}>
+                  <strong>{segment.name}</strong> — {Math.round(segment.percent)}% of assets
                 </span>
               ))}
+              {(analytics.assetLegend || []).length > 3 && <span>+{analytics.assetLegend.length - 3} more</span>}
             </div>
-            <small className="asset-legend-note">Each line shows the account and the percent of the donut it occupies.</small>
+            <small className="asset-legend-note">Accounts with a positive balance only — each line is the account and its share of that total.</small>
           </article>
         </div>
       </section>

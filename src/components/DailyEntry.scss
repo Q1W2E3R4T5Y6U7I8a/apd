@@ -517,7 +517,6 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   transition: all 0.2s;
   min-width: 0;
   flex-wrap: wrap;
-  overflow: visible;
 
   &:hover {
     box-shadow: $shadow-md;
@@ -557,7 +556,6 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
     gap: $space-xs;
     flex-shrink: 0;
     margin-left: auto; // This pushes controls to the right
-    overflow: visible;
   }
 
   .delete-todo {
@@ -1017,7 +1015,6 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
 
 .color-picker {
   position: relative;
-  z-index: 1000;
 
   .color-picker-toggle {
     width: 28px;
@@ -1046,7 +1043,7 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: $space-xs;
-    z-index: 2000;
+    z-index: 100;
     box-shadow: $shadow-lg;
 
     .color-option {

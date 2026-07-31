@@ -10,8 +10,7 @@ import Finance from './components/Finance';
 import { MediaProvider } from './contexts/MediaContent';
 import Terminal from './components/Terminal'; 
 import OnboardingPopup from './components/OnboardingPopup';
-import './TechTheme.scss';
-
+import TradingLosos from './components/TradingLosos';
 
 function App() {
   const [page, setPage] = useState('daily');
@@ -133,17 +132,13 @@ function App() {
     }
   }, []);
 
-   const handleInfoClick = () => {
+  const handleInfoClick = () => {
     setShowOnboarding(true);
   };
 
   const handlePageChange = (newPage) => {
     setPage(newPage);
     setMobileMenuOpen(false);
-  };
-
-  const handleFinanceClick = () => {
-    handlePageChange('finance');
   };
 
   // Navigation items configuration
@@ -153,19 +148,21 @@ function App() {
     { id: 'stats', icon: '📊', text: 'Statistics' },
     { id: 'dreams', icon: '✨', text: 'Dreams' },
     { id: 'constitution', icon: '📝', text: 'Constitution' },
+    { id: 'finance', icon: '💰', text: 'Finance' }, 
+    { id: 'trading', icon: '📊', text: 'Trading' },
     { id: 'importexport', icon: '🔄', text: 'Backup' },
   ];
 
   return (
     <MediaProvider>
       <div className="app-container">
-         {showOnboarding && (
+        {showOnboarding && (
           <OnboardingPopup onClose={() => setShowOnboarding(false)} />
         )}
 
         <nav className="main-nav">
-          {/* Desktop navigation */}
           <div className="nav-container">
+            {/* All navigation items including Finance */}
             {navItems.map(item => (
               <button 
                 key={item.id}
@@ -177,16 +174,7 @@ function App() {
               </button>
             ))}
             
-            {/* Finance Button */}
-            <div className="finance-button-group">
-              <button
-                onClick={handleFinanceClick}
-                className={`nav-button ${page === 'finance' ? 'active' : ''}`}
-              >
-                <span className="nav-icon">💰</span>
-                <span className="nav-text">Finance</span>
-              </button>
-            </div>
+            {/* REMOVED: Duplicate finance-button-group */}
 
             {/* Mobile menu button */}
             <button 
@@ -211,16 +199,7 @@ function App() {
               </button>
             ))}
             
-            {/* Finance in mobile menu */}
-            <div className="finance-button-group">
-              <button
-                onClick={handleFinanceClick}
-                className={`nav-button ${page === 'finance' ? 'active' : ''}`}
-              >
-                <span className="nav-icon">💰</span>
-                <span className="nav-text">Finance</span>
-              </button>
-            </div>
+            {/* REMOVED: Duplicate finance-button-group */}
           </div>
         </nav>
 
@@ -229,13 +208,13 @@ function App() {
           {page === 'daily' && <DailyEntry />}
           {page === 'goals' && <Calendar />}
           {page === 'stats' && <Statistics />}
-          {page === 'dreams' && <Dreams />}
           {page === 'constitution' && <Constitution />}
           {page === 'finance' && <Finance />}
+          {page === 'trading' && <TradingLosos />}
           {page === 'importexport' && <ImportExport />}
         </main>
-
       </div>
+      
       <div className="bottom-buttons">
         <button 
           className="minimal-btn info-button"
@@ -246,7 +225,6 @@ function App() {
         </button>
       </div>
       <Terminal />
-
     </MediaProvider>  
   );
 }

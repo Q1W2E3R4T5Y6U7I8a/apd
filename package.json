@@ -26,6 +26,7 @@
     "react-dom": "^18.2.0",
     "react-leaflet": "^4.2.0",
     "react-scripts": "5.0.1",
+    "recharts": "^3.10.1",
     "sass": "^1.87.0",
     "sharp": "^0.34.5",
     "web-vitals": "^5.1.0",
