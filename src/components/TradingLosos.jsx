@@ -5,6 +5,7 @@ import {
   RadialBarChart, RadialBar, PolarAngleAxis, Legend,
   RadarChart, Radar, PolarGrid, PolarRadiusAxis, LabelList,
 } from 'recharts';
+import TradingLososPolymarket from './TradingLososPolymarket';
 import './TradingLosos.scss';
 
 // ======================================================================
@@ -1119,64 +1120,9 @@ CRITICAL: This is a conversation. Show each member speaking, their arguments, th
     
         </div>
 
-        {/* Polymarket iframes */}
-        <div style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          alignItems: 'stretch',
-          gap: '24px 20px',
-          padding: '30px 20px',
-          background: 'linear-gradient(145deg, #0b0e14 0%, #1a1f2a 100%)',
-          borderRadius: '32px',
-          boxShadow: '0 20px 40px rgba(0,0,0,0.7), inset 0 1px 2px rgba(255,255,255,0.06)',
-          maxWidth: '1400px',
-          margin: '20px auto',
-          border: '1px solid rgba(255,255,255,0.04)'
-        }}>
-          <iframe
-            title="polymarket-market-iframe"
-            src="https://embed.polymarket.com/market?market=us-iran-60-day-negotiation-period-extended-20260624044855448&theme=dark&liveactivity=true&buttons=false&border=true&height=300"
-            width="400"
-            height="300"
-            frameBorder="0"
-          />
-          <iframe
-            title="polymarket-market-iframe"
-            src="https://embed.polymarket.com/market?market=yevhen-khmara-appointed-as-ukrainian-minister-of-defence-by-august-31&theme=dark&liveactivity=true&buttons=false&border=true&height=300"
-            width="400"
-            height="300"
-            frameBorder="0"
-          />
-          <iframe
-            title="polymarket-market-iframe"
-            src="https://embed.polymarket.com/market?market=mykhailo-fedorov-reinstated-as-ukrainian-defense-minister-by-august-31-2026-20260722051644333&theme=dark&liveactivity=true&buttons=false&border=true&height=300"
-            width="400"
-            height="300"
-            frameBorder="0"
-          />
-          <iframe
-            title="polymarket-market-iframe"
-            src="https://embed.polymarket.com/market?market=will-there-be-no-change-in-fed-interest-rates-after-the-september-2026-meeting-615&theme=dark&liveactivity=true&buttons=false&border=true&height=300"
-            width="400"
-            height="300"
-            frameBorder="0"
-          />
-          <iframe
-            title="polymarket-market-iframe"
-            src="https://embed.polymarket.com/market?market=will-the-fed-increase-interest-rates-by-25-bps-after-the-september-2026-meeting-649&theme=dark&liveactivity=true&buttons=false&border=true&height=300"
-            width="400"
-            height="300"
-            frameBorder="0"
-          />
-          <iframe
-            title="polymarket-market-iframe"
-            src="https://embed.polymarket.com/market?market=russia-x-ukraine-ceasefire-agreement-by-december-31-2026&theme=dark&liveactivity=true&buttons=false&border=true&height=300"
-            width="400"
-            height="300"
-            frameBorder="0"
-          />
-        </div>
+      {/* Polymarket iframes */}
+      <TradingLososPolymarket />
+      {/* Polymarket iframes */}
 
         <div className="links-section" style={{
           display: 'flex',
@@ -1204,6 +1150,52 @@ CRITICAL: This is a conversation. Show each member speaking, their arguments, th
             <span className="link-icon">📊</span> Minfin (TG)
           </a>
         </div>
+        <div
+  className="links-section"
+  style={{
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '12px 16px',
+    padding: '18px 24px',
+    background: 'rgba(255,255,255,0.04)',
+    borderRadius: '16px',
+    border: '1px solid rgba(255,255,255,0.06)',
+    backdropFilter: 'blur(4px)',
+    marginTop: '20px',
+  }}
+>
+      <a href="https://polymarket.com/@pennedreadful" target="_blank" rel="noopener noreferrer" className="link-item">
+        <span className="link-icon">💰</span> Pennedreadful
+      </a>
+      <a href="https://polymarket.com/@c03b" target="_blank" rel="noopener noreferrer" className="link-item">
+        <span className="link-icon">📈</span> c03b
+      </a>
+      <a href="https://polymarket.com/@anoin123" target="_blank" rel="noopener noreferrer" className="link-item">
+        <span className="link-icon">🗳️</span> anoin123
+      </a>
+      <a href="https://polymarket.com/@jep-g" target="_blank" rel="noopener noreferrer" className="link-item">
+        <span className="link-icon">🛢️</span> jep-g
+      </a>
+      <a href="https://polymarket.com/@ng6000" target="_blank" rel="noopener noreferrer" className="link-item">
+        <span className="link-icon">🔗</span> ng6000
+      </a>
+      <a href="https://polymarket.com/@pippitrader" target="_blank" rel="noopener noreferrer" className="link-item">
+        <span className="link-icon">🔗</span> pippitrader
+      </a>
+      <a href="https://polymarket.com/@romkos7" target="_blank" rel="noopener noreferrer" className="link-item">
+        <span className="link-icon">🔗</span> romkos7
+      </a>
+      <a href="https://polymarket.com/@sleeperhunter" target="_blank" rel="noopener noreferrer" className="link-item">
+        <span className="link-icon">🔗</span> sleeperhunter
+      </a>
+      <a href="https://polymarket.com/@moonshot1019" target="_blank" rel="noopener noreferrer" className="link-item">
+        <span className="link-icon">🔗</span> moonshot1019
+      </a>
+    </div>
+
+
 
         {isModalOpen && (
           <div className="modal-overlay" onClick={() => { setIsModalOpen(false); setError(null); }}>

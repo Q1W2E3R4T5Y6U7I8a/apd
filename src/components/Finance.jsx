@@ -38,6 +38,7 @@ const emptyFinanceData = {
     expense: Object.fromEntries(defaultExpenseCategories.map((category) => [category.id, 0])),
     income: Object.fromEntries(defaultIncomeCategories.map((category) => [category.id, 0])),
   },
+  goals: [],
   transactions: [],
 };
 
@@ -75,6 +76,7 @@ const loadFinanceData = () => {
         expense: { ...emptyFinanceData.budgets.expense, ...expenseBudgets },
         income: { ...emptyFinanceData.budgets.income, ...incomeBudgets },
       },
+      goals: Array.isArray(saved.goals) ? saved.goals : [],
       transactions: saved.transactions || [],
     };
   } catch (error) {
@@ -95,7 +97,9 @@ export default function Finance() {
   const [showAccountForm, setShowAccountForm] = useState(false);
   const [newAccount, setNewAccount] = useState({ name: '', balance: '' });
   const [budgetTab, setBudgetTab] = useState('expense');
+  const [showGoalForm, setShowGoalForm] = useState(false);
   const [newCategory, setNewCategory] = useState({ label: '', color: '#22a8aa' });
+  const [newGoal, setNewGoal] = useState({ label: '', emoji: '🎯', amount: '', attainedAmount: '', date: '' });
   const [form, setForm] = useState({
     type: 'expense',
     amount: '',
@@ -185,6 +189,23 @@ export default function Finance() {
       .sort((a, b) => b.amount - a.amount);
   }, [incomeByCategory, incomeCategories, totals.income]);
 
+  const spendingBreakdown = useMemo(() => {
+    const total = totals.spending;
+    return expenseCategories
+      .map((category) => {
+        const amount = spendingByCategory[category.id] || 0;
+        return {
+          id: category.id,
+          label: category.label,
+          color: category.color,
+          amount,
+          percent: total ? (amount / total) * 100 : 0,
+        };
+      })
+      .filter((entry) => entry.amount > 0)
+      .sort((a, b) => b.amount - a.amount);
+  }, [expenseCategories, spendingByCategory, totals.spending]);
+
   const recentTransactions = useMemo(
     () => [...finance.transactions]
       .sort((a, b) => new Date(b.date) - new Date(a.date) || b.createdAt - a.createdAt)
@@ -237,6 +258,54 @@ export default function Finance() {
         ...current.budgets,
         [kind]: Object.fromEntries(Object.entries(current.budgets[kind]).filter(([key]) => key !== categoryId)),
       },
+    }));
+  };
+
+  const addGoal = (event) => {
+    event.preventDefault();
+    const label = newGoal.label.trim();
+    const amount = Number(newGoal.amount);
+    const attainedAmount = Number(newGoal.attainedAmount) || 0;
+    if (!label || !newGoal.date || !amount || amount <= 0) return;
+
+    updateFinance((current) => ({
+      ...current,
+      goals: [
+        {
+          id: `${label.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`,
+          label,
+          emoji: newGoal.emoji || '🎯',
+          amount,
+          attainedAmount,
+          date: newGoal.date,
+          createdAt: Date.now(),
+        },
+        ...current.goals,
+      ],
+    }));
+
+    setNewGoal({ label: '', emoji: '🎯', amount: '', attainedAmount: '', date: '' });
+    setShowGoalForm(false);
+  };
+
+  const updateGoal = (goalId, field, value) => {
+    updateFinance((current) => ({
+      ...current,
+      goals: current.goals.map((goal) => (
+        goal.id === goalId
+          ? {
+            ...goal,
+            [field]: field === 'amount' || field === 'attainedAmount' ? Number(value) || 0 : value,
+          }
+          : goal
+      )),
+    }));
+  };
+
+  const deleteGoal = (goalId) => {
+    updateFinance((current) => ({
+      ...current,
+      goals: current.goals.filter((goal) => goal.id !== goalId),
     }));
   };
 
@@ -516,6 +585,15 @@ export default function Finance() {
         AccountId: transaction.accountId,
         Note: transaction.note,
       })),
+      ...finance.goals.map((goal) => ({
+        ...blankRow,
+        EntryType: 'Goal',
+        Id: goal.id,
+        Name: goal.label,
+        Budget: goal.amount,
+        Date: goal.date,
+        Note: goal.note || '',
+      })),
     ];
 
     const sheet = XLSX.utils.json_to_sheet(rows, { header: SHEET_HEADERS });
@@ -551,6 +629,7 @@ export default function Finance() {
     const importedCategories = { expense: [], income: [] };
     const importedBudgets = { expense: [], income: [] };
     const importedTransactions = [];
+    const importedGoals = [];
 
     importedRows.forEach((row, index) => {
       const type = (row.EntryType || row.entryType || '').toString().trim();
@@ -596,6 +675,16 @@ export default function Finance() {
           createdAt: Date.now() + index,
         });
       }
+
+      if (type === 'Goal') {
+        importedGoals.push({
+          id: row.Id || `imported-goal-${index}`,
+          label: row.Name || `Goal ${index + 1}`,
+          amount: Number(row.Budget || 0),
+          date: row.Date || '',
+          createdAt: Date.now() + index,
+        });
+      }
     });
 
     const normalizedBudgets = {
@@ -614,6 +703,7 @@ export default function Finance() {
         expense: { ...current.budgets.expense, ...normalizedBudgets.expense },
         income: { ...current.budgets.income, ...normalizedBudgets.income },
       },
+      goals: importedGoals.length ? importedGoals : current.goals,
       transactions: importedTransactions.length ? importedTransactions : current.transactions,
     }));
     event.target.value = '';
@@ -830,63 +920,192 @@ export default function Finance() {
             <div className="type-switch" role="group" aria-label="Budget type">
               <button type="button" className={budgetTab === 'expense' ? 'selected expense' : ''} onClick={() => setBudgetTab('expense')}>Expenses</button>
               <button type="button" className={budgetTab === 'income' ? 'selected income' : ''} onClick={() => setBudgetTab('income')}>Income</button>
+              <button type="button" className={budgetTab === 'goals' ? 'selected' : ''} onClick={() => setBudgetTab('goals')}>Goals</button>
             </div>
           </div>
-          <form className="new-category-form" onSubmit={addCategory}>
-            <input
-              type="text"
-              placeholder={budgetTab === 'income' ? 'New income source' : 'New category'}
-              value={newCategory.label}
-              onChange={(event) => setNewCategory((current) => ({ ...current, label: event.target.value }))}
-              required
-            />
-            <input
-              type="color"
-              value={newCategory.color}
-              onChange={(event) => setNewCategory((current) => ({ ...current, color: event.target.value }))}
-              aria-label="Category color"
-            />
-            <button type="submit">Add {budgetTab === 'income' ? 'source' : 'category'}</button>
-          </form>
-          <div className="budget-grid">
-            {(budgetTab === 'income' ? incomeCategories : expenseCategories).map((category) => {
-              const activity = (budgetTab === 'income' ? incomeByCategory : spendingByCategory)[category.id] || 0;
-              const budget = Number(finance.budgets[budgetTab][category.id] || 0);
-              const progress = budget > 0 ? Math.min((activity / budget) * 100, 100) : 0;
-              const isOverBudget = budgetTab === 'expense' && budget > 0 && activity > budget;
-              const isBelowGoal = budgetTab === 'income' && budget > 0 && activity < budget;
-
-              return (
-                <article
-                  className={`category-budget ${isOverBudget ? 'over-budget' : ''} ${isBelowGoal ? 'below-goal' : ''}`}
-                  key={category.id}
-                  style={{ '--category-color': category.color }}
-                >
-                  <div className="category-budget-topline">
-                    <span className="category-icon">{category.icon}</span>
-                    <span className="category-name">{category.label}</span>
-                    <strong>{money.format(activity)}</strong>
+          {budgetTab === 'goals' ? (
+            <>
+              <div className="goal-toolbar">
+                <button type="button" className="text-action" onClick={() => setShowGoalForm((visible) => !visible)}>
+                  {showGoalForm ? 'Close form' : '+ New goal'}
+                </button>
+              </div>
+              {showGoalForm && (
+                <form className="new-goal-form" onSubmit={addGoal}>
+                <input
+                  type="text"
+                  placeholder="Goal name"
+                  value={newGoal.label}
+                  onChange={(event) => setNewGoal((current) => ({ ...current, label: event.target.value }))}
+                  required
+                />
+                <input
+                  type="number"
+                  min="0"
+                  step="1"
+                  placeholder="Target"
+                  value={newGoal.amount}
+                  onChange={(event) => setNewGoal((current) => ({ ...current, amount: event.target.value }))}
+                  required
+                />
+                <input
+                  type="number"
+                  min="0"
+                  step="1"
+                  placeholder="Reached"
+                  value={newGoal.attainedAmount}
+                  onChange={(event) => setNewGoal((current) => ({ ...current, attainedAmount: event.target.value }))}
+                />
+                <input
+                  type="date"
+                  value={newGoal.date}
+                  onChange={(event) => setNewGoal((current) => ({ ...current, date: event.target.value }))}
+                  required
+                />
+                <div className="goal-emoji-row">
+                  {['🎯','💸','🏡','🚗','📈','💼','🎁','✈️','🧳','🛍️'].map((emoji) => (
+                    <button
+                      key={emoji}
+                      type="button"
+                      className={`goal-emoji-chip ${newGoal.emoji === emoji ? 'active' : ''}`}
+                      onClick={() => setNewGoal((current) => ({ ...current, emoji }))}
+                    >
+                      {emoji}
+                    </button>
+                  ))}
+                </div>
+                <button type="submit">Add goal</button>
+                </form>
+              )}
+              <div className="goals-grid">
+                {finance.goals?.length ? finance.goals.map((goal) => {
+                  const progress = goal.amount > 0 ? Math.min((Number(goal.attainedAmount || 0) / Number(goal.amount)) * 100, 100) : 0;
+                  return (
+                    <article className="goal-card" key={goal.id}>
+                      <div className="goal-card-head">
+                        <span className="goal-emoji">{goal.emoji || '🎯'}</span>
+                        <div className="goal-card-main">
+                          <input
+                            type="text"
+                            className="goal-title-input"
+                            value={goal.label}
+                            onChange={(event) => updateGoal(goal.id, 'label', event.target.value)}
+                          />
+                          <div className="goal-progress-row">
+                            <div className="goal-progress-bar"><span style={{ width: `${progress}%` }} /></div>
+                            <strong>{Math.round(progress)}%</strong>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="goal-card-fields">
+                        <label>
+                          <span>Reached</span>
+                          <input
+                            type="number"
+                            min="0"
+                            step="1"
+                            value={goal.attainedAmount || 0}
+                            onChange={(event) => updateGoal(goal.id, 'attainedAmount', event.target.value)}
+                          />
+                        </label>
+                        <label>
+                          <span>Target</span>
+                          <input
+                            type="number"
+                            min="0"
+                            step="1"
+                            value={goal.amount}
+                            onChange={(event) => updateGoal(goal.id, 'amount', event.target.value)}
+                          />
+                        </label>
+                        <label>
+                          <span>Due</span>
+                          <input
+                            type="date"
+                            value={goal.date || ''}
+                            onChange={(event) => updateGoal(goal.id, 'date', event.target.value)}
+                          />
+                        </label>
+                        <label>
+                          <span>Emoji</span>
+                          <input
+                            type="text"
+                            maxLength="2"
+                            value={goal.emoji || '🎯'}
+                            onChange={(event) => updateGoal(goal.id, 'emoji', event.target.value || '🎯')}
+                            placeholder="🎯"
+                          />
+                        </label>
+                      </div>
+                      <button type="button" className="delete-goal" onClick={() => deleteGoal(goal.id)}>Remove</button>
+                    </article>
+                  );
+                }) : (
+                  <div className="goals-empty">
+                    <p>Save future targets here — investments, cash milestones, or other goals.</p>
                   </div>
-                  <div className="category-progress"><span style={{ width: `${progress}%` }} /></div>
-                  <label>
-                    <span>{budgetTab === 'income' ? 'Goal' : 'Limit'}</span>
-                    <input
-                      type="number"
-                      min="0"
-                      step="1"
-                      value={budget || ''}
-                      placeholder={budgetTab === 'income' ? 'Set goal' : 'Set budget'}
-                      onChange={(event) => updateBudget(budgetTab, category.id, event.target.value)}
-                      aria-label={`${category.label} monthly ${budgetTab === 'income' ? 'goal' : 'budget'}`}
-                    />
-                  </label>
-                  <button type="button" className="delete-category" onClick={() => deleteCategory(budgetTab, category.id)} aria-label={`Delete ${category.label}`}>
-                    Remove
-                  </button>
-                </article>
-              );
-            })}
-          </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <>
+              <form className="new-category-form" onSubmit={addCategory}>
+                <input
+                  type="text"
+                  placeholder={budgetTab === 'income' ? 'New income source' : 'New category'}
+                  value={newCategory.label}
+                  onChange={(event) => setNewCategory((current) => ({ ...current, label: event.target.value }))}
+                  required
+                />
+                <input
+                  type="color"
+                  value={newCategory.color}
+                  onChange={(event) => setNewCategory((current) => ({ ...current, color: event.target.value }))}
+                  aria-label="Category color"
+                />
+                <button type="submit">Add {budgetTab === 'income' ? 'source' : 'category'}</button>
+              </form>
+              <div className="budget-grid">
+                {(budgetTab === 'income' ? incomeCategories : expenseCategories).map((category) => {
+                  const activity = (budgetTab === 'income' ? incomeByCategory : spendingByCategory)[category.id] || 0;
+                  const budget = Number(finance.budgets[budgetTab][category.id] || 0);
+                  const progress = budget > 0 ? Math.min((activity / budget) * 100, 100) : 0;
+                  const isOverBudget = budgetTab === 'expense' && budget > 0 && activity > budget;
+                  const isBelowGoal = budgetTab === 'income' && budget > 0 && activity < budget;
+
+                  return (
+                    <article
+                      className={`category-budget ${isOverBudget ? 'over-budget' : ''} ${isBelowGoal ? 'below-goal' : ''}`}
+                      key={category.id}
+                      style={{ '--category-color': category.color }}
+                    >
+                      <div className="category-budget-topline">
+                        <span className="category-icon">{category.icon}</span>
+                        <span className="category-name">{category.label}</span>
+                        <strong>{money.format(activity)}</strong>
+                      </div>
+                      <div className="category-progress"><span style={{ width: `${progress}%` }} /></div>
+                      <label>
+                        <span>{budgetTab === 'income' ? 'Goal' : 'Limit'}</span>
+                        <input
+                          type="number"
+                          min="0"
+                          step="1"
+                          value={budget || ''}
+                          placeholder={budgetTab === 'income' ? 'Set goal' : 'Set budget'}
+                          onChange={(event) => updateBudget(budgetTab, category.id, event.target.value)}
+                          aria-label={`${category.label} monthly ${budgetTab === 'income' ? 'goal' : 'budget'}`}
+                        />
+                      </label>
+                      <button type="button" className="delete-category" onClick={() => deleteCategory(budgetTab, category.id)} aria-label={`Delete ${category.label}`}>
+                        Remove
+                      </button>
+                    </article>
+                  );
+                })}
+              </div>
+            </>
+          )}
         </section>
 
         <section className="finance-panel accounts-panel">
@@ -1001,7 +1220,7 @@ export default function Finance() {
           <div className="analytics-graph-block">
             <div className="analytics-graph-top">
               <strong>Monthly trend</strong>
-              <span>Month labels show broader timeline; day ticks are integrated into the grid.</span>
+             
             </div>
             <div className="analytics-graph-frame">
               <svg viewBox="0 0 280 160" preserveAspectRatio="none">
@@ -1012,6 +1231,10 @@ export default function Finance() {
                   <line x1="20" y1="116" x2="260" y2="116" />
                   <line x1="20" y1="148" x2="260" y2="148" />
                 </g>
+                {['0', '25', '50', '75', '100'].map((label, index) => {
+                  const y = 148 - index * 32;
+                  return <text key={label} x="6" y={y + 4} className="axis-value-label">{label}%</text>;
+                })}
                 <path d={analytics.linePaths.spending} className="line spending-line" />
                 <path d={analytics.linePaths.income} className="line income-line" />
                 <path d={analytics.linePaths.total} className="line total-line" />
@@ -1053,17 +1276,33 @@ export default function Finance() {
         </div>
 
         <div className="analytics-circles">
-          <article className="donut-card spending-donut" style={{ '--fill': `${analytics.spendingShare.toFixed(0)}%` }}>
-            <span>Spendings</span>
+          <article className="donut-card spending-donut" style={{ '--fill': `${Math.max(8, Math.round(spendingBreakdown[0]?.percent || 0))}%` }}>
+            <span>Spending mix</span>
             <div className="donut-chart">
-              <strong>{analytics.formatPercent(analytics.spendingShare)}</strong>
+              <strong>{spendingBreakdown[0] ? analytics.formatPercent(spendingBreakdown[0].percent) : '0%'}</strong>
+            </div>
+            <div className="asset-legend">
+              {(spendingBreakdown || []).slice(0, 3).map((segment) => (
+                <span key={segment.id} style={{ '--legend-color': segment.color }}>
+                  <strong>{segment.label}</strong> — {Math.round(segment.percent)}% of spend
+                </span>
+              ))}
+              {(spendingBreakdown || []).length > 3 && <span>+{spendingBreakdown.length - 3} more</span>}
             </div>
             <small>{analytics.formatCurrency(analytics.totalSpending)}</small>
           </article>
-          <article className="donut-card income-donut" style={{ '--fill': `${analytics.earningShare.toFixed(0)}%` }}>
-            <span>Earnings</span>
+          <article className="donut-card income-donut" style={{ '--fill': `${Math.max(8, Math.round(incomeBreakdown[0]?.percent || 0))}%` }}>
+            <span>Income mix</span>
             <div className="donut-chart">
-              <strong>{analytics.formatPercent(analytics.earningShare)}</strong>
+              <strong>{incomeBreakdown[0] ? analytics.formatPercent(incomeBreakdown[0].percent) : '0%'}</strong>
+            </div>
+            <div className="asset-legend">
+              {(incomeBreakdown || []).slice(0, 3).map((segment) => (
+                <span key={segment.id} style={{ '--legend-color': segment.color }}>
+                  <strong>{segment.label}</strong> — {Math.round(segment.percent)}% of income
+                </span>
+              ))}
+              {(incomeBreakdown || []).length > 3 && <span>+{incomeBreakdown.length - 3} more</span>}
             </div>
             <small>{analytics.formatCurrency(analytics.totalIncome)}</small>
           </article>
